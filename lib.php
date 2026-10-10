@@ -85,6 +85,12 @@ function theme_retani_studio_get_extra_scss($theme) {
         $content .= ' pointer-events: none;';
         $content .= ' }';
     }
+    // Get the extra css from the parent theme, if it exists.
+    $extraCss = $CFG->dirroot . '/theme/retani_studio/scss/post.scss';
+
+    if(file_exists($extraCss)) {
+        $content .= file_get_contents($extraCss);
+    }
 
     // Always return the background image with the scss when we have it.
     return !empty($theme->settings->scss) ? "{$theme->settings->scss}  \n  {$content}" : $content;
@@ -165,9 +171,14 @@ function theme_retani_studio_get_main_scss_content($theme) {
         $scss .= file_get_contents($CFG->dirroot . '/theme/retani_studio/scss/preset/default.scss');
     } else if ($filename == 'plain.scss') {
         $scss .= file_get_contents($CFG->dirroot . '/theme/retani_studio/scss/preset/plain.scss');
-    } else if ($filename && ($presetfile = $fs->get_file($context->id, 'theme_retani_studio', 'preset', 0, '/', $filename))) {
+    } else if ($filename == 'preset-retani.scss') {
+        $scss .= file_get_contents($CFG->dirroot . '/theme/retani_studio/scss/preset/preset-retani.scss');
+    }
+    else if ($filename && ($presetfile = $fs->get_file($context->id, 'theme_retani_studio', 'preset', 0, '/', $filename))) {
         $scss .= $presetfile->get_content();
-    } else {
+    }
+
+    else {
         // Safety fallback - maybe new installs etc.
         $scss .= file_get_contents($CFG->dirroot . '/theme/retani_studio/scss/preset/default.scss');
     }
@@ -219,6 +230,12 @@ function theme_retani_studio_get_pre_scss($theme) {
     // Prepend pre-scss.
     if (!empty($theme->settings->scsspre)) {
         $scss .= $theme->settings->scsspre;
+    }
+
+    // Also read from the pre.scss file in the theme's scss folder.
+    $preScssFile = $CFG->dirroot . '/theme/retani_studio/scss/pre.scss';
+    if (file_exists($preScssFile)) {
+        $scss.= file_get_contents($preScssFile);
     }
 
     return $scss;

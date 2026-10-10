@@ -22,6 +22,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * @var $ADMIN admin_root
+ */
+
 if ($ADMIN->fulltree) {
     $settings = new theme_retani_studio_admin_settingspage_tabs('themesettingretani_studio', get_string('configtitle', 'theme_retani_studio'));
     $page = new admin_settingpage('theme_retani_studio_general', get_string('generalsettings', 'theme_retani_studio'));
@@ -50,6 +54,7 @@ if ($ADMIN->fulltree) {
     // These are the built in presets.
     $choices['default.scss'] = 'default.scss';
     $choices['plain.scss'] = 'plain.scss';
+    $choices['preset-retani.scss'] = 'preset-retani.scss';
 
     $setting = new admin_setting_configthemepreset($name, $title, $description, $default, $choices, 'retani_studio');
     $setting->set_updatedcallback('theme_reset_all_caches');
