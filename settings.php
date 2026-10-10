@@ -85,6 +85,15 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
+    // Logo shown on the login page.
+    $name = 'theme_retani_studio/logo';
+    $title = get_string('logo', 'theme_retani_studio');
+    $description = get_string('logo_desc', 'theme_retani_studio');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'logo', 0,
+        ['maxfiles' => 1, 'accepted_types' => ['web_image']]);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
     // We use an empty default value because the default colour should come from the preset.
     $name = 'theme_retani_studio/brandcolor';
     $title = get_string('brandcolor', 'theme_retani_studio');

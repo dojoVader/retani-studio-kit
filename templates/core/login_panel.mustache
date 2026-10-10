@@ -22,32 +22,80 @@
     When leftinstructions is provided (i.e. the site has custom auth instructions configured),
     it fully replaces the entire default welcome section (title, tagline, and stats).
 
+    Context variables:
+    * logourl - URL of the logo uploaded in the theme settings, if any.
+    * sitename - Name of the site, shown when there is no logo.
+    * leftinstructions - Custom auth instructions, if configured.
+
     Example context (json):
     {
+        "logourl": "https://example.com/pluginfile.php/1/theme_retani_studio/logo/0/logo.png",
+        "sitename": "EduCore",
         "leftinstructions": "<p>Welcome to our learning platform. Please log in to continue.</p>"
     }
 }}
+<div class="login-layout-brand">
+    {{#logourl}}
+        <img class="login-layout-logo" src="{{logourl}}" alt="{{sitename}}">
+    {{/logourl}}
+    {{^logourl}}
+        <span class="login-layout-sitename">{{sitename}}</span>
+    {{/logourl}}
+</div>
 <div class="login-layout-left-content">
     {{^leftinstructions}}
-        <h1 class="h2 mb-3">{{#str}}loginwelcometitle{{/str}}</h1>
-        <div class="mx-auto mb-4 text-start">
-            {{#str}}loginwelcomedescription{{/str}}
+        {{! Placeholder slides until real content is configurable: images from Unsplash, copy is dummy text. }}
+        {{#react}}
+        {
+            "component": "@moodle/lms/theme_retani_studio/LoginCarousel",
+            "class": "login-carousel-mount",
+            "props": {
+                "interval": 6000,
+                "label": {{#quote}}{{#str}}carousellabel, theme_retani_studio{{/str}}{{/quote}},
+                "previouslabel": {{#quote}}{{#str}}carouselprevious, theme_retani_studio{{/str}}{{/quote}},
+                "nextlabel": {{#quote}}{{#str}}carouselnext, theme_retani_studio{{/str}}{{/quote}},
+                "slidelabel": {{#quote}}{{#str}}carouselslide, theme_retani_studio, {$a}{{/str}}{{/quote}},
+                "slides": [
+                    {
+                        "title": "Teach better with clearer data",
+                        "body": "See how every course, lesson and learner is performing — in one place, updated in real time.",
+                        "image": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
+                        "alt": "Students working together around a laptop"
+                    },
+                    {
+                        "title": "Helping you easily track learning progress",
+                        "body": "An intuitive system to monitor courses and students efficiently, giving you real-time insights to boost engagement.",
+                        "image": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80",
+                        "alt": "A group of students studying at a table"
+                    },
+                    {
+                        "title": "Spot struggling courses early",
+                        "body": "Smart alerts flag drops in engagement so you can update materials before students fall behind.",
+                        "image": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80",
+                        "alt": "A lecturer presenting to a classroom"
+                    },
+                    {
+                        "title": "Celebrate every completion",
+                        "body": "Track certificates, skill graphs and completion rates across your entire academy.",
+                        "image": "https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=1200&q=80",
+                        "alt": "A student writing notes next to a laptop"
+                    }
+                ]
+            }
+        }
+        <div class="login-carousel">
+            <div class="login-carousel-copy">
+                <h2 class="login-carousel-title">“Teach better with clearer data”</h2>
+                <p class="login-carousel-body">See how every course, lesson and learner is performing — in one place, updated in real time.</p>
+            </div>
+            <div class="login-carousel-frame">
+                <div class="login-carousel-backdrop" aria-hidden="true"></div>
+                <div class="login-carousel-viewport">
+                    <img class="login-carousel-image is-active" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80" alt="Students working together around a laptop">
+                </div>
+            </div>
         </div>
-        <p class="mx-auto mb-4">{{#str}}loginpaneltagline{{/str}}</p>
-        <div class="login-layout-stats">
-            <div class="login-layout-stat">
-                <strong class="login-layout-stat-value">{{#str}}loginstatusers_value{{/str}}</strong>
-                <span>{{#str}}loginstatusers{{/str}}</span>
-            </div>
-            <div class="login-layout-stat">
-                <strong class="login-layout-stat-value">{{#str}}loginstatsites_value{{/str}}</strong>
-                <span>{{#str}}loginstatsites{{/str}}</span>
-            </div>
-            <div class="login-layout-stat">
-                <strong class="login-layout-stat-value">{{#str}}loginstatcountries_value{{/str}}</strong>
-                <span>{{#str}}loginstatcountries{{/str}}</span>
-            </div>
-        </div>
+        {{/react}}
     {{/leftinstructions}}
     {{#leftinstructions}}
         <div class="mx-auto text-start">

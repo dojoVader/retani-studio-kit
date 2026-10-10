@@ -1,11 +1,54 @@
-$login-layout-left-bg: $primary !default;
-$login-layout-panel-bg: darken($login-layout-left-bg, 25%);
+// Login page styles, based on mockup/EduCore Login.dc.html.
+$login-page-bg: #f8f8f9 !default;
+$login-layout-gap: 20px !default;
+$login-layout-left-bg: #7b5be6 !default;
+$login-layout-left-radius: 14px !default;
+$login-layout-grid-line: rgba($white, 0.12) !default;
+$login-layout-grid-size: 102px !default;
 $login-layout-panel-padding: 3rem !default;
-$login-layout-content-width: 576px !default;
-$login-layout-copy-width: 450px !default;
-$login-input-bg: var(--#{$prefix}gray-100) !default;
+$login-layout-content-width: 456px !default;
+$login-layout-copy-width: 500px !default;
+$login-carousel-width: 574px !default;
+$login-logo-max-height: 40px !default;
+
+$login-accent: #8b6cf0 !default;
+$login-accent-dark: #6a4bdb !default;
+$login-link-color: #6e52e0 !default;
+$login-link-hover-color: #5338c9 !default;
+$login-control-height: 44px !default;
+$login-control-radius: 8px !default;
+$login-control-border: #e4e4e7 !default;
+$login-control-shadow: 0 1px 2px rgba($black, 0.03) !default;
+$login-focus-ring: 0 0 0 3px rgba($login-accent, 0.18) !default;
 
 .pagelayout-login {
+    // Local palette, swapped as a whole for dark mode below.
+    --login-page-bg: #{$login-page-bg};
+    --login-surface: #{$white};
+    --login-surface-hover: #f7f7f8;
+    --login-text: #1c1c1e;
+    --login-text-secondary: #55555b;
+    --login-text-muted: #6b6b70;
+    --login-input-text: #3a3a3f;
+    --login-placeholder: #a0a0a6;
+    --login-border: #{$login-control-border};
+    --login-link: #{$login-link-color};
+    --login-link-hover: #{$login-link-hover-color};
+
+    @include dark-mode {
+        --login-page-bg: var(--#{$prefix}body-bg);
+        --login-surface: var(--#{$prefix}tertiary-bg);
+        --login-surface-hover: var(--#{$prefix}secondary-bg);
+        --login-text: var(--#{$prefix}body-color);
+        --login-text-secondary: var(--#{$prefix}secondary-color);
+        --login-text-muted: var(--#{$prefix}secondary-color);
+        --login-input-text: var(--#{$prefix}body-color);
+        --login-placeholder: var(--#{$prefix}secondary-color);
+        --login-border: var(--#{$prefix}border-color);
+        --login-link: #{$login-accent};
+        --login-link-hover: #{lighten($login-accent, 10%)};
+    }
+
     #region-main,
     #region-main-box {
         border: 0;
@@ -15,66 +58,294 @@ $login-input-bg: var(--#{$prefix}gray-100) !default;
     #page {
         margin: 0;
         min-height: 100vh;
-        background-color: var(--#{$prefix}white);
+        background-color: var(--login-page-bg);
+        color: var(--login-text);
+    }
+
+    #page-footer {
+        background-color: var(--login-page-bg);
     }
 }
 
 .login-layout-left {
+    position: sticky;
+    top: $login-layout-gap;
+    align-self: flex-start;
+    height: calc(100vh - #{$login-layout-gap * 2});
+    min-height: 760px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    // Extra top padding keeps the carousel clear of the logo pinned above it.
+    padding: 6.5rem $login-layout-panel-padding $login-layout-panel-padding;
+    border-radius: $login-layout-left-radius;
+    color: $white;
     background-color: $login-layout-left-bg;
+    background-image:
+        linear-gradient($login-layout-grid-line 1px, transparent 1px),
+        linear-gradient(90deg, $login-layout-grid-line 1px, transparent 1px);
+    background-size: $login-layout-grid-size $login-layout-grid-size;
+    background-position: 38px 56px;
 
-    // A photographic panel in both colour modes, so its content stays light whatever the mode.
+    // Vignette that fades the grid lines towards the edges.
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 50% 40%, rgba($login-layout-left-bg, 0) 0%, rgba($login-layout-left-bg, 0.55) 75%);
+        pointer-events: none;
+    }
+
+    // Decorative glowing orb.
+    &::after {
+        content: "";
+        position: absolute;
+        top: 150px;
+        right: 8%;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba($white, 0.35) 0 16%, rgba($white, 0.1) 17% 45%, rgba($white, 0.04) 46% 100%);
+        pointer-events: none;
+    }
+
+    // A branded panel in both colour modes, so its content stays light whatever the mode.
     @include dark-mode {
         color: $white;
     }
+}
 
-    position: sticky;
-    top: 0;
-    align-self: flex-start;
-    height: 100vh;
+// Logo, or the site name when no logo is set, pinned to the top of the panel.
+.login-layout-brand {
+    position: absolute;
+    top: 42px;
+    left: 50%;
+    z-index: 1;
+    max-width: calc(100% - 3rem);
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: $login-layout-panel-padding;
+}
+
+.login-layout-logo {
+    display: block;
+    max-width: 100%;
+    max-height: $login-logo-max-height;
+    object-fit: contain;
+}
+
+.login-layout-sitename {
+    font-size: 1.3125rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: $white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .login-layout-left-content {
-    max-width: $login-layout-copy-width;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: $login-carousel-width + 48px;
+    padding: 0 1.5rem;
     text-align: center;
-    color: color-contrast($login-layout-panel-bg);
-    background-color: rgba($login-layout-panel-bg, 0.65);
-    border-radius: $border-radius;
-    padding: $spacer;
-    margin-bottom: 5rem;
+    color: $white;
+
+    h1,
+    .h2 {
+        margin-bottom: 0.75rem;
+        font-size: 1.5625rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: $white;
+    }
+
+    p,
+    div {
+        font-size: 0.90625rem;
+        line-height: 1.5;
+        color: #f1edff;
+    }
+
     blockquote {
         color: inherit;
-        border-left: 5px solid color-contrast($login-layout-panel-bg);
+        border-left: 3px solid rgba($white, 0.5);
     }
+
     a {
         color: inherit;
         text-decoration: underline;
     }
 }
 
-.login-layout-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    justify-items: center;
-}
-
-.login-layout-stat {
+// Carousel rendered by theme_retani_studio/LoginCarousel (and its static fallback).
+.login-carousel {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    align-items: center;
+    width: 100%;
 }
 
-.login-layout-stat-value {
-    font-size: $h5-font-size;
-    line-height: 1;
+.login-carousel-copy {
+    max-width: $login-layout-copy-width;
+    min-height: 7.5rem;
+}
+
+.login-layout-left-content .login-carousel-title {
+    margin: 0;
+    font-size: 1.5625rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: $white;
+    animation: login-carousel-fade 0.4s ease both;
+}
+
+.login-layout-left-content .login-carousel-body {
+    margin: 0.75rem 0 0;
+    font-size: 0.90625rem;
+    line-height: 1.5;
+    color: #f1edff;
+    animation: login-carousel-fade 0.4s ease both;
+}
+
+.login-carousel-frame {
+    position: relative;
+    width: min(#{$login-carousel-width}, 100%);
+    aspect-ratio: 574 / 380;
+    margin-top: 3.25rem;
+}
+
+// Tilted translucent card peeking out behind the image.
+.login-carousel-backdrop {
+    position: absolute;
+    inset: -14px 20px;
+    border-radius: 12px;
+    background-color: rgba($white, 0.14);
+    transform: rotate(-1.5deg);
+}
+
+.login-carousel-viewport {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    background-color: $white;
+    box-shadow: 0 24px 48px rgba(40, 20, 110, 0.35);
+}
+
+.login-carousel-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+
+    &.is-active {
+        opacity: 1;
+    }
+}
+
+.login-carousel-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 3rem;
+}
+
+.login-carousel-arrow {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    background-color: rgba($white, 0.22);
+    color: $white;
+    cursor: pointer;
+
+    &:hover {
+        background-color: rgba($white, 0.34);
+    }
+}
+
+.login-carousel-indicators {
+    display: flex;
+    gap: 12px;
+}
+
+.login-carousel-indicator {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: rgba($white, 0.45);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+
+    // Enlarge the hit area without changing the dot's size.
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -6px;
+    }
+
+    &:hover {
+        background-color: rgba($white, 0.75);
+    }
+
+    &.is-active {
+        background-color: $white;
+        transform: scale(1.2);
+    }
+}
+
+.login-carousel-arrow,
+.login-carousel-indicator {
+    &:focus-visible {
+        outline: 2px solid $white;
+        outline-offset: 2px;
+    }
+}
+
+@keyframes login-carousel-fade {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .login-layout-left-content .login-carousel-title,
+    .login-layout-left-content .login-carousel-body {
+        animation: none;
+    }
+
+    .login-carousel-image {
+        transition: none;
+    }
 }
 
 .login-layout-right {
     min-height: 100vh;
-    padding: $login-layout-panel-padding;
+    padding: 2.5rem 0;
     display: flex;
     justify-content: center;
 }
@@ -85,55 +356,193 @@ $login-input-bg: var(--#{$prefix}gray-100) !default;
     margin: auto 0;
 }
 
+@include media-breakpoint-up(lg) {
+    .pagelayout-login #page-content {
+        display: grid;
+        grid-template-columns: minmax(0, 692fr) minmax(400px, 748fr);
+        gap: $login-layout-gap;
+        padding: $login-layout-gap;
+
+        > .login-layout-left,
+        > .login-layout-right {
+            width: auto;
+            max-width: none;
+        }
+    }
+
+    .login-layout-right {
+        min-height: calc(100vh - #{$login-layout-gap * 2});
+    }
+}
+
 .login-container {
+    color: var(--login-text);
+
+    a {
+        color: var(--login-link);
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            color: var(--login-link-hover);
+        }
+    }
+
+    .loginform {
+        > h1 {
+            margin-bottom: 0;
+            font-size: 1.875rem;
+            font-weight: 500;
+            letter-spacing: -0.015em;
+            color: var(--login-text);
+        }
+
+        > h1 + .text-muted {
+            margin-top: 0.625rem;
+            margin-bottom: 2.5rem !important; // stylelint-disable-line declaration-no-important
+            font-size: 0.84375rem;
+            color: var(--login-text-secondary) !important; // stylelint-disable-line declaration-no-important
+        }
+    }
+
     .login-form {
+        .form-label {
+            margin-bottom: 0.625rem;
+            font-size: 0.84375rem;
+            font-weight: 500;
+            color: var(--login-text);
+        }
+
+        .login-form-username {
+            margin-bottom: 1.5rem !important; // stylelint-disable-line declaration-no-important
+        }
+
+        .login-form-password {
+            margin-bottom: 0.875rem !important; // stylelint-disable-line declaration-no-important
+        }
+
         .login-input-wrapper {
             position: relative;
 
             .form-control {
-                background-color: $login-input-bg;
-                box-shadow: none;
-                padding-inline-start: 3rem;
+                height: $login-control-height;
+                padding: 0 15px;
+                border: 1px solid var(--login-border);
+                border-radius: $login-control-radius;
+                background-color: var(--login-surface);
+                box-shadow: $login-control-shadow;
+                font-size: 0.875rem;
+                color: var(--login-input-text);
+
+                &::placeholder {
+                    color: var(--login-placeholder);
+                }
 
                 &:hover {
-                    background-color: $login-input-bg;
+                    background-color: var(--login-surface);
                 }
 
                 &:focus {
-                    background-color: $login-input-bg;
-                    border-color: $input-focus-border-color;
-                    box-shadow: $input-focus-box-shadow;
+                    background-color: var(--login-surface);
+                    border-color: $login-accent;
+                    box-shadow: $login-focus-ring;
+                    outline: 0;
                 }
             }
 
+            #password {
+                letter-spacing: 0.06em;
+            }
+
+            // The mockup uses plain inputs without leading icons.
             .login-input-icon {
-                position: absolute;
-                inset-inline-start: 1rem;
-                top: 50%;
-                transform: translateY(-50%);
-                color: $gray-600;
-                pointer-events: none;
-                // Exceeds Bootstrap's focused input z-index (3) to stay visible over focused fields.
-                z-index: 6;
+                display: none;
             }
         }
 
-        .toggle-sensitive-wrapper .toggle-sensitive-btn {
-            --#{$prefix}btn-bg: #{$login-input-bg};
-            --bs-btn-border-color: #{$input-border-color};
-            --#{$prefix}btn-hover-bg: #{$login-input-bg};
-            --bs-btn-hover-border-color: #{$input-border-color};
-            --#{$prefix}btn-active-bg: #{$login-input-bg};
-            --bs-btn-active-border-color: #{$input-border-color};
-            border-inline-start: none;
-            color: var(--#{$prefix}gray-700);
+        // Render the show/hide password button as an icon inside the field.
+        .toggle-sensitive-wrapper {
+            position: relative;
 
-            &:focus,
-            &:focus-visible {
-                background-color: $login-input-bg;
-                border-color: $input-focus-border-color;
-                box-shadow: $input-focus-box-shadow;
+            .form-control {
+                width: 100%;
+                padding-inline-end: $login-control-height;
+                border-radius: $login-control-radius !important; // stylelint-disable-line declaration-no-important
             }
+
+            .toggle-sensitive-btn {
+                position: absolute;
+                top: 50%;
+                inset-inline-end: 10px;
+                z-index: 6;
+                width: 24px;
+                height: 24px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transform: translateY(-50%);
+                border: 0;
+                border-radius: 4px;
+                background: none;
+                box-shadow: none;
+                color: var(--login-placeholder);
+
+                .icon {
+                    margin: 0;
+                }
+
+                &:hover {
+                    color: var(--login-text-secondary);
+                }
+
+                &:focus,
+                &:focus-visible {
+                    background: none;
+                    box-shadow: $login-focus-ring;
+                }
+            }
+        }
+
+        // Forgot password link row.
+        .login-form-password + .text-end {
+            margin-bottom: 1.375rem !important; // stylelint-disable-line declaration-no-important
+            font-size: 0.8125rem;
+        }
+
+        #loginbtn {
+            height: $login-control-height;
+            border: 1px solid $login-accent-dark;
+            border-radius: $login-control-radius;
+            background: linear-gradient(180deg, $login-accent, #7756e4);
+            box-shadow: 0 1px 2px rgba(80, 50, 180, 0.25), inset 0 1px 0 rgba($white, 0.18);
+            font-size: 0.90625rem;
+            font-weight: 500;
+            color: $white;
+
+            &:hover {
+                background: linear-gradient(180deg, #7f5fea, $login-accent-dark);
+            }
+
+            &:focus-visible {
+                box-shadow: $login-focus-ring;
+            }
+        }
+    }
+
+    // Sign up line.
+    .loginform > .text-center.small {
+        margin-top: 1.5rem;
+        font-size: 0.8125rem;
+        color: var(--login-input-text);
+
+        .text-muted {
+            color: var(--login-input-text) !important; // stylelint-disable-line declaration-no-important
+        }
+
+        a {
+            text-decoration: underline;
+            text-underline-offset: 2px;
         }
     }
 
@@ -141,45 +550,85 @@ $login-input-bg: var(--#{$prefix}gray-100) !default;
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        color: var(--#{$prefix}gray-600);
-        font-size: $font-size-sm;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
+        margin: 1.75rem 0 !important; // stylelint-disable-line declaration-no-important
+        font-size: 0.75rem;
+        color: var(--login-text-muted);
 
         &::before,
         &::after {
             content: "";
             flex: 1;
-            border-top: $border-width solid $border-color;
+            height: 1px;
+            background-color: var(--login-border);
+        }
+    }
+
+    .login-identityproviders {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+
+        .login-identityprovider-btn {
+            margin-bottom: 0 !important; // stylelint-disable-line declaration-no-important
         }
     }
 
     .login-identityprovider-btn {
         width: 100%;
-        background-color: var(--#{$prefix}white);
-        border-color: var(--#{$prefix}gray-400);
-        color: var(--#{$prefix}gray-600);
+        height: $login-control-height;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        white-space: nowrap;
+        border: 1px solid var(--login-border);
+        border-radius: $login-control-radius;
+        background-color: var(--login-surface);
+        box-shadow: 0 1px 2px rgba($black, 0.04);
+        font-size: 0.875rem;
+        color: var(--login-text);
+
+        img {
+            width: 20px;
+            height: 20px;
+            flex: none;
+        }
+
+        .fa {
+            margin: 0 !important; // stylelint-disable-line declaration-no-important
+        }
 
         &:hover,
         &:focus {
-            background-color: var(--#{$prefix}gray-100);
-            border-color: var(--#{$prefix}gray-500);
+            border-color: var(--login-border);
+            background-color: var(--login-surface-hover);
+            color: var(--login-text);
+        }
+
+        &:focus-visible {
+            border-color: $login-accent;
+            box-shadow: $login-focus-ring;
         }
     }
 
     .login-cookiesnotice {
         .btn-link {
-            font-size: $font-size-sm;
-            color: var(--#{$prefix}gray-600);
+            font-size: 0.78125rem;
+            color: var(--login-text-muted);
+            text-decoration: none;
 
             &:hover,
             &:focus {
-                color: var(--#{$prefix}gray-700);
+                color: var(--login-text);
             }
         }
     }
 
     .login-languagemenu {
+        margin: 1.5rem 0 !important; // stylelint-disable-line declaration-no-important
+
         .dropdown-menu {
             max-height: 300px;
             overflow-y: auto;
@@ -193,7 +642,6 @@ $login-input-bg: var(--#{$prefix}gray-100) !default;
     }
 
     .login-layout-right-content {
-        max-width: 100%;
-        margin: 0;
+        max-width: $login-layout-content-width;
     }
 }
