@@ -1,0 +1,76 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_retani_studio/retani/left_bar
+
+    Retractable left bar with the course category selector, navigation menu and user menu.
+
+    The bar itself is the theme_retani_studio/leftbar/LeftBar React component. The links inside the
+    react helper block are a plain fallback shown until the component mounts, or when JavaScript is off.
+
+    Context variables required for this template:
+    * reactprops - JSON props for the LeftBar component, from theme_retani_studio\output\left_bar.
+    * collapsed - Whether the bar starts collapsed.
+    * brand - Site name, home URL and optional logo URL.
+    * fallbacklinks - Top-level links for the no-JavaScript fallback.
+
+    Example context (json):
+    {
+        "reactprops": "{\"collapsed\":false,\"preference\":\"theme_retani_studio_leftbar_collapsed\",\"brand\":{\"name\":\"EduCore\",\"url\":\"/\",\"logourl\":null},\"categories\":{\"items\":[],\"selected\":null,\"manageurl\":null,\"managelabel\":null},\"navigation\":[],\"footernavigation\":[],\"user\":{\"fullname\":\"Ada Lovelace\",\"email\":\"ada@example.com\",\"role\":\"\",\"initials\":\"AL\",\"avatarurl\":\"\",\"hasavatar\":false,\"items\":[]},\"strings\":{\"collapse\":\"Collapse sidebar\",\"expand\":\"Expand sidebar\",\"navigation\":\"Site navigation\",\"switchcategory\":\"Switch category\",\"categories\":\"Course categories\",\"coursecount\":\"{$a} courses\",\"usermenu\":\"User menu\"} }",
+        "collapsed": false,
+        "brand": {"name": "EduCore", "url": "/", "logourl": null},
+        "fallbacklinks": [
+            {"label": "Dashboard", "url": "/my/", "active": true},
+            {"label": "Calendar", "url": "/calendar/view.php", "active": false}
+        ]
+    }
+}}
+<aside id="retani-leftbar" class="retani-leftbar d-print-none" aria-label="{{#str}}leftbar:navigation, theme_retani_studio{{/str}}">
+    {{#react}}
+    {
+        "component": "@moodle/lms/theme_retani_studio/leftbar/LeftBar",
+        "class": "retani-leftbar-mount",
+        "props": {{{reactprops}}}
+    }
+    <div class="retani-leftbar-inner{{#collapsed}} is-collapsed{{/collapsed}}">
+        <div class="retani-leftbar-header">
+            {{^collapsed}}
+                <a class="retani-leftbar-brand" href="{{brand.url}}">
+                    {{#brand.logourl}}
+                        <img class="retani-leftbar-logo" src="{{brand.logourl}}" alt="{{brand.name}}">
+                    {{/brand.logourl}}
+                    {{^brand.logourl}}
+                        <span class="retani-leftbar-sitename">{{brand.name}}</span>
+                    {{/brand.logourl}}
+                </a>
+            {{/collapsed}}
+        </div>
+        <nav class="retani-leftbar-nav">
+            <ul class="retani-leftbar-menu">
+                {{#fallbacklinks}}
+                    <li class="retani-leftbar-menuitem">
+                        <a class="retani-leftbar-item{{#active}} is-active{{/active}}" href="{{url}}"{{#active}} aria-current="page"{{/active}}>
+                            <span class="retani-leftbar-tile" aria-hidden="true"></span>
+                            <span class="{{#collapsed}}visually-hidden{{/collapsed}}{{^collapsed}}retani-leftbar-label{{/collapsed}}">{{label}}</span>
+                        </a>
+                    </li>
+                {{/fallbacklinks}}
+            </ul>
+        </nav>
+    </div>
+    {{/react}}
+</aside>

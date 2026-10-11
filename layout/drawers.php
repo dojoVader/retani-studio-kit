@@ -57,6 +57,16 @@ if (!$courseindex) {
     $courseindexopen = false;
 }
 
+// Retractable left bar, for users who are signed in to an account of their own.
+$leftbar = false;
+if (isloggedin() && !isguestuser()) {
+    $leftbar = (new \theme_retani_studio\output\left_bar($PAGE))->export_for_template($OUTPUT);
+    $extraclasses[] = 'has-retani-leftbar';
+    if ($leftbar['collapsed']) {
+        $extraclasses[] = 'retani-leftbar-collapsed';
+    }
+}
+
 $bodyattributes = $OUTPUT->body_attributes($extraclasses);
 $forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 
@@ -116,7 +126,8 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
-    'addblockbutton' => $addblockbutton
+    'addblockbutton' => $addblockbutton,
+    'leftbar' => $leftbar,
 ];
 
 echo $OUTPUT->render_from_template('theme_retani_studio/drawers', $templatecontext);

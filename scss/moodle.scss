@@ -53,5 +53,7 @@
 @import "moodle/dropdown";
 @import "moodle/deprecated";
 @import "moodle/task-indicator";
+// Retractable left bar.
+@import "retani_leftbar";
 // Must stay last so that the dark colour mode can override anything above it.
 @import "moodle/dark";

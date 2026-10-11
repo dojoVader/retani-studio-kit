@@ -141,6 +141,12 @@ function theme_retani_studio_user_preferences(): array {
             'default' => true,
             'permissioncallback' => [core_user::class, 'is_current_user'],
         ],
+        \theme_retani_studio\output\left_bar::PREFERENCE => [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ],
         \theme_retani_studio\colour_mode::PREFERENCE => [
             'type' => PARAM_ALPHA,
             'null' => NULL_NOT_ALLOWED,

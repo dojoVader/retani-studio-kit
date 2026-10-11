@@ -50,6 +50,14 @@ $string['enablecolourmodes_desc'] = 'Allow people to switch the site between a l
 This feature is experimental. Plugins are only shown in the dark colour scheme if they take their colours from the theme, so pages of a plugin which has not been checked yet may be shown with light backgrounds, or with text which is hard to read against them.';
 $string['experimentalsettings'] = 'Experimental settings';
 $string['generalsettings'] = 'General settings';
+$string['leftbar:collapse'] = 'Collapse sidebar';
+$string['leftbar:coursecount'] = '{$a} courses';
+$string['leftbar:coursemanagement'] = 'Course management';
+$string['leftbar:expand'] = 'Expand sidebar';
+$string['leftbar:help'] = 'Help & Support';
+$string['leftbar:mybadges'] = 'My badges';
+$string['leftbar:navigation'] = 'Site navigation';
+$string['leftbar:switchcategory'] = 'Switch category';
 $string['loginbackgroundimage'] = 'Login page background image';
 $string['loginbackgroundimage_desc'] = 'The image to display as a background for the login page.';
 $string['logo'] = 'Logo';

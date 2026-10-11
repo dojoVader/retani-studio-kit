@@ -28,6 +28,7 @@
     * courseindexopen - true if the nav drawer should be open on page load
     * regionmainsettingsmenu - HTML for the region main settings menu
     * hasregionmainsettingsmenu - There is a region main settings menu on this page.
+    * leftbar - Context for theme_retani_studio/retani/left_bar, or false when the bar is not shown.
 
     Example context (json):
     {
@@ -57,6 +58,9 @@
 
     {{{ output.standard_top_of_body_html }}}
 
+    {{#leftbar}}
+        {{> theme_retani_studio/retani/left_bar }}
+    {{/leftbar}}
     {{> theme_retani_studio/navbar }}
     {{#courseindex}}
         {{< theme_retani_studio/drawer }}
