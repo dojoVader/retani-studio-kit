@@ -44,6 +44,8 @@ function theme_retani_studio_css_tree_post_processor($tree, $theme) {
  * @return string
  */
 function theme_retani_studio_get_extra_scss($theme) {
+    global $CFG;
+
     $content = '';
     $imageurl = $theme->setting_file_url('backgroundimage', 'backgroundimage');
 
@@ -55,36 +57,17 @@ function theme_retani_studio_get_extra_scss($theme) {
         $content .= ' } }';
     }
 
-    // Sets the login background image.
+    // Sets the login panel background image. The Retani login panel is a solid dark surface by default,
+    // so only an image uploaded in the theme settings is applied; it is darkened in scss/moodle/login.scss.
     $loginbackgroundimageurl = $theme->setting_file_url('loginbackgroundimage', 'loginbackgroundimage');
-    $isdefaultloginimage = empty($loginbackgroundimageurl);
-    if ($isdefaultloginimage) {
-        // Use the default login background image.
-        $loginbackgroundimageurl = $theme->image_url(
-            'login_background',
-            'theme',
-        );
-    }
-    $content .= 'body.pagelayout-login #page .login-layout-left { ';
-    $content .= "background-image: url('$loginbackgroundimageurl'); ";
-    // Center the login background image so cropping is symmetrical, for both the default and any custom image.
-    $content .= 'background-size: cover; background-position: center;';
-    $content .= ' }';
-
-    // Add a watermark to indicate the image is AI generated, but only for the default image.
-    if ($isdefaultloginimage) {
-        $content .= 'body.pagelayout-login #page .login-layout-left::after {';
-        // Escape the label for use in a CSS string value: collapse newlines (which would break the CSS string)
-        // and escape single quotes and backslashes via addcslashes.
-        $ailabel = preg_replace('/[\r\n]+/', ' ', get_string('aigeneratedimage', 'theme_retani_studio'));
-        $content .= " content: '" . addcslashes($ailabel, "'\\") . "';";
-        $content .= ' position: absolute; bottom: 1rem; right: 1rem;';
-        $content .= ' color: $white;';
-        $content .= ' font-size: 0.8rem;';
-        $content .= ' text-shadow: 0 1px 2px $black;';
-        $content .= ' pointer-events: none;';
+    if (!empty($loginbackgroundimageurl)) {
+        $content .= 'body.pagelayout-login #page .login-layout-left { ';
+        $content .= "background-image: url('$loginbackgroundimageurl'); ";
+        $content .= 'background-size: cover; background-position: center;';
         $content .= ' }';
+        $content .= 'body.pagelayout-login #page .login-layout-left::before { content: ""; }';
     }
+
     // Get the extra css from the parent theme, if it exists.
     $extraCss = $CFG->dirroot . '/theme/retani_studio/scss/post.scss';
 

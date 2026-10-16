@@ -40,12 +40,13 @@ const PATHS: Record<IconName, string> = {
 
 /**
  * Decorative glyphs for course categories, cycled by position so each category gets a stable look.
+ * Flat Retani ink tiles, with the lime accent on every third one, as in mockup/Retani Dashboard.dc.html.
  */
 export const CATEGORY_STYLES: ReadonlyArray<{gradient: string; path: string}> = [
-    {gradient: 'linear-gradient(180deg, #ff6a3d, #f2361f)', path: 'M12 3L2.5 20h19zM7 20l7.5-9'},
-    {gradient: 'linear-gradient(180deg, #8b9bf0, #5468d4)', path: 'M8 7l-5 5 5 5M16 7l5 5-5 5'},
-    {gradient: 'linear-gradient(180deg, #6fe0a0, #22a35a)', path: 'M3 10v4l12 5V5zM15 9a3 3 0 0 1 0 6'},
-    {gradient: 'linear-gradient(180deg, #a58bf5, #7b5be6)', path: 'M4 8h16v11H4zM9 8V5h6v3'},
+    {gradient: '#111111', path: 'M12 3L2.5 20h19zM7 20l7.5-9'},
+    {gradient: '#111111', path: 'M8 7l-5 5 5 5M16 7l5 5-5 5'},
+    {gradient: '#95bf47', path: 'M3 10v4l12 5V5zM15 9a3 3 0 0 1 0 6'},
+    {gradient: '#111111', path: 'M4 8h16v11H4zM9 8V5h6v3'},
 ];
 
 interface IconProps {

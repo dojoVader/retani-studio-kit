@@ -17,21 +17,21 @@
 {{!
     @template core/login_layout
 
-    Split-screen layout for login-flow pages (login, MFA, etc.).
+    Split-screen layout for login-flow pages (login, MFA, etc.), based on mockup/Retani Login.dc.html.
 
-    Provides a two-column structure: a decorative left panel (hidden on mobile)
-    and a right panel that receives the page's main content. The left panel
-    content is loaded from the core/login_panel partial, which themes can
-    override to customise the welcome copy and branding.
+    Provides a two-column structure: a dark branded left panel (hidden on mobile) and a right panel
+    that receives the page's main content, with the copyright line pinned to its foot.
 
     Context variables required for this template:
     * output - The core renderer output object (provides main_content).
+    * copyright - Optional copyright line shown under the form.
 
     Example context (json):
     {
         "output": {
             "main_content": "<h1>Login form goes here</h1>"
-        }
+        },
+        "copyright": "Copyright © 2026 Retani Consults. All rights reserved"
     }
 }}
 <div id="page-content" class="min-vh-100 row g-0">
@@ -44,5 +44,8 @@
                 {{{ output.main_content }}}
             </div>
         </div>
+        {{#copyright}}
+            <p class="login-layout-copyright">{{copyright}}</p>
+        {{/copyright}}
     </div>
 </div>

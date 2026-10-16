@@ -94,12 +94,9 @@ export default function LeftBar({
                         {brand.logourl ? (
                             <img className="retani-leftbar-logo" src={brand.logourl} alt={brand.name} />
                         ) : (
-                            <>
-                                <span className="retani-leftbar-mark" aria-hidden="true">
-                                    <span /><span /><span className="is-square" /><span />
-                                </span>
-                                <span className="retani-leftbar-sitename">{brand.name}</span>
-                            </>
+                            <span className="retani-leftbar-sitename">
+                                {brand.name}<span className="retani-leftbar-sitename-dot" aria-hidden="true">.</span>
+                            </span>
                         )}
                     </a>
                 )}

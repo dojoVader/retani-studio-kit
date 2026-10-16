@@ -17,21 +17,21 @@
 {{!
     @template core/login_panel
 
-    Default content for the left panel of the split-screen login layout.
+    Content for the dark left panel of the split-screen login layout, based on mockup/Retani Login.dc.html.
 
     When leftinstructions is provided (i.e. the site has custom auth instructions configured),
-    it fully replaces the entire default welcome section (title, tagline, and stats).
+    it replaces the carousel.
 
     Context variables:
     * logourl - URL of the logo uploaded in the theme settings, if any.
-    * sitename - Name of the site, shown when there is no logo.
+    * sitename - Name of the site, shown as a wordmark when there is no logo.
     * leftinstructions - Custom auth instructions, if configured.
 
     Example context (json):
     {
-        "logourl": "https://example.com/pluginfile.php/1/theme_retani_studio/logo/0/logo.png",
-        "sitename": "EduCore",
-        "leftinstructions": "<p>Welcome to our learning platform. Please log in to continue.</p>"
+        "logourl": "",
+        "sitename": "retani",
+        "leftinstructions": ""
     }
 }}
 <div class="login-layout-brand">
@@ -39,12 +39,12 @@
         <img class="login-layout-logo" src="{{logourl}}" alt="{{sitename}}">
     {{/logourl}}
     {{^logourl}}
-        <span class="login-layout-sitename">{{sitename}}</span>
+        <span class="login-layout-sitename">{{sitename}}<span class="login-layout-sitename-dot" aria-hidden="true">.</span></span>
     {{/logourl}}
 </div>
 <div class="login-layout-left-content">
     {{^leftinstructions}}
-        {{! Placeholder slides until real content is configurable: images from Unsplash, copy is dummy text. }}
+        {{! Placeholder slides until real content is configurable: images from Unsplash, copy from the mockup. }}
         {{#react}}
         {
             "component": "@moodle/lms/theme_retani_studio/LoginCarousel",
@@ -98,7 +98,7 @@
         {{/react}}
     {{/leftinstructions}}
     {{#leftinstructions}}
-        <div class="mx-auto text-start">
+        <div class="login-layout-instructions mx-auto text-start">
             {{{leftinstructions}}}
         </div>
     {{/leftinstructions}}
