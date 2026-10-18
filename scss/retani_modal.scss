@@ -1,0 +1,1203 @@
+// Modals and the file picker, from mockup/Moodle Dashboard Implementation /Retani Moodle Modal.dc.html:
+// - Bootstrap modals (core/modal) and YUI dialogues (moodle-core-dialogue, used by the file picker):
+//   a white panel with a hairline border and 8px corners, a 60px header with a 20px title and a square
+//   close button, an ink-tinted backdrop, and a footer with the ink "primary" / outlined "Cancel" pair;
+// - the file picker (core/filemanager_modal_generallayout and friends): a repository rail on the left,
+//   a toolbar (search, refresh, view switcher), a folder path, and the files in a bordered panel;
+// - the "Select file" and "Upload a file" panes with stacked fields and a dashed drop zone.
+// Styling only: the file picker JavaScript finds its parts by class name, so no markup is changed.
+// Uses the $retani-admin-* variables from retani_adminsettings.scss.
+$retani-modal-radius: 8px !default;
+$retani-modal-control-height: 36px !default;
+$retani-modal-close-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3e%3cpath d='M5 5l14 14M19 5L5 19'/%3e%3c/svg%3e"); // stylelint-disable-line function-url-scheme-disallowed-list
+
+.modal,
+.modal-backdrop,
+.moodle-dialogue-base {
+    --retani-modal-surface: #{$white};
+    --retani-modal-canvas: #f4f3ef;
+    --retani-modal-line: #dedcd5;
+    --retani-modal-row-line: #eceae4;
+    --retani-modal-ink: #111;
+    --retani-modal-on-ink: #{$white};
+    --retani-modal-muted: #6b6a64;
+    --retani-modal-lime: #95bf47;
+
+    @include dark-mode {
+        --retani-modal-surface: var(--#{$prefix}body-bg);
+        --retani-modal-canvas: var(--#{$prefix}tertiary-bg);
+        --retani-modal-line: var(--#{$prefix}border-color);
+        --retani-modal-row-line: var(--#{$prefix}border-color-translucent);
+        --retani-modal-ink: var(--#{$prefix}body-color);
+        --retani-modal-on-ink: var(--#{$prefix}body-bg);
+        --retani-modal-muted: var(--#{$prefix}secondary-color);
+    }
+}
+
+// Shared pieces.
+@mixin retani-modal-panel {
+    background-color: var(--retani-modal-surface);
+    border: 1px solid var(--retani-modal-line);
+    border-radius: $retani-modal-radius;
+    box-shadow: none;
+    font-family: $retani-admin-font-family;
+    color: var(--retani-modal-ink);
+    -webkit-font-smoothing: antialiased;
+}
+
+@mixin retani-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 60px;
+    padding: 0 14px 0 22px;
+    border-bottom: 1px solid var(--retani-modal-line);
+}
+
+@mixin retani-modal-title {
+    margin: 0;
+    font-family: $retani-admin-font-family;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.03em;
+    color: var(--retani-modal-ink);
+}
+
+// A 32px square close button with a thin "x".
+@mixin retani-modal-close {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    margin: 0 0 0 auto;
+    padding: 0;
+    background: transparent none;
+    border: 0;
+    border-radius: 6px;
+    opacity: 1;
+    box-shadow: none;
+    color: var(--retani-modal-ink);
+    cursor: pointer;
+
+    &::after {
+        content: "";
+        display: block;
+        width: 13px;
+        height: 13px;
+        margin: auto;
+        background-color: currentColor;
+        mask: $retani-modal-close-icon center / contain no-repeat;
+    }
+
+    &:hover {
+        background-color: var(--retani-modal-canvas);
+        opacity: 1;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--retani-modal-ink);
+        outline-offset: 1px;
+        box-shadow: none;
+    }
+}
+
+// Buttons in modal footers and file picker panes: 36px, ink primary, outlined secondary.
+@mixin retani-modal-buttons {
+    .btn {
+        height: $retani-modal-control-height;
+        padding: 0 16px;
+        border-radius: 6px;
+        font-family: $retani-admin-font-family;
+        font-size: 0.8125rem;
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        --#{$prefix}btn-bg: var(--retani-modal-ink);
+        --#{$prefix}btn-color: var(--retani-modal-on-ink);
+        --#{$prefix}btn-border-color: var(--retani-modal-ink);
+        --#{$prefix}btn-hover-bg: #33322e;
+        --#{$prefix}btn-hover-color: var(--retani-modal-on-ink);
+        --#{$prefix}btn-hover-border-color: #33322e;
+        --#{$prefix}btn-active-bg: var(--retani-modal-ink);
+        --#{$prefix}btn-active-color: var(--retani-modal-on-ink);
+        --#{$prefix}btn-active-border-color: var(--retani-modal-ink);
+        --#{$prefix}btn-disabled-bg: var(--retani-modal-ink);
+        --#{$prefix}btn-disabled-color: var(--retani-modal-on-ink);
+        --#{$prefix}btn-disabled-border-color: var(--retani-modal-ink);
+        padding: 0 18px;
+    }
+
+    .btn-secondary,
+    .btn-outline-secondary {
+        --#{$prefix}btn-bg: var(--retani-modal-surface);
+        --#{$prefix}btn-color: var(--retani-modal-ink);
+        --#{$prefix}btn-border-color: var(--retani-modal-line);
+        --#{$prefix}btn-hover-bg: var(--retani-modal-surface);
+        --#{$prefix}btn-hover-color: var(--retani-modal-ink);
+        --#{$prefix}btn-hover-border-color: var(--retani-modal-ink);
+        --#{$prefix}btn-active-bg: var(--retani-modal-surface);
+        --#{$prefix}btn-active-color: var(--retani-modal-ink);
+        --#{$prefix}btn-active-border-color: var(--retani-modal-ink);
+    }
+}
+
+// Fields in modals and file picker panes: 36px, hairline border, ink focus.
+@mixin retani-modal-fields {
+    label,
+    .col-form-label {
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--retani-modal-ink);
+    }
+
+    .form-control,
+    .form-select {
+        min-height: $retani-modal-control-height;
+        padding: 0 12px;
+        background-color: var(--retani-modal-surface);
+        border: 1px solid var(--retani-modal-line);
+        border-radius: 6px;
+        box-shadow: none;
+        font-size: 0.84375rem;
+        color: var(--retani-modal-ink);
+
+        &:focus {
+            border-color: var(--retani-modal-ink);
+            box-shadow: none;
+        }
+    }
+
+    .form-select {
+        padding-right: 32px;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3e%3cpath d='M2 3.5h6L5 7z' fill='%236b6a64'/%3e%3c/svg%3e"); // stylelint-disable-line function-url-scheme-disallowed-list
+        background-position: right 12px center;
+        background-repeat: no-repeat;
+        background-size: 10px 10px;
+        appearance: none;
+    }
+
+    .form-check-input {
+        accent-color: var(--retani-modal-ink);
+
+        &:checked {
+            background-color: var(--retani-modal-ink);
+            border-color: var(--retani-modal-ink);
+        }
+    }
+}
+
+// Bootstrap modals (core/modal).
+// The dialogue takes focus when it opens; that is not a keyboard focus, so no ring around the panel.
+.modal .modal-dialog:focus,
+.modal .modal-dialog:focus-visible,
+.modal .modal-content:focus,
+.modal .modal-dialog[tabindex]:focus .modal-content {
+    outline: 0;
+    box-shadow: none;
+}
+
+.modal-backdrop {
+    --#{$prefix}backdrop-bg: #111;
+    --#{$prefix}backdrop-opacity: 0.42;
+}
+
+.modal {
+    .modal-content {
+        @include retani-modal-panel;
+        overflow: hidden;
+    }
+
+    // Centred in the window, like the mockup (Bootstrap's .modal-dialog-centered, for every modal).
+    .modal-dialog {
+        display: flex;
+        align-items: center;
+        min-height: calc(100% - var(--#{$prefix}modal-margin) * 2);
+    }
+
+    .modal-dialog-scrollable {
+        height: calc(100% - var(--#{$prefix}modal-margin) * 2);
+    }
+
+    .modal-dialog > .modal-content {
+        width: 100%;
+    }
+
+    .modal-header {
+        @include retani-modal-header;
+    }
+
+    .modal-title {
+        @include retani-modal-title;
+        font-size: 1.25rem !important; // stylelint-disable-line declaration-no-important
+    }
+
+    .modal-header .btn-close {
+        @include retani-modal-close;
+    }
+
+    .modal-body {
+        padding: 22px;
+        font-size: 0.84375rem;
+        line-height: 1.5;
+
+        @include retani-modal-fields;
+    }
+
+    .modal-footer {
+        gap: 10px;
+        padding: 12px 14px;
+        background-color: var(--retani-modal-surface);
+        border-top: 1px solid var(--retani-modal-line);
+
+        > * {
+            margin: 0;
+        }
+
+        @include retani-modal-buttons;
+    }
+}
+
+// Forms in modals (core_form/modalform and friends): flat, without the page's section cards.
+.modal-body .mform {
+    fieldset:has(> .retani-formsection-header) {
+        margin: 0;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+
+        + fieldset:has(> .retani-formsection-header) {
+            margin-top: 8px;
+        }
+
+        > .fcontainer {
+            padding: 0;
+        }
+    }
+
+    .retani-formsection-header {
+        padding: 10px 0 6px;
+        border-bottom: 1px solid var(--retani-modal-line);
+    }
+
+    .retani-formsection-heading {
+        font-size: 0.9375rem;
+    }
+
+    fieldset:has(> .retani-formsection-header) > .fcontainer > .fitem,
+    fieldset:has(> .retani-formsection-header) > .fcontainer > div > .fitem.row {
+        padding: 8px 0;
+        border-top: 0;
+    }
+
+    .fitem.row:not(.felement .fitem) {
+        @include media-breakpoint-up(md) {
+            grid-template-columns: minmax(120px, 170px) minmax(0, 1fr);
+            gap: 6px 20px;
+        }
+    }
+
+    // The modal footer holds the buttons; nothing sticks inside the body.
+    [data-groupname="buttonar"],
+    .fitem_actionbuttons {
+        position: static;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        border: 0;
+    }
+}
+
+// YUI dialogues (moodle-core-dialogue): the file picker, its "Select file" pane, and older choosers.
+.moodle-dialogue-base {
+    .moodle-dialogue-lightbox {
+        background-color: #111;
+        opacity: 0.42 !important; // stylelint-disable-line declaration-no-important
+    }
+
+    .moodle-dialogue-wrap {
+        @include retani-modal-panel;
+        overflow: hidden;
+    }
+
+    .moodle-dialogue-wrap .moodle-dialogue-hd,
+    .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
+        @include retani-modal-header;
+        // Some dialogues (the permissions role picker) set the header as plain text, without a heading.
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.3;
+        letter-spacing: -0.03em;
+
+        h3,
+        h5 {
+            @include retani-modal-title;
+            flex: 1;
+            min-width: 0;
+        }
+
+        h5:empty {
+            display: none;
+        }
+
+        .yui3-widget-buttons {
+            margin-left: auto;
+        }
+    }
+
+    .closebutton {
+        @include retani-modal-close;
+
+        // Core draws its own glyph; the mask above replaces it.
+        &::before {
+            content: none;
+        }
+    }
+
+    .moodle-dialogue .moodle-dialogue-bd {
+        padding: 20px 22px;
+        font-size: 0.84375rem;
+        line-height: 1.5;
+        color: var(--retani-modal-ink);
+
+        @include retani-modal-fields;
+    }
+
+    // M.core.confirm / M.core.alert: the message, then the buttons in a footer that runs edge to edge.
+    .confirmation-dialogue {
+        .confirmation-message {
+            margin: 0;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin: 20px -22px -20px;
+            padding: 12px 14px;
+            text-align: right;
+            border-top: 1px solid var(--retani-modal-line);
+
+            @include retani-modal-buttons;
+
+            .btn {
+                margin: 0;
+            }
+        }
+    }
+
+    // M.core.exception: the error details in a quiet, monospaced box.
+    .moodle-dialogue-exception .moodle-exception-param {
+        label {
+            font-weight: 500;
+        }
+
+        .moodle-exception-message,
+        pre {
+            padding: 10px 12px;
+            background-color: var(--retani-modal-canvas);
+            border: 1px solid var(--retani-modal-line);
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+    }
+
+    .moodle-dialogue-ft:not(:empty) {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 12px 14px;
+        border-top: 1px solid var(--retani-modal-line);
+
+        @include retani-modal-buttons;
+    }
+}
+
+// Permissions page: "Allow role" / "Prohibit role" (core/permissionmanager_panelcontent override).
+.moodle-dialogue-base .retani-rolepicker {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    .retani-rolepicker-message {
+        margin: 0;
+        color: var(--retani-modal-muted);
+    }
+
+    .retani-rolepicker-list {
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100vh - 260px);
+        overflow-y: auto;
+        border: 1px solid var(--retani-modal-line);
+        border-radius: 6px;
+    }
+
+    .retani-rolepicker-role {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 40px;
+        padding: 6px 12px 6px 14px;
+        flex: none;
+        background-color: var(--retani-modal-surface);
+        border: 0;
+        border-bottom: 1px solid var(--retani-modal-row-line);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--retani-modal-ink);
+        text-align: left;
+        cursor: pointer;
+
+        &:last-child {
+            border-bottom: 0;
+        }
+
+        &:hover:not(:disabled),
+        &:focus-visible {
+            background-color: var(--retani-modal-canvas);
+            outline: 0;
+        }
+
+        &:focus-visible {
+            box-shadow: inset 2px 0 0 var(--retani-modal-ink);
+        }
+
+        &:disabled {
+            cursor: default;
+            font-weight: 400;
+            color: var(--retani-modal-muted);
+        }
+    }
+
+    .retani-rolepicker-name {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .retani-rolepicker-state {
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    // "+" in a small square for roles that can be added, "Added" for the others.
+    .retani-rolepicker-add {
+        width: 26px;
+        height: 26px;
+        border: 1px solid var(--retani-modal-line);
+        border-radius: 5px;
+        color: var(--retani-modal-ink);
+    }
+
+    .retani-rolepicker-role:hover:not(:disabled) .retani-rolepicker-add {
+        background-color: var(--retani-modal-ink);
+        border-color: var(--retani-modal-ink);
+        color: var(--retani-modal-on-ink);
+    }
+
+    .retani-rolepicker-added {
+        display: none;
+        font-family: $retani-admin-font-family;
+        font-size: 0.6875rem;
+        color: var(--retani-modal-muted);
+    }
+
+    .retani-rolepicker-role:disabled {
+        .retani-rolepicker-add {
+            display: none;
+        }
+
+        .retani-rolepicker-added {
+            display: inline-flex;
+        }
+    }
+}
+
+// File picker.
+.moodle-dialogue-base .filepicker {
+    max-width: calc(100vw - 48px);
+
+    .moodle-dialogue-bd {
+        padding: 0;
+    }
+
+    .moodle-dialogue-bd > .container {
+        max-width: none;
+        padding: 0;
+    }
+}
+
+.moodle-dialogue-base .file-picker.fp-generallayout {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    height: calc(100vh - 110px);
+    max-height: 580px;
+    margin: 0;
+
+    > [class*="col-"] {
+        width: auto;
+        max-width: none;
+        min-width: 0;
+        min-height: 0;
+        padding: 0;
+    }
+
+    // Repository rail.
+    .fp-repo-area {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 2px;
+        padding: 12px 10px;
+        overflow-y: auto;
+        background-color: var(--retani-modal-canvas);
+        border-right: 1px solid var(--retani-modal-line);
+    }
+
+    .fp-repo {
+        flex: none;
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 36px;
+            padding: 0 10px;
+            background-color: transparent;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            color: var(--retani-modal-muted);
+            white-space: nowrap;
+
+            &:hover {
+                background-color: var(--retani-modal-surface);
+                color: var(--retani-modal-ink);
+            }
+        }
+
+        .fp-repo-icon {
+            flex: none;
+            width: 15px;
+            height: 15px;
+            margin: 0;
+            padding: 0;
+            filter: grayscale(1);
+            opacity: 0.75;
+        }
+
+        .fp-repo-name {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        // Selected repository: white, bordered, with a lime dot.
+        &.active .nav-link,
+        .nav-link.active {
+            background-color: var(--retani-modal-surface);
+            border-color: var(--retani-modal-line);
+            font-weight: 500;
+            color: var(--retani-modal-ink);
+
+            &::after {
+                content: "";
+                flex: none;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background-color: var(--retani-modal-lime);
+            }
+
+            .fp-repo-icon {
+                filter: none;
+                opacity: 1;
+            }
+        }
+    }
+
+    // Main pane: toolbar and path on top, files in a bordered, scrolling panel below.
+    .fp-repo-items {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .fp-navbar {
+        flex: none;
+        padding: 12px 14px 0 !important; // stylelint-disable-line declaration-no-important
+        background: transparent;
+        border: 0 !important; // stylelint-disable-line declaration-no-important
+
+        > div:first-child {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+    }
+
+    .fp-toolbar {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        flex-wrap: wrap;
+        gap: 8px;
+        float: none;
+
+        > div {
+            display: flex;
+            float: none;
+            margin: 0;
+        }
+
+        .disabled {
+            display: none;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 34px;
+            height: 34px;
+            padding: 0 10px;
+            background-color: var(--retani-modal-surface);
+            border: 1px solid var(--retani-modal-line);
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            color: var(--retani-modal-ink);
+
+            &:hover {
+                border-color: var(--retani-modal-ink);
+            }
+
+            .icon {
+                margin: 0;
+                color: inherit;
+            }
+        }
+    }
+
+    // Search: one field with the search icon inside.
+    .fp-tb-search {
+        flex: 1;
+        min-width: 160px;
+        max-width: 320px;
+
+        form,
+        .fp-def-search {
+            width: 100%;
+        }
+
+        .fp-def-search {
+            position: relative;
+            margin: 0;
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 10px;
+                width: 13px;
+                height: 13px;
+                margin-top: -6.5px;
+                background-color: var(--retani-modal-muted);
+                mask: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3e%3ccircle cx='11' cy='11' r='7'/%3e%3cpath d='M20 20l-4-4'/%3e%3c/svg%3e") center / contain no-repeat; // stylelint-disable-line function-url-scheme-disallowed-list
+                pointer-events: none;
+            }
+        }
+
+        .form-control {
+            height: 34px;
+            padding: 0 10px 0 30px;
+            background-color: var(--retani-modal-surface);
+            border: 1px solid var(--retani-modal-line);
+            border-radius: 6px;
+            box-shadow: none;
+            font-size: 0.8125rem;
+
+            &:focus {
+                border-color: var(--retani-modal-ink);
+            }
+        }
+    }
+
+    // View switcher: a segmented control.
+    .fp-viewbar {
+        display: inline-flex;
+        gap: 2px;
+        margin-left: auto;
+        padding: 2px;
+        float: none;
+        background-color: var(--retani-modal-canvas);
+        border: 1px solid var(--retani-modal-line);
+        border-radius: 6px;
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 28px;
+            padding: 0;
+            background-color: transparent;
+            border: 0;
+            border-radius: 4px;
+            color: var(--retani-modal-muted);
+
+            .icon {
+                margin: 0;
+                color: inherit;
+            }
+
+            &:hover {
+                color: var(--retani-modal-ink);
+            }
+        }
+
+        &:not(.disabled) a.checked {
+            background-color: var(--retani-modal-surface);
+            border: 0;
+            color: var(--retani-modal-ink);
+        }
+    }
+
+    .fp-clear-left {
+        display: none;
+    }
+
+    // Folder path: "📁 System / Category 1".
+    .fp-pathbar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 10px 2px;
+        font-size: 0.8125rem;
+
+        &::before {
+            content: "";
+            flex: none;
+            width: 14px;
+            height: 14px;
+            background-color: var(--retani-modal-ink);
+            mask: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3e%3cpath d='M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/%3e%3c/svg%3e") center / contain no-repeat; // stylelint-disable-line function-url-scheme-disallowed-list
+        }
+
+        &.empty {
+            display: none;
+        }
+
+        .fp-path-folder {
+            height: auto;
+            margin: 0;
+            background: none;
+
+            + .fp-path-folder::before {
+                content: "/";
+                margin-right: 6px;
+                color: #b9b7ae;
+            }
+        }
+
+        .fp-path-folder-name {
+            margin: 0;
+            color: var(--retani-modal-muted);
+            text-decoration: none;
+
+            &:hover {
+                color: var(--retani-modal-ink);
+                text-decoration: underline;
+            }
+        }
+
+        .fp-path-folder.last .fp-path-folder-name {
+            font-weight: 500;
+            color: var(--retani-modal-ink);
+        }
+    }
+
+    .fp-content {
+        flex: 1;
+        height: auto;
+        min-height: 0;
+        max-height: none;
+        margin: 0 14px 14px !important; // stylelint-disable-line declaration-no-important
+        background-color: var(--retani-modal-surface);
+        border: 1px solid var(--retani-modal-line);
+        border-radius: 6px;
+
+        &:focus {
+            outline: 0;
+            box-shadow: none;
+        }
+
+        &:focus-visible {
+            border-color: var(--retani-modal-ink);
+        }
+    }
+
+    // "Upload a file" and other form panes: no file panel and no view switcher.
+    .fp-repo-items:has(.fp-upload-form) {
+        .fp-viewbar {
+            display: none;
+        }
+
+        .fp-content {
+            margin: 0 !important; // stylelint-disable-line declaration-no-important
+            border: 0;
+            border-radius: 0;
+        }
+    }
+
+    .fp-repo-items:focus,
+    &:focus {
+        outline: 0;
+        box-shadow: none;
+    }
+}
+
+// Icon view (file picker and file manager): 84px tiles in an auto-filling grid.
+.moodle-dialogue-base .file-picker .fp-iconview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: 8px;
+    padding: 14px;
+
+    .fp-file {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        padding: 10px 6px;
+        float: none;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        color: var(--retani-modal-ink);
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            background-color: var(--retani-modal-canvas);
+            border-color: var(--retani-modal-line);
+            outline: 0;
+        }
+    }
+
+    .fp-thumbnail {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 84px !important; // stylelint-disable-line declaration-no-important
+        height: 84px !important; // stylelint-disable-line declaration-no-important
+        min-width: 0;
+        min-height: 0;
+        line-height: 1;
+        overflow: hidden;
+        background-color: var(--retani-modal-canvas);
+        border: 1px solid var(--retani-modal-line);
+        border-radius: 6px;
+        box-shadow: none;
+
+        &:hover {
+            background-color: var(--retani-modal-canvas);
+            border-color: var(--retani-modal-line);
+            box-shadow: none;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            padding: 0;
+            border: 0;
+            box-shadow: none;
+        }
+    }
+
+    .fp-folder .fp-thumbnail {
+        background-color: var(--retani-modal-surface);
+    }
+
+    .fp-filename-field {
+        position: static;
+        width: 100% !important; // stylelint-disable-line declaration-no-important
+        height: auto;
+        margin: 0;
+    }
+
+    .fp-filename-field .fp-filename {
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        background: none;
+        font-size: 0.78125rem;
+        line-height: 1.3;
+        text-align: center;
+        color: var(--retani-modal-ink);
+    }
+}
+
+// List and tree views.
+.moodle-dialogue-base .file-picker {
+    .fp-tableview table,
+    .yui3-datatable table {
+        width: 100%;
+        height: auto;
+        padding: 0;
+        border: 0;
+        font-size: 0.8125rem;
+        text-align: left;
+    }
+
+    .yui3-datatable-header {
+        height: 34px;
+        padding: 0 14px;
+        background-color: var(--retani-modal-canvas);
+        border-bottom: 1px solid var(--retani-modal-line);
+        font-size: 0.71875rem;
+        font-weight: 500;
+        color: var(--retani-modal-muted);
+    }
+
+    .yui3-datatable-cell {
+        padding: 6px 14px;
+        background-color: var(--retani-modal-surface);
+        border-bottom: 1px solid var(--retani-modal-row-line);
+        color: var(--retani-modal-muted);
+    }
+
+    .yui3-datatable-data tr:hover .yui3-datatable-cell {
+        background-color: var(--retani-modal-canvas);
+    }
+
+    .fp-filename-icon a {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--retani-modal-ink);
+        text-decoration: none;
+    }
+
+    .fp-treeview {
+        padding: 8px 6px;
+        font-size: 0.8125rem;
+    }
+}
+
+// "Upload a file": fields stacked, the file input in a dashed drop zone.
+.moodle-dialogue-base .file-picker .fp-upload-form {
+    max-width: 560px;
+    padding: 20px;
+
+    @include retani-modal-fields;
+
+    .fp-content-center {
+        display: block;
+        height: auto;
+    }
+
+    .fp-formset {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        > div {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin: 0;
+        }
+    }
+
+    .fp-file > div {
+        padding: 28px 16px !important; // stylelint-disable-line declaration-no-important
+        background-color: var(--retani-modal-canvas);
+        border: 1.5px dashed var(--retani-modal-line);
+        border-radius: 6px;
+        text-align: center;
+
+        &:hover,
+        &:focus-within {
+            border-color: var(--retani-modal-ink);
+        }
+    }
+
+    input[type="file"] {
+        max-width: 100%;
+        font-size: 0.8125rem;
+
+        &::file-selector-button {
+            height: 32px;
+            margin-right: 10px;
+            padding: 0 12px;
+            background-color: var(--retani-modal-ink);
+            border: 0;
+            border-radius: 6px;
+            font: inherit;
+            font-weight: 500;
+            color: var(--retani-modal-on-ink);
+            cursor: pointer;
+        }
+    }
+
+    .mdl-align {
+        margin-top: 16px;
+        text-align: left;
+
+        @include retani-modal-buttons;
+
+        .btn-primary {
+            height: 38px;
+        }
+    }
+}
+
+// "Select file": its own 450px dialogue (the width and centring are set by the file picker JS).
+// A small preview with the file details beside it, then the fields, then the buttons.
+.moodle-dialogue-base .moodle-dialogue-bd:has(> .fp-select) {
+    padding: 0;
+}
+
+.moodle-dialogue-base .file-picker.fp-select {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 20px 22px;
+    font-family: $retani-admin-font-family;
+    color: var(--retani-modal-ink);
+
+    @include retani-modal-fields;
+
+    .fp-info {
+        order: -1;
+        display: grid;
+        grid-template-columns: 96px minmax(0, 1fr);
+        align-items: start;
+        gap: 16px;
+        font-size: 0.75rem;
+
+        hr {
+            display: none;
+        }
+    }
+
+    .fp-thumbnail {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 96px;
+        height: 96px;
+        min-width: 0;
+        min-height: 0;
+        margin: 0;
+        float: none;
+        line-height: 1;
+        overflow: hidden;
+        background-color: var(--retani-modal-canvas);
+        border: 1px solid var(--retani-modal-line);
+        border-radius: 6px;
+        box-shadow: none;
+
+        img {
+            max-width: 84%;
+            max-height: 84%;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            box-shadow: none;
+        }
+    }
+
+    .fp-fileinfo {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 5px 12px;
+        max-width: none;
+        margin: 0;
+
+        > div {
+            display: contents;
+            padding: 0;
+            color: var(--retani-modal-muted);
+        }
+
+        .fp-value {
+            color: var(--retani-modal-ink);
+        }
+    }
+
+    > .container {
+        max-width: none;
+        padding: 0;
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin: 0;
+
+            > * {
+                width: auto;
+                margin-bottom: 0;
+                padding: 0;
+            }
+        }
+
+        fieldset {
+            gap: 6px;
+            margin: 0 !important; // stylelint-disable-line declaration-no-important
+            font-size: 0.8125rem;
+
+            .form-check-label {
+                font-weight: 400;
+            }
+        }
+    }
+
+    // Buttons: "Cancel" then the primary action, on the right, above a line that runs edge to edge.
+    .fp-select-buttons {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-start;
+        gap: 10px;
+        margin: 4px -22px -20px;
+        padding: 12px 14px;
+        float: none;
+        border-top: 1px solid var(--retani-modal-line);
+
+        @include retani-modal-buttons;
+
+        .btn {
+            white-space: nowrap;
+        }
+    }
+}
+
+// Narrow screens: the repository rail goes on top.
+@include media-breakpoint-down(md) {
+    .moodle-dialogue-base .file-picker.fp-generallayout {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+
+        .fp-repo-area {
+            flex-direction: row;
+            overflow-x: auto;
+            border-right: 0;
+            border-bottom: 1px solid var(--retani-modal-line);
+        }
+    }
+}

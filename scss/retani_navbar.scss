@@ -1,0 +1,301 @@
+// Top navbar (theme_retani_studio/navbar), styled after the header in mockup/Retani Home.dc.html.
+// Styles only: every element of the standard navbar is kept, and restyled to the Retani look.
+$retani-navbar-font-family: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif !default;
+$retani-navbar-control-size: 28px !default;
+$retani-navbar-radius: 5px !default;
+
+.navbar.fixed-top.retani-navbar {
+    // Local palette, swapped as a whole for dark mode below.
+    --retani-navbar-bg: #f4f3ef;
+    --retani-navbar-surface: #{$white};
+    --retani-navbar-line: #dedcd5;
+    --retani-navbar-text: #111111;
+    --retani-navbar-muted: #6b6a64;
+    --retani-navbar-active-border: #111111;
+    --retani-navbar-lime: #95bf47;
+    --retani-navbar-badge-bg: #111111;
+    --retani-navbar-badge-text: #{$white};
+
+    @include dark-mode {
+        --retani-navbar-bg: var(--#{$prefix}body-bg);
+        --retani-navbar-surface: var(--#{$prefix}tertiary-bg);
+        --retani-navbar-line: var(--#{$prefix}border-color);
+        --retani-navbar-text: var(--#{$prefix}body-color);
+        --retani-navbar-muted: var(--#{$prefix}secondary-color);
+        --retani-navbar-active-border: var(--#{$prefix}body-color);
+        --retani-navbar-badge-bg: var(--#{$prefix}body-color);
+        --retani-navbar-badge-text: var(--#{$prefix}body-bg);
+    }
+
+    // No border or shadow: the bar sits on the page canvas, as in the mockup.
+    border: 0;
+    box-shadow: none;
+    background-color: var(--retani-navbar-bg) !important; // stylelint-disable-line declaration-no-important
+    color: var(--retani-navbar-text);
+    font-family: $retani-navbar-font-family;
+    -webkit-font-smoothing: antialiased;
+
+    // Site name, in the weight and size of the mockup's page title.
+    .navbar-brand {
+        font-size: 1.1875rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        color: var(--retani-navbar-text);
+    }
+
+    // Primary navigation pills.
+    .primary-navigation .mds-nav-pill {
+        height: $retani-navbar-control-size;
+        padding: 0 10px;
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid transparent;
+        border-radius: $retani-navbar-radius;
+        background-color: transparent;
+        font-family: inherit;
+        font-size: 0.78125rem;
+        color: var(--retani-navbar-muted);
+
+        &:hover {
+            background-color: var(--retani-navbar-surface);
+            color: var(--retani-navbar-text);
+            text-decoration: none;
+        }
+    }
+
+    .primary-navigation .mds-nav-pill--selected,
+    .primary-navigation .mds-nav-pill--selected:visited {
+        border-color: var(--retani-navbar-line);
+        background-color: var(--retani-navbar-surface);
+        color: var(--retani-navbar-text);
+        font-weight: 500;
+    }
+
+    // Right-hand controls: a row of small outlined buttons, 8px apart.
+    #usernavigation {
+        align-items: center;
+        gap: 8px;
+    }
+
+    // Thin divider between groups of controls.
+    .divider {
+        width: 1px;
+        height: 18px !important; // stylelint-disable-line declaration-no-important
+        margin: 0 2px !important; // stylelint-disable-line declaration-no-important
+        border: 0 !important; // stylelint-disable-line declaration-no-important
+        background-color: var(--retani-navbar-line);
+    }
+
+    // Square icon buttons: notifications, messages, colour mode and language.
+    #usernavigation .popover-region-toggle,
+    #usernavigation .colourmodemenu .dropdown-toggle,
+    #usernavigation .langmenu .dropdown-toggle {
+        position: relative;
+        width: $retani-navbar-control-size;
+        min-width: $retani-navbar-control-size;
+        height: $retani-navbar-control-size;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--retani-navbar-line);
+        border-radius: $retani-navbar-radius;
+        background-color: var(--retani-navbar-bg);
+        box-shadow: none;
+        color: var(--retani-navbar-muted);
+        font-size: 0.75rem;
+
+        .icon {
+            width: 14px;
+            height: 14px;
+            margin: 0;
+            font-size: 14px;
+            color: inherit;
+        }
+
+        &::after {
+            display: none;
+        }
+
+        &:hover,
+        &[aria-expanded="true"] {
+            border-color: var(--retani-navbar-active-border);
+            background-color: var(--retani-navbar-surface);
+            color: var(--retani-navbar-text);
+        }
+    }
+
+    // The language toggle carries its language code, so it is wider than the icon buttons.
+    #usernavigation .langmenu .dropdown-toggle {
+        width: auto;
+        padding: 0 9px 0 7px;
+        gap: 6px;
+    }
+
+    .popover-region:not(.collapsed) .popover-region-toggle {
+        border-color: var(--retani-navbar-active-border);
+        background-color: var(--retani-navbar-surface);
+        color: var(--retani-navbar-text);
+    }
+
+    // Unread counts, as small badges on the corner of their button.
+    .popover-region-toggle .count-container {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        min-width: 15px;
+        height: 15px;
+        padding: 0 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1.5px solid var(--retani-navbar-bg);
+        border-radius: $retani-navbar-radius;
+        background-color: var(--retani-navbar-badge-bg);
+        color: var(--retani-navbar-badge-text);
+        font-size: 0.5625rem;
+        font-weight: 700;
+        line-height: 1;
+
+        &.hidden {
+            display: none;
+        }
+    }
+
+    // Notifications use the lime accent for their badge, as the mockup does for unread notifications.
+    .popover-region-notifications .count-container {
+        background-color: var(--retani-navbar-lime);
+        color: #111111;
+    }
+
+    // Edit mode: the switch inside an outlined pill, with a small lime track when on.
+    .editmode-switch-form {
+        --mds-bg-interactive-primary-default: var(--retani-navbar-lime);
+        --mds-bg-interactive-primary-default-light: #{$white};
+        --mds-bg-interactive-primary-hover: #{darken(#95bf47, 6%)};
+        --mds-bg-interactive-primary-disabled: #{lighten(#95bf47, 20%)};
+        margin-left: 0 !important; // stylelint-disable-line declaration-no-important
+
+        .mds-switch {
+            align-self: center;
+        }
+
+        .mds-switch-control {
+            height: $retani-navbar-control-size;
+            padding: 0 8px 0 10px;
+            gap: 8px;
+            border: 1px solid var(--retani-navbar-line);
+            border-radius: $retani-navbar-radius;
+            background-color: var(--retani-navbar-bg);
+        }
+
+        .mds-switch-input:checked + .mds-switch-control,
+        .mds-switch-input:hover + .mds-switch-control {
+            border-color: var(--retani-navbar-active-border);
+            background-color: var(--retani-navbar-surface);
+        }
+
+        .mds-switch-label {
+            font-family: inherit;
+            font-size: 0.75rem;
+            color: var(--retani-navbar-muted);
+        }
+
+        .mds-switch-indicator {
+            inline-size: 26px;
+            block-size: 15px;
+        }
+
+        .mds-switch-focus-ring,
+        .mds-switch-track {
+            border-radius: 6px;
+        }
+
+        .mds-switch-track {
+            padding: 2px;
+            background-color: var(--retani-navbar-line);
+            color: var(--retani-navbar-line);
+        }
+
+        .mds-switch-thumb {
+            inline-size: 11px;
+            block-size: 11px;
+            background-color: $white;
+        }
+
+        // Hide the on/off glyphs inside the thumb: the mockup's thumb is a plain dot.
+        .mds-switch-icon {
+            visibility: hidden;
+        }
+
+        .mds-switch-input:checked + .mds-switch-control .mds-switch-track {
+            background-color: var(--retani-navbar-lime);
+            color: var(--retani-navbar-lime);
+        }
+
+        .mds-switch-input:checked + .mds-switch-control .mds-switch-thumb {
+            transform: translateX(11px);
+            background-color: $white;
+        }
+    }
+
+    // User menu: avatar tile and name.
+    .usermenu {
+        .dropdown-toggle {
+            padding: 0 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 0;
+            font-size: 0.78125rem;
+            color: var(--retani-navbar-text);
+        }
+
+        .avatars .userpicture,
+        .avatars .userinitials {
+            width: $retani-navbar-control-size;
+            height: $retani-navbar-control-size;
+            border-radius: $retani-navbar-radius;
+        }
+
+        .avatars .userinitials {
+            background-color: #111111;
+            color: $white;
+            font-size: 0.6875rem;
+            font-weight: 700;
+        }
+
+        .userfirstname {
+            font-weight: 500;
+        }
+    }
+
+    // Shared dropdown panels opened from the navbar.
+    .dropdown-menu,
+    .popover-region-container {
+        border: 1px solid var(--retani-navbar-line);
+        border-radius: $retani-navbar-radius;
+        box-shadow: none;
+        font-family: $retani-navbar-font-family;
+        font-size: 0.78125rem;
+    }
+
+    .dropdown-item {
+        border-radius: 4px;
+    }
+}
+
+.dir-rtl .navbar.fixed-top.retani-navbar {
+    .popover-region-toggle .count-container {
+        right: auto;
+        left: -5px;
+    }
+
+    .editmode-switch-form {
+        margin-right: 0 !important; // stylelint-disable-line declaration-no-important
+
+        .mds-switch-input:checked + .mds-switch-control .mds-switch-thumb {
+            transform: translateX(-11px);
+        }
+    }
+}

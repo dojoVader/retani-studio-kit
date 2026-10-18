@@ -1,0 +1,178 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/full_header
+
+    The page header, as in mockup/Moodle Dashboard Implementation (6)/Retani Course Details.dc.html.
+
+    On course pages it is a hero card (tags, course name, contact, counts and progress); on other pages it is
+    the standard context header. Either way the secondary navigation is drawn under it as a segmented tab bar.
+    The tab bar also has an empty "tab tools" slot on the right: the course content moves its
+    "Collapse all / Expand all" button there (see core_courseformat/local/content).
+
+    Context variables (on top of the core ones):
+    * coursehero - Course card data from theme_retani_studio\output\course_header, or absent.
+    * secondarynav - Context for core/secondarymoremenu, or absent.
+    * adminheader - On admin settings pages: {path, haspath, title, description}, in place of the context header.
+
+    Example context (json):
+    {
+        "contextheader": "context_header_html",
+        "settingsmenu": "settings_html",
+        "hasnavbar": false,
+        "navbar": "navbar_if_available",
+        "courseheader": "course_header_html",
+        "headeractions": ["action1_html", "action2_html"],
+        "headerextras": ["extra1_html", "extra2_html"],
+        "welcomemessage": "welcomemessage",
+        "coursehero": {
+            "title": "Critical Thinking: Develop your skills",
+            "tags": ["Humanities", "CT101"],
+            "contact": {"name": "Alice Nguyen", "role": "Teacher", "initials": "AN", "others": 0},
+            "sectioncount": 6,
+            "activitycount": 18,
+            "progress": {
+                "done": 8, "total": 18, "percent": 44,
+                "summary": "8 of 18 complete · 44%",
+                "segments": [{"filled": true}, {"filled": false}]
+            }
+        }
+    }
+}}
+<header id="page-header" class="header-maxwidth d-print-none retani-page-header{{#coursehero}} has-coursehero{{/coursehero}}" data-for="page-heading">
+    <div class="w-100">
+        <div class="d-flex flex-wrap">
+            {{#hasnavbar}}
+            <div id="page-navbar">
+                {{{navbar}}}
+            </div>
+            {{/hasnavbar}}
+            <div class="ms-auto d-flex">
+                {{{pageheadingbutton}}}
+            </div>
+            <div id="course-header">
+                {{{courseheader}}}
+            </div>
+        </div>
+
+        {{#coursehero}}
+        <section class="retani-coursehero" aria-labelledby="retani-coursehero-title">
+            <div class="retani-coursehero-top">
+                <ul class="retani-coursehero-tags">
+                    {{#tags}}
+                        <li class="retani-coursehero-tag">{{{.}}}</li>
+                    {{/tags}}
+                </ul>
+                <div class="header-actions-container ms-auto" data-region="header-actions-container">
+                    {{#headeractions}}
+                    <div class="header-action ms-2">{{{.}}}</div>
+                    {{/headeractions}}
+                </div>
+            </div>
+            <h1 id="retani-coursehero-title" class="retani-coursehero-title">{{{title}}}</h1>
+            <ul class="retani-coursehero-meta">
+                {{#contact}}
+                    <li class="retani-coursehero-contact" title="{{role}}">
+                        <span class="retani-coursehero-avatar" aria-hidden="true">{{initials}}</span>
+                        <span>{{name}}</span>
+                        {{#others}}
+                            <span class="retani-coursehero-others">{{#str}}coursehero:othercontacts, theme_retani_studio, {{others}}{{/str}}</span>
+                        {{/others}}
+                    </li>
+                {{/contact}}
+                <li>{{#str}}coursehero:sections, theme_retani_studio, {{sectioncount}}{{/str}}</li>
+                <li>{{#str}}coursehero:activities, theme_retani_studio, {{activitycount}}{{/str}}</li>
+            </ul>
+            {{#progress}}
+                <div class="retani-coursehero-progress" data-region="retani-course-progress"
+                     data-done="{{done}}" data-total="{{total}}">
+                    <div class="retani-coursehero-progress-label">
+                        <span id="retani-coursehero-progress-label">{{#str}}coursehero:progress, theme_retani_studio{{/str}}</span>
+                        <span class="retani-coursehero-progress-summary" data-region="summary">{{summary}}</span>
+                    </div>
+                    <div class="retani-coursehero-progress-bar" role="progressbar"
+                         aria-labelledby="retani-coursehero-progress-label"
+                         aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{percent}}"
+                         aria-valuetext="{{summary}}" data-region="bar">
+                        {{#segments}}
+                            <span class="retani-coursehero-segment{{#filled}} is-filled{{/filled}}"></span>
+                        {{/segments}}
+                    </div>
+                </div>
+            {{/progress}}
+            {{#welcomemessage}}
+                <div>
+                    {{> core/welcome }}
+                </div>
+            {{/welcomemessage}}
+        </section>
+        {{/coursehero}}
+
+        {{^coursehero}}
+        <div class="d-flex align-items-center">
+            <div class="me-auto d-flex flex-column">
+                {{#adminheader}}
+                <div class="retani-adminheader">
+                    {{#haspath}}
+                        <p class="retani-adminheader-path">
+                            {{#path}}<span>{{.}}</span>{{/path}}
+                        </p>
+                    {{/haspath}}
+                    <h1 class="retani-adminheader-title" data-region="retani-adminheader-title">{{title}}</h1>
+                    {{#isindex}}
+                        <p class="retani-adminheader-description" data-region="retani-adminheader-description"{{^description}} hidden{{/description}}>{{description}}</p>
+                    {{/isindex}}
+                    {{^isindex}}
+                    {{#description}}
+                        <p class="retani-adminheader-description">{{description}}</p>
+                    {{/description}}
+                    {{/isindex}}
+                </div>
+                {{/adminheader}}
+                {{#contextheader}}
+                <div>
+                    {{{contextheader}}}
+                </div>
+                {{/contextheader}}
+                <div>
+                    {{> core/welcome }}
+                </div>
+            </div>
+            <div class="header-actions-container ms-auto" data-region="header-actions-container">
+                {{#headeractions}}
+                <div class="header-action ms-2">{{{.}}}</div>
+                {{/headeractions}}
+            </div>
+        </div>
+        {{/coursehero}}
+
+        <div class="header-extras-container ms-auto" data-region="header-extras-container">
+            {{#headerextras}}
+            <div class="header-extra ms-2">{{{.}}}</div>
+            {{/headerextras}}
+        </div>
+
+        {{#secondarynav}}
+        <div class="retani-header-tabs{{#adminheader}} retani-header-tabs--underline{{/adminheader}}">
+            <div class="secondary-navigation retani-tabs">
+                {{> core/secondarymoremenu }}
+            </div>
+            <div class="retani-header-tabtools" data-region="retani-header-tabtools"></div>
+        </div>
+        {{/secondarynav}}
+    </div>
+</header>

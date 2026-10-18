@@ -1,0 +1,535 @@
+// Right-hand block bar (theme_retani_studio/retani/block_sidebar and the blocksidebar/BlockSidebar component),
+// from mockup/Moodle Dashboard Implementation /Retani Home.dc.html:
+// - a 300px bar docked on the right with a "Blocks" header and a collapse button;
+// - when collapsed, a vertical "Blocks" tab on the right edge that expands it;
+// - blocks as white cards with 8px corners; in edit mode a dashed "Add a block" card on top;
+// - the "Add a block" dialog (blocksidebar/AddBlockDialog).
+// From the "xl" breakpoint the page makes room for the open bar; below it the bar slides over the page.
+// Uses $retani-admin-font-family from retani_adminsettings.scss.
+$retani-blocksidebar-width: 300px !default;
+$retani-blocksidebar-transition: 0.25s ease !default;
+
+body.has-retani-blocksidebar,
+.retani-addblock-backdrop {
+    --retani-blocksidebar-width: #{$retani-blocksidebar-width};
+    --retani-bs-canvas: #f4f3ef;
+    --retani-bs-surface: #{$white};
+    --retani-bs-line: #dedcd5;
+    --retani-bs-ink: #111;
+    --retani-bs-on-ink: #{$white};
+    --retani-bs-muted: #6b6a64;
+
+    @include dark-mode {
+        --retani-bs-canvas: var(--#{$prefix}tertiary-bg);
+        --retani-bs-surface: var(--#{$prefix}body-bg);
+        --retani-bs-line: var(--#{$prefix}border-color);
+        --retani-bs-ink: var(--#{$prefix}body-color);
+        --retani-bs-on-ink: var(--#{$prefix}body-bg);
+        --retani-bs-muted: var(--#{$prefix}secondary-color);
+    }
+}
+
+// The bar: fixed to the right edge. Its panel slides out of view when closed. The bar itself is not transformed
+// (that would make it the containing block of the fixed tab and backdrop inside it) and lets clicks through.
+.retani-blocksidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: $zindex-fixed + 2;
+    width: min(var(--retani-blocksidebar-width), 88vw);
+    font-family: $retani-admin-font-family;
+    color: var(--retani-bs-ink);
+    pointer-events: none;
+
+    > .retani-blocksidebar-mount {
+        height: 100%;
+    }
+
+    .retani-blocksidebar-panel,
+    .retani-blocksidebar-tab,
+    .retani-blocksidebar-scrim {
+        pointer-events: auto;
+    }
+
+    .retani-blocksidebar-panel {
+        transform: translateX(105%);
+        transition: transform $retani-blocksidebar-transition;
+    }
+
+    &.is-open .retani-blocksidebar-panel {
+        transform: none;
+    }
+
+    // Before the component mounts (or without JavaScript) the blocks stay where Moodle rendered them: under the
+    // fallback header while the bar is open, hidden while it is closed.
+    > .retani-blocksidebar-blocks {
+        display: none;
+    }
+
+    &.is-open > .retani-blocksidebar-blocks {
+        position: absolute;
+        inset: 56px 0 0;
+        display: block;
+        padding: 15px;
+        overflow-y: auto;
+        pointer-events: auto;
+    }
+}
+
+.retani-blocksidebar-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--retani-bs-canvas);
+    border-left: 1px solid var(--retani-bs-line);
+}
+
+.retani-blocksidebar-header {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+    height: 56px;
+    padding: 0 12px 0 15px;
+    border-bottom: 1px solid var(--retani-bs-line);
+}
+
+.retani-blocksidebar-title {
+    flex: 1;
+    margin: 0;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--retani-bs-ink);
+}
+
+.retani-blocksidebar-close {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 5px;
+    color: var(--retani-bs-muted);
+
+    &:hover {
+        background-color: var(--retani-bs-surface);
+        color: var(--retani-bs-ink);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--retani-bs-ink);
+        outline-offset: 1px;
+    }
+}
+
+.retani-blocksidebar-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    padding: 15px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+// "Add a block" card (edit mode).
+.retani-blocksidebar-add {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 22px 16px;
+    background: transparent;
+    border: 1.5px dashed var(--retani-bs-line);
+    border-radius: 8px;
+    color: var(--retani-bs-ink);
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--retani-bs-surface);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--retani-bs-ink);
+        outline-offset: 2px;
+    }
+}
+
+.retani-blocksidebar-addicon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 6px;
+    background-color: var(--retani-bs-surface);
+    border: 1px solid var(--retani-bs-line);
+    border-radius: 50%;
+}
+
+.retani-blocksidebar-addtitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.retani-blocksidebar-addhint {
+    font-size: 0.71875rem;
+    color: var(--retani-bs-muted);
+}
+
+// Blocks: white cards.
+.retani-blocksidebar-blocks {
+    .block-region {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 0;
+    }
+
+    .block.card {
+        margin: 0;
+        background-color: var(--retani-bs-surface);
+        border: 1px solid var(--retani-bs-line);
+        border-radius: 8px;
+        box-shadow: none;
+        font-size: 0.8125rem;
+
+        > .card-body {
+            padding: 14px;
+        }
+
+        .card-title {
+            margin-bottom: 12px;
+            font-family: $retani-admin-font-family;
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.3;
+            letter-spacing: 0;
+            color: var(--retani-bs-ink);
+        }
+
+        .card-text {
+            color: var(--retani-bs-ink);
+        }
+
+        a:not(.btn):not(.dropdown-item) {
+            color: var(--retani-bs-ink);
+            text-decoration-color: #95bf47;
+            text-underline-offset: 3px;
+        }
+
+        // Block actions (edit mode): the "···" menu at the top right.
+        .block-controls .action-menu .dropdown-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            border-radius: 5px;
+            color: var(--retani-bs-ink);
+
+            &:hover {
+                background-color: var(--retani-bs-canvas);
+            }
+        }
+
+        &.invisibleblock,
+        &.dimmed {
+            border-style: dashed;
+        }
+    }
+
+    // Placeholder shown while a block is dragged.
+    .block-region .block-placeholder,
+    .block-region .dragdrop-placeholder {
+        border: 1.5px dashed var(--retani-bs-line);
+        border-radius: 8px;
+    }
+}
+
+// Collapsed: the vertical "Blocks" tab on the right edge.
+.retani-blocksidebar-tab {
+    position: fixed;
+    top: 96px;
+    right: 0;
+    z-index: $zindex-fixed - 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 30px;
+    padding: 12px 0 14px;
+    background-color: var(--retani-bs-surface);
+    border: 1px solid var(--retani-bs-line);
+    border-right: 0;
+    border-radius: 6px 0 0 6px;
+    font-family: $retani-admin-font-family;
+    color: var(--retani-bs-muted);
+    cursor: pointer;
+    transition: width 0.15s ease, background-color 0.15s ease;
+
+    &:hover {
+        width: 34px;
+        background-color: var(--retani-bs-canvas);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--retani-bs-ink);
+        outline-offset: 1px;
+    }
+}
+
+.retani-blocksidebar-tablabel {
+    font-size: 0.71875rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--retani-bs-ink);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}
+
+.retani-blocksidebar-tabdot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--retani-bs-ink);
+}
+
+// Narrow screens: the bar slides over the page, with a backdrop.
+.retani-blocksidebar-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-color: rgba(20, 20, 30, 0.28);
+}
+
+// Wide screens: the page makes room for the open bar.
+@include media-breakpoint-up(xl) {
+    body.has-retani-blocksidebar {
+        #page-wrapper {
+            transition: padding-right $retani-blocksidebar-transition;
+        }
+
+        .navbar.fixed-top {
+            transition: right $retani-blocksidebar-transition;
+        }
+    }
+
+    body.retani-blocksidebar-open {
+        #page-wrapper {
+            padding-right: var(--retani-blocksidebar-width);
+        }
+
+        .navbar.fixed-top,
+        #sticky-footer {
+            right: var(--retani-blocksidebar-width);
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .retani-blocksidebar .retani-blocksidebar-panel,
+    body.has-retani-blocksidebar #page-wrapper,
+    body.has-retani-blocksidebar .navbar.fixed-top {
+        transition: none;
+    }
+}
+
+// "Add a block" dialog.
+body.retani-addblock-open {
+    overflow: hidden;
+}
+
+.retani-addblock-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: $zindex-modal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background-color: rgba(17, 17, 17, 0.42);
+}
+
+.retani-addblock {
+    display: flex;
+    flex-direction: column;
+    width: 520px;
+    max-width: 100%;
+    max-height: calc(100vh - 48px);
+    overflow: hidden;
+    background-color: var(--retani-bs-surface);
+    border: 1px solid var(--retani-bs-line);
+    border-radius: 8px;
+    font-family: $retani-admin-font-family;
+    color: var(--retani-bs-ink);
+}
+
+.retani-addblock-header {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 14px 14px 12px;
+}
+
+.retani-addblock-badge {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: var(--retani-bs-canvas);
+    border: 1px solid var(--retani-bs-line);
+    border-radius: 6px;
+    color: var(--retani-bs-muted);
+}
+
+.retani-addblock-title {
+    flex: 1;
+    margin: 0;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--retani-bs-ink);
+}
+
+.retani-addblock-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 5px;
+    color: var(--retani-bs-ink);
+
+    &:hover {
+        background-color: var(--retani-bs-canvas);
+    }
+}
+
+.retani-addblock-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 34px;
+    margin: 0 14px 10px;
+    padding: 0 10px;
+    background-color: var(--retani-bs-surface);
+    border: 1px solid var(--retani-bs-line);
+    border-radius: 6px;
+    color: var(--retani-bs-muted);
+
+    &:focus-within {
+        border-color: var(--retani-bs-ink);
+    }
+
+    input {
+        flex: 1;
+        min-width: 0;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        outline: 0;
+        font: inherit;
+        font-size: 0.78125rem;
+        color: var(--retani-bs-ink);
+    }
+}
+
+.retani-addblock-body {
+    flex: 1;
+    min-height: 0;
+    padding: 6px;
+    overflow-y: auto;
+    border-top: 1px solid var(--retani-bs-line);
+}
+
+.retani-addblock-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.retani-addblock-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px;
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    color: var(--retani-bs-ink);
+    text-align: left;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--retani-bs-canvas);
+        outline: 0;
+    }
+}
+
+.retani-addblock-icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: var(--retani-bs-canvas);
+    border: 1px solid var(--retani-bs-line);
+    border-radius: 5px;
+}
+
+.retani-addblock-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.78125rem;
+    font-weight: 500;
+}
+
+.retani-addblock-action {
+    font-size: 0.71875rem;
+    font-weight: 500;
+}
+
+.retani-addblock-empty {
+    margin: 0;
+    padding: 16px 8px;
+    font-size: 0.75rem;
+    color: var(--retani-bs-muted);
+}
+
+.retani-addblock-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 14px;
+    border-top: 1px solid var(--retani-bs-line);
+
+    .btn {
+        height: 30px;
+        padding: 0 14px;
+        background-color: var(--retani-bs-canvas);
+        border: 1px solid var(--retani-bs-line);
+        border-radius: 6px;
+        font-size: 0.75rem;
+        color: var(--retani-bs-ink);
+    }
+}

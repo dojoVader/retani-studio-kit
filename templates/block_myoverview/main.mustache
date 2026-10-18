@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/main
+
+    Course overview block, shown as the Retani course table (mockup/Retani Dashboard.dc.html,
+    "Top Performance Courses").
+
+    The table is the theme_retani_studio/courseoverview/CourseOverview React component. It loads the
+    courses itself through core_course_get_enrolled_courses_by_timeline_classification and
+    theme_retani_studio_get_course_overview_details. The placeholder rows inside the react helper block
+    show until it mounts.
+
+    Context variables required for this template:
+    * reactprops - JSON props for the CourseOverview component, from
+      theme_retani_studio\output\block_myoverview_renderer.
+    * iscardview - Whether the user's view is the card grid, for the loading placeholders.
+
+    Example context (json):
+    {
+        "uniqid": "abc123",
+        "iscardview": false,
+        "reactprops": "{\"filters\":[{\"key\":\"all\",\"grouping\":\"all\",\"label\":\"All\"}],\"filter\":\"all\",\"sort\":\"fullname\",\"paging\":12,\"showcategory\":true,\"actions\":[],\"strings\":{\"title\":\"Course overview\",\"controls\":\"Course overview controls\",\"search\":\"Search courses\",\"filter\":\"Filter\",\"code\":\"Code\",\"coursename\":\"Course name\",\"level\":\"Level\",\"category\":\"Category\",\"teacher\":\"Teacher\",\"enrolled\":\"Enrolled\",\"completionrate\":\"Completion rate\",\"progress\":\"Progress\",\"sortby\":\"Sort by {$a}\",\"nocourses\":\"No courses\",\"nomatch\":\"No courses match {$a}.\",\"loadfailed\":\"Courses could not be loaded.\",\"previous\":\"Previous\",\"next\":\"Next\",\"page\":\"Page {$a}\",\"hidden\":\"Hidden from students\"} }"
+    }
+}}
+<div id="block-myoverview-{{uniqid}}" class="block-myoverview retani-courseoverview-block" data-region="myoverview">
+    {{#react}}
+    {
+        "component": "@moodle/lms/theme_retani_studio/courseoverview/CourseOverview",
+        "class": "retani-courseoverview-mount",
+        "props": {{{reactprops}}}
+    }
+    <div class="retani-courseoverview is-loading" aria-busy="true">
+        {{> block_myoverview/placeholders }}
+    </div>
+    {{/react}}
+</div>

@@ -28,6 +28,8 @@
     * courseindexopen - true if the nav drawer should be open on page load
     * regionmainsettingsmenu - HTML for the region main settings menu
     * hasregionmainsettingsmenu - There is a region main settings menu on this page.
+    * blocksidebar - Context for theme_retani_studio/retani/block_sidebar (the right-hand block bar, in place of
+      the Boost block drawer), or false when the page has no blocks to show.
     * leftbar - Context for theme_retani_studio/retani/left_bar, or false when the bar is not shown.
       When leftbar.hascourseoutline is set, the course index is wrapped in theme_retani_studio/retani/course_outline,
       which the LeftBar component moves into the bar on wide screens.
@@ -49,7 +51,7 @@
         "blockdraweropen": true,
         "regionmainsettingsmenu": "",
         "hasregionmainsettingsmenu": false,
-        "addblockbutton": ""
+        "blocksidebar": false
     }
 }}
 {{> theme_retani_studio/head }}
@@ -88,29 +90,10 @@
             {{/closebuttonicon}}
         {{/ theme_retani_studio/drawer}}
     {{/courseindex}}
-    {{#hasblocks}}
-        {{< theme_retani_studio/drawer }}
-            {{$id}}theme_retani_studio-drawers-blocks{{/id}}
-            {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
-            {{$drawercontent}}
-                <div class="d-print-none">
-                    {{{ addblockbutton }}}
-                    {{{ sidepreblocks }}}
-                </div>
-            {{/drawercontent}}
-            {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
-            {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
-            {{$drawerstate}}show-drawer-right{{/drawerstate}}
-            {{$tooltipplacement}}left{{/tooltipplacement}}
-            {{$drawercloseonresize}}1{{/drawercloseonresize}}
-            {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
-            {{$closebuttonicon}}
-                <span class="dir-rtl-hide">{{#pix}} e/sidebar_right, core {{/pix}}</span>
-                <span class="dir-ltr-hide">{{#pix}} e/sidebar_left, core {{/pix}}</span>
-            {{/closebuttonicon}}
-        {{/ theme_retani_studio/drawer}}
-    {{/hasblocks}}
-    <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container">
+    {{#blocksidebar}}
+        {{> theme_retani_studio/retani/block_sidebar }}
+    {{/blocksidebar}}
+    <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} drag-container">
         <div id="topofscroll" class="main-inner">
             <div class="drawer-toggles d-flex">
                 {{#courseindex}}
@@ -130,23 +113,6 @@
                         </button>
                     </div>
                 {{/courseindex}}
-                {{#hasblocks}}
-                    <div class="drawer-toggler drawer-right-toggle ms-auto d-print-none">
-                        <button
-                            class="btn btn-icon icon-size-3"
-                            data-toggler="drawers"
-                            data-action="toggle"
-                            data-target="theme_retani_studio-drawers-blocks"
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="right"
-                            title="{{#str}}opendrawerblocks, core{{/str}}"
-                        >
-                            <span class="visually-hidden">{{#str}}opendrawerblocks, core{{/str}}</span>
-                            <span class="dir-rtl-hide">{{#pix}} e/sidebar_right, core {{/pix}}</span>
-                            <span class="dir-ltr-hide">{{#pix}} e/sidebar_left, core {{/pix}}</span>
-                        </button>
-                    </div>
-                {{/hasblocks}}
             </div>
             {{{ output.full_header }}}
             <div id="page-content" class="pb-3 d-print-block">

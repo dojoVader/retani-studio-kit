@@ -1,0 +1,749 @@
+// Moodle forms (moodleform), from mockup/Moodle Dashboard Implementation /General Settings.dc.html,
+// in step with the admin settings cards in retani_adminsettings.scss:
+// - the form sections (core_form/element-header) are joined into one card, each with a chevron header,
+//   a field count, and its fields as rows: label column on the left, control column on the right;
+// - controls: 36px fields with a hairline border, "Required" tags, round help buttons, switch checkboxes;
+// - "Expand all / Collapse all" (core_form/collapsesections) is a small outlined button;
+// - the form buttons, in the form or in the sticky footer, use the ink "Save" / outlined "Cancel" pair.
+// Uses the $retani-admin-* variables from retani_adminsettings.scss.
+$retani-form-gutter: 24px !default;
+$retani-form-control-height: 36px !default;
+$retani-form-control-radius: 6px !default;
+
+.mform,
+.stickyfooter,
+.retani-settings {
+    --retani-form-surface: #{$white};
+    --retani-form-canvas: #f4f3ef;
+    --retani-form-hover: #fafaf8;
+    --retani-form-line: #dedcd5;
+    --retani-form-row-line: #eceae4;
+    --retani-form-ink: #111111;
+    --retani-form-on-ink: #{$white};
+    --retani-form-muted: #6b6a64;
+    --retani-form-lime: #95bf47;
+
+    @include dark-mode {
+        --retani-form-surface: var(--#{$prefix}body-bg);
+        --retani-form-canvas: var(--#{$prefix}tertiary-bg);
+        --retani-form-hover: var(--#{$prefix}secondary-bg);
+        --retani-form-line: var(--#{$prefix}border-color);
+        --retani-form-row-line: var(--#{$prefix}border-color-translucent);
+        --retani-form-ink: var(--#{$prefix}body-color);
+        --retani-form-on-ink: var(--#{$prefix}body-bg);
+        --retani-form-muted: var(--#{$prefix}secondary-color);
+    }
+}
+
+// Section cards. Only fieldsets drawn by core_form/element-header (they start with its header).
+// Neighbouring sections join into one card: a line between them and rounded outer corners only.
+.mform fieldset:has(> .retani-formsection-header) {
+    margin: 0;
+    padding: 0;
+    background-color: var(--retani-form-surface);
+    border: 1px solid var(--retani-form-line);
+    border-radius: 8px;
+    font-family: $retani-admin-font-family;
+    color: var(--retani-form-ink);
+
+    &:has(+ fieldset > .retani-formsection-header),
+    &:has(+ [data-groupname="buttonar"]) {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    + fieldset:has(> .retani-formsection-header) {
+        margin-top: -1px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+    // The last section of a run is followed by whatever comes after the card.
+    &:not(:has(+ fieldset > .retani-formsection-header)):not(:has(+ [data-groupname="buttonar"])) {
+        margin-bottom: 1rem;
+    }
+
+    > .fcontainer {
+        padding: 0 $retani-form-gutter 0.5rem;
+
+        // Core indents the labels of collapsible sections to clear its chevron; the card header holds it now.
+        &.collapseable .col-form-label {
+            padding-left: 0;
+        }
+    }
+}
+
+// Field rows of a section: a light line above each.
+.mform fieldset:has(> .retani-formsection-header) > .fcontainer > .fitem,
+.mform fieldset:has(> .retani-formsection-header) > .fcontainer > div > .fitem.row {
+    margin: 0;
+    padding: 18px 0;
+    border-top: 1px solid var(--retani-form-row-line);
+}
+
+// Every field row (not the parts of grouped controls): label column (170-240px) and control column.
+.mform .fitem.row:not(.felement .fitem) {
+    @include media-breakpoint-up(md) {
+        display: grid;
+        grid-template-columns: minmax(170px, 240px) minmax(0, 1fr);
+        gap: 10px 32px;
+        margin-right: 0;
+        margin-left: 0;
+
+        > [class*="col-md-"] {
+            width: auto;
+            max-width: none;
+            padding-right: 0;
+            padding-left: 0;
+        }
+
+        // Labels line up with the middle of the first 36px control, and stay at the top of tall rows.
+        > .col-form-label {
+            align-self: start;
+            padding-top: 8px;
+        }
+    }
+}
+
+// Sections without a title (such as the first section of many modal forms) have no header bar.
+.retani-formsection-header:has(.retani-formsection-title:empty) {
+    display: none;
+}
+
+.retani-formsection-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px $retani-form-gutter;
+}
+
+.retani-formsection-heading {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+    color: var(--retani-form-ink);
+}
+
+.retani-formsection-count {
+    margin-left: auto;
+    font-family: $retani-admin-mono-family;
+    font-size: 0.6875rem;
+    color: var(--retani-form-muted);
+    white-space: nowrap;
+}
+
+.retani-formsection-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+    color: inherit;
+
+    // The whole header row toggles the section, as core's stretched link did.
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+    }
+
+    &:hover,
+    &:focus {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    &:focus-visible {
+        outline: 0;
+
+        .retani-formsection-title {
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+    }
+}
+
+.retani-formsection-chevron {
+    display: inline-flex;
+    transition: transform 0.15s ease;
+
+    .icon {
+        width: 12px;
+        height: 12px;
+        margin: 0;
+        font-size: 12px;
+        color: var(--retani-form-ink);
+    }
+}
+
+.retani-formsection-toggle:not(.collapsed) .retani-formsection-chevron {
+    transform: rotate(90deg);
+}
+
+.dir-rtl .retani-formsection-toggle:not(.collapsed) .retani-formsection-chevron {
+    transform: rotate(-90deg);
+}
+
+// The help button sits above the stretched toggle, so it stays clickable.
+.retani-formsection-header > :not(.retani-formsection-heading) {
+    position: relative;
+    z-index: 1;
+}
+
+// Expand all / Collapse all.
+.collapsible-actions.retani-formsections-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+}
+
+.retani-formsections-toggle {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    background-color: var(--retani-form-surface);
+    border: 1px solid var(--retani-form-line);
+    border-radius: $retani-admin-radius;
+    font-family: $retani-admin-font-family;
+    font-size: 0.75rem;
+    color: var(--retani-form-ink);
+    white-space: nowrap;
+
+    // core_form/collapsesections sets "collapsed" when the button should offer "Expand all".
+    .collapseall,
+    .expandall {
+        align-items: center;
+        gap: 6px;
+    }
+
+    &.collapsemenu .collapseall,
+    &.collapsemenu.collapsed .expandall {
+        display: inline-flex;
+    }
+
+    &.collapsemenu .expandall,
+    &.collapsemenu.collapsed .collapseall {
+        display: none;
+    }
+
+    .icon {
+        width: 12px;
+        height: 12px;
+        margin: 0;
+        font-size: 12px;
+        color: var(--retani-form-muted);
+    }
+
+    &:hover,
+    &:focus {
+        background-color: var(--retani-form-hover);
+        color: var(--retani-form-ink);
+        text-decoration: none;
+    }
+}
+
+// Form buttons: in the form, and in the sticky footer.
+.mform .fitem_actionbuttons,
+.mform [data-groupname="buttonar"],
+.stickyfooter {
+    .btn {
+        height: 40px;
+        padding: 0 1.25rem;
+        border-radius: 5px;
+        font-family: $retani-admin-font-family;
+        font-size: 0.9375rem;
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        --#{$prefix}btn-bg: var(--retani-form-ink);
+        --#{$prefix}btn-color: var(--retani-form-on-ink);
+        --#{$prefix}btn-border-color: var(--retani-form-ink);
+        --#{$prefix}btn-hover-bg: var(--retani-form-ink);
+        --#{$prefix}btn-hover-color: var(--retani-form-on-ink);
+        --#{$prefix}btn-hover-border-color: var(--retani-form-ink);
+        --#{$prefix}btn-active-bg: var(--retani-form-ink);
+        --#{$prefix}btn-active-color: var(--retani-form-on-ink);
+        --#{$prefix}btn-active-border-color: var(--retani-form-ink);
+
+        &:hover {
+            opacity: 0.88;
+        }
+    }
+
+    .btn-secondary {
+        --#{$prefix}btn-bg: var(--retani-form-surface);
+        --#{$prefix}btn-color: var(--retani-form-ink);
+        --#{$prefix}btn-border-color: var(--retani-form-line);
+        --#{$prefix}btn-hover-bg: var(--retani-form-surface);
+        --#{$prefix}btn-hover-color: var(--retani-form-ink);
+        --#{$prefix}btn-hover-border-color: var(--retani-form-ink);
+        --#{$prefix}btn-active-bg: var(--retani-form-surface);
+        --#{$prefix}btn-active-color: var(--retani-form-ink);
+        --#{$prefix}btn-active-border-color: var(--retani-form-ink);
+    }
+}
+
+.mform [data-groupname="buttonar"] .d-flex.flex-wrap {
+    gap: 0.75rem;
+
+    > .fitem {
+        margin-bottom: 0;
+    }
+}
+
+// The button row of a form: under the cards, buttons on the right.
+.mform > [data-groupname="buttonar"],
+.mform > .fitem_actionbuttons {
+    margin-top: 0.5rem;
+
+    > .col-form-label:empty,
+    > .col-md-3:empty {
+        display: none;
+    }
+
+    > .felement {
+        display: flex;
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+        flex: 1 1 auto;
+        max-width: none;
+    }
+}
+
+// Sticky footer: the same bar as the admin settings footer.
+.stickyfooter {
+    background-color: var(--retani-form-surface) !important; // stylelint-disable-line declaration-no-important
+    border-top: 1px solid var(--retani-form-line) !important; // stylelint-disable-line declaration-no-important
+    font-family: $retani-admin-font-family;
+
+    .sticky-footer-content .fitem {
+        margin-bottom: 0 !important; // stylelint-disable-line declaration-no-important
+    }
+
+    // Form buttons go on the right, as in the admin settings footer.
+    .sticky-footer-content > .fitem {
+        flex: 1 1 auto;
+    }
+
+    .sticky-footer-content .d-flex.flex-wrap {
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+}
+
+// The sticky footer is fixed, so it ignores the page padding that clears the left bar.
+@include media-breakpoint-up(lg) {
+    .has-retani-leftbar .stickyfooter {
+        left: var(--retani-leftbar-width);
+        transition: transform 0.5s, left $retani-leftbar-transition;
+    }
+
+    .dir-rtl.has-retani-leftbar .stickyfooter {
+        right: var(--retani-leftbar-width);
+        left: 0;
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .retani-formsection-header,
+    .mform fieldset:has(> .retani-formsection-header) > .fcontainer {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+}
+
+// Single buttons (core/single_button): the same dark button as "Save changes" in the admin settings footer.
+// Danger and link buttons keep their own look, so destructive actions still stand out.
+.singlebutton {
+    --retani-singlebutton-ink: #111111;
+    --retani-singlebutton-on-ink: #{$white};
+
+    @include dark-mode {
+        --retani-singlebutton-ink: var(--#{$prefix}body-color);
+        --retani-singlebutton-on-ink: var(--#{$prefix}body-bg);
+    }
+
+    .btn:not(.btn-danger):not(.btn-outline-danger):not(.btn-link) {
+        --#{$prefix}btn-bg: var(--retani-singlebutton-ink);
+        --#{$prefix}btn-color: var(--retani-singlebutton-on-ink);
+        --#{$prefix}btn-border-color: var(--retani-singlebutton-ink);
+        --#{$prefix}btn-hover-bg: var(--retani-singlebutton-ink);
+        --#{$prefix}btn-hover-color: var(--retani-singlebutton-on-ink);
+        --#{$prefix}btn-hover-border-color: var(--retani-singlebutton-ink);
+        --#{$prefix}btn-active-bg: var(--retani-singlebutton-ink);
+        --#{$prefix}btn-active-color: var(--retani-singlebutton-on-ink);
+        --#{$prefix}btn-active-border-color: var(--retani-singlebutton-ink);
+        --#{$prefix}btn-disabled-bg: var(--retani-singlebutton-ink);
+        --#{$prefix}btn-disabled-color: var(--retani-singlebutton-on-ink);
+        --#{$prefix}btn-disabled-border-color: var(--retani-singlebutton-ink);
+        display: inline-flex;
+        align-items: center;
+        height: 40px;
+        padding: 0 1.25rem;
+        border-radius: 5px;
+        font-family: $retani-admin-font-family;
+        font-size: 0.9375rem;
+        font-weight: 500;
+
+        &:hover {
+            opacity: 0.88;
+        }
+    }
+}
+
+// Button row right after the section card: the card's footer, kept in view while scrolling.
+.mform > fieldset:has(> .retani-formsection-header) + [data-groupname="buttonar"] {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin: -1px 0 1rem;
+    padding: 14px $retani-form-gutter;
+    background-color: var(--retani-form-surface);
+    border: 1px solid var(--retani-form-line);
+    border-radius: 0 0 8px 8px;
+}
+
+// Field labels and controls, in form sections and on the admin settings pages.
+.mform,
+.retani-settings {
+    .col-form-label label,
+    .col-form-label .fgrouplabel,
+    .col-form-label > span,
+    .col-form-label > p,
+    .form-label label {
+        font-size: 0.84375rem;
+        font-weight: 500;
+        line-height: 1.35;
+        color: var(--retani-form-ink);
+    }
+
+    // Label, "Required" tag and help button on one line.
+    .col-form-label {
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-label-addon {
+        gap: 8px;
+    }
+
+    // Keep the "Required" tag and help button right after the label (core pushes them to the column's end).
+    &:not(.full-width-labels) .col-form-label .form-label-addon {
+        margin-left: 0;
+    }
+
+    // Grouped controls (dates, durations…): 8px apart, without the per-part bottom margin.
+    .felement fieldset > .d-flex,
+    .felement > .d-flex.flex-wrap {
+        gap: 8px;
+    }
+
+    .felement .fitem {
+        margin-bottom: 0;
+    }
+
+    // Date picker button: a 36px square beside the date selects.
+    .felement button[name$="[calendar]"] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: $retani-form-control-height;
+        height: $retani-form-control-height;
+        padding: 0;
+        border: 1px solid var(--retani-form-line);
+        border-radius: $retani-form-control-radius;
+        color: var(--retani-form-muted);
+
+        &:hover,
+        &:focus {
+            border-color: var(--retani-form-ink);
+            color: var(--retani-form-ink);
+        }
+
+        .icon {
+            margin: 0;
+            color: inherit;
+        }
+    }
+
+    // Autocomplete: picked values as quiet chips.
+    .form-autocomplete-selection .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        background-color: var(--retani-form-canvas) !important; // stylelint-disable-line declaration-no-important
+        border: 1px solid var(--retani-form-line);
+        border-radius: 5px;
+        font-size: 0.78125rem;
+        font-weight: 500;
+        color: var(--retani-form-ink) !important; // stylelint-disable-line declaration-no-important
+
+        &:first-child {
+            margin-left: 0 !important; // stylelint-disable-line declaration-no-important
+        }
+
+        &[data-active-selection="true"] {
+            border-color: var(--retani-form-ink);
+            box-shadow: none;
+        }
+    }
+
+    // Inline check labels inside grouped controls ("Enable" beside a date, etc.).
+    .felement .form-check-label,
+    .felement .form-check > label,
+    .felement fieldset .form-check {
+        font-size: 0.84375rem;
+        color: var(--retani-form-ink);
+    }
+
+    .form-autocomplete-downarrow {
+        top: 50%;
+        right: 8px;
+        font-size: 0.625rem;
+        color: var(--retani-form-muted);
+        transform: translateY(-50%);
+    }
+
+    // Help: an 18px round "?" button. It turns ink while its popover is open.
+    .help-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        padding: 0;
+        background-color: var(--retani-form-surface);
+        border: 1px solid var(--retani-form-line);
+        border-radius: 50%;
+        color: var(--retani-form-ink);
+        text-decoration: none;
+
+        .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: auto;
+            height: auto;
+            margin: 0;
+            font-size: 0;
+            color: inherit;
+
+            &::before {
+                content: "?";
+                font-family: $retani-admin-font-family;
+                font-size: 10.5px;
+                font-weight: 600;
+                line-height: 1;
+            }
+        }
+
+        &:hover,
+        &[aria-describedby] {
+            background-color: var(--retani-form-ink);
+            border-color: var(--retani-form-ink);
+            color: var(--retani-form-on-ink);
+        }
+    }
+
+    // Text fields, selects and text areas.
+    .form-control,
+    .form-select,
+    .form-setting .form-control,
+    .form-setting .form-select {
+        min-height: $retani-form-control-height;
+        padding: 0 12px;
+        background-color: var(--retani-form-surface);
+        border: 1px solid var(--retani-form-line);
+        border-radius: $retani-form-control-radius;
+        box-shadow: none;
+        font-family: $retani-admin-font-family;
+        font-size: 0.84375rem;
+        color: var(--retani-form-ink);
+
+        &::placeholder {
+            color: var(--retani-form-muted);
+        }
+
+        &:focus {
+            border-color: var(--retani-form-ink);
+            box-shadow: none;
+        }
+
+        &:disabled,
+        &[readonly] {
+            background-color: var(--retani-form-canvas);
+        }
+    }
+
+    input.form-control {
+        height: $retani-form-control-height;
+    }
+
+    textarea.form-control {
+        padding: 10px 12px;
+        line-height: 1.6;
+    }
+
+    // Selects: the mockup's small triangle instead of the browser arrow.
+    .form-select,
+    select.form-control {
+        padding-right: 32px;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3e%3cpath d='M2 3.5h6L5 7z' fill='%236b6a64'/%3e%3c/svg%3e"); // stylelint-disable-line function-url-scheme-disallowed-list
+        background-position: right 12px center;
+        background-repeat: no-repeat;
+        background-size: 10px 10px;
+        cursor: pointer;
+        appearance: none;
+    }
+
+    select[multiple].form-control,
+    select[multiple].form-select,
+    select[size].form-select:not([size="1"]) {
+        padding: 6px 12px;
+        background-image: none;
+    }
+
+    // Checkboxes and radios in ink.
+    .form-check-input {
+        accent-color: var(--retani-form-ink);
+
+        &:checked {
+            background-color: var(--retani-form-ink);
+            border-color: var(--retani-form-ink);
+        }
+
+        &:focus {
+            border-color: var(--retani-form-ink);
+            box-shadow: 0 0 0 2px var(--retani-form-line);
+        }
+    }
+
+    // Descriptions under a control.
+    .form-text,
+    .form-description,
+    .felement .text-muted {
+        font-size: 0.78125rem;
+        line-height: 1.45;
+        color: var(--retani-form-muted);
+    }
+
+    // Errors: ink, with a round "!" icon, and an ink border on the control.
+    .has-danger .form-control,
+    .has-danger .form-select,
+    .form-control.is-invalid,
+    .form-select.is-invalid {
+        border-color: var(--retani-form-ink);
+        background-image: none;
+    }
+
+    .form-select.is-invalid,
+    .has-danger .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3e%3cpath d='M2 3.5h6L5 7z' fill='%236b6a64'/%3e%3c/svg%3e"); // stylelint-disable-line function-url-scheme-disallowed-list
+    }
+
+    .invalid-feedback {
+        align-items: center;
+        gap: 6px;
+        font-size: 0.78125rem;
+        font-weight: 500;
+        color: var(--retani-form-ink);
+
+        &[style*="block"] {
+            display: flex !important; // stylelint-disable-line declaration-no-important
+        }
+
+        &:not(:empty)::before {
+            content: "";
+            flex: none;
+            width: 14px;
+            height: 14px;
+            background-color: currentColor;
+            mask: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3e%3ccircle cx='12' cy='12' r='9'/%3e%3cpath d='M12 7v6M12 16.5h.01'/%3e%3c/svg%3e") center / contain no-repeat; // stylelint-disable-line function-url-scheme-disallowed-list
+        }
+    }
+
+    // Rich text editor frame.
+    .tox-tinymce {
+        border: 1px solid var(--retani-form-line);
+        border-radius: $retani-form-control-radius;
+    }
+}
+
+// "Required" tag beside a label (core_form/element-template override).
+.retani-field-required {
+    padding: 2px 6px;
+    border-radius: 4px;
+    background-color: var(--retani-form-canvas);
+    font-family: $retani-admin-mono-family;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--retani-form-muted);
+}
+
+// Single yes/no checkboxes (checkbox and advcheckbox rows) as switches, as in the mockup.
+.mform .fitem > .checkbox > .form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: $retani-form-control-height;
+    padding-left: 0;
+
+    > .form-check-input {
+        float: none;
+        flex: none;
+        width: 34px;
+        height: 20px;
+        margin: 0;
+        background-color: var(--retani-form-line);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3.5' fill='%23fff'/%3e%3c/svg%3e"); // stylelint-disable-line function-url-scheme-disallowed-list
+        background-position: left 3px center;
+        background-repeat: no-repeat;
+        background-size: 14px 14px;
+        border: 0;
+        border-radius: 10px;
+        cursor: pointer;
+        appearance: none;
+        transition: background-position 0.15s ease, background-color 0.15s ease;
+
+        &:checked {
+            background-color: var(--retani-form-lime);
+            background-position: right 3px center;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 1;
+
+            &:checked {
+                background-color: #b9b7ae;
+            }
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--retani-form-ink);
+            outline-offset: 2px;
+            box-shadow: none;
+        }
+    }
+
+    > label,
+    > span {
+        margin: 0;
+        font-size: 0.8125rem;
+        color: var(--retani-form-ink);
+    }
+}

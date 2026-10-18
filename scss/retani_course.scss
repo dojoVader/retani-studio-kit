@@ -1,0 +1,793 @@
+// Course page design, from mockup/Moodle Dashboard Implementation (6)/Retani Course Details.dc.html:
+// - the header (core/full_header): course hero card and the segmented tab bar for the secondary navigation;
+// - the course content (core_courseformat/local/content): sections as cards;
+// - the course outline in the left bar (theme_retani_studio/retani/course_outline).
+$retani-course-font-family: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif !default;
+$retani-course-radius: 8px !default;
+$retani-course-radius-sm: 6px !default;
+$retani-course-control-height: 28px !default;
+
+// Shared palette for the header and the content, swapped as a whole for dark mode.
+.retani-page-header,
+.retani-course-content {
+    --retani-course-canvas: #f4f3ef;
+    --retani-course-surface: #{$white};
+    --retani-course-hover: #fafaf8;
+    --retani-course-line: #dedcd5;
+    --retani-course-ink: #111111;
+    --retani-course-on-ink: #{$white};
+    --retani-course-muted: #6b6a64;
+    --retani-course-lime: #95bf47;
+
+    @include dark-mode {
+        --retani-course-canvas: var(--#{$prefix}tertiary-bg);
+        --retani-course-surface: var(--#{$prefix}body-bg);
+        --retani-course-hover: var(--#{$prefix}secondary-bg);
+        --retani-course-line: var(--#{$prefix}border-color);
+        --retani-course-ink: var(--#{$prefix}body-color);
+        --retani-course-on-ink: var(--#{$prefix}body-bg);
+        --retani-course-muted: var(--#{$prefix}secondary-color);
+    }
+
+    font-family: $retani-course-font-family;
+    -webkit-font-smoothing: antialiased;
+}
+
+// Header.
+.retani-page-header {
+    color: var(--retani-course-ink);
+
+    &.has-coursehero {
+        margin-bottom: 15px;
+    }
+}
+
+.retani-coursehero {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 20px;
+    background-color: var(--retani-course-surface);
+    border: 1px solid var(--retani-course-line);
+    border-radius: $retani-course-radius;
+}
+
+.retani-coursehero-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.retani-coursehero-tags {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.retani-coursehero-tag {
+    display: flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    background-color: var(--retani-course-canvas);
+    border: 1px solid var(--retani-course-line);
+    border-radius: 5px;
+    font-size: 0.6875rem;
+    white-space: nowrap;
+}
+
+.retani-coursehero-title {
+    margin: 0;
+    font-family: inherit;
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    text-wrap: pretty;
+    color: var(--retani-course-ink);
+}
+
+.retani-coursehero-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.75rem;
+    color: var(--retani-course-muted);
+}
+
+.retani-coursehero-contact {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--retani-course-ink);
+}
+
+.retani-coursehero-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: var(--retani-course-ink);
+    color: var(--retani-course-on-ink);
+    font-size: 0.5625rem;
+    font-weight: 600;
+}
+
+.retani-coursehero-others {
+    color: var(--retani-course-muted);
+}
+
+.retani-coursehero-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding-top: 14px;
+    border-top: 1px solid var(--retani-course-line);
+}
+
+.retani-coursehero-progress-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.75rem;
+
+    > :first-child {
+        font-weight: 500;
+    }
+}
+
+.retani-coursehero-progress-summary {
+    color: var(--retani-course-muted);
+}
+
+.retani-coursehero-progress-bar {
+    display: flex;
+    gap: 2px;
+    height: 8px;
+}
+
+.retani-coursehero-segment {
+    flex: 1;
+    border-radius: 2px;
+    background-color: var(--retani-course-line);
+    transition: background-color 0.2s ease;
+
+    &.is-filled {
+        background-color: var(--retani-course-lime);
+    }
+}
+
+// Tab bar: the secondary navigation as a segmented control, with the tab tools on the right.
+.retani-header-tabs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+
+    .retani-tabs.secondary-navigation {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding-bottom: 0;
+    }
+
+    .secondary-navigation .navigation,
+    .secondary-navigation .navigation.secondarynav-tabbar {
+        height: auto;
+        padding: 0;
+        background: transparent;
+        border: 0;
+    }
+
+    .more-nav {
+        display: inline-flex;
+        flex-wrap: nowrap;
+        gap: 2px;
+        max-width: 100%;
+        margin: 0;
+        padding: 2px;
+        background-color: var(--retani-course-surface);
+        border: 1px solid var(--retani-course-line);
+        border-radius: $retani-course-radius-sm;
+    }
+
+    // Beats `.secondary-navigation .navigation.secondarynav-tabbar .nav-item` (fixed to the old tab height).
+    .secondary-navigation .navigation.secondarynav-tabbar .nav-item,
+    .nav-item {
+        height: auto;
+    }
+
+    // React pills (core/nav/Nav) and the no-JS fallback links.
+    .mds-nav-pill,
+    .mds-nav-pill:visited,
+    .nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        height: $retani-course-control-height;
+        padding: 0 12px;
+        background-color: transparent;
+        border: 0;
+        border-radius: 5px;
+        font-family: inherit;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--retani-course-muted);
+        white-space: nowrap;
+
+        &:hover {
+            color: var(--retani-course-ink);
+            text-decoration: none;
+        }
+    }
+
+    .mds-nav-pill__indicator,
+    .mds-nav-pill.active::before {
+        display: none;
+    }
+
+    // Visited links: core's `.secondary-navigation .navigation.secondarynav-tabbar .mds-nav-pill--selected:visited`
+    // (and the design system's :visited rules) would otherwise paint their own fill over the segmented look.
+    // Note getComputedStyle() hides :visited styles, so this only shows on screen.
+    .secondary-navigation .navigation.secondarynav-tabbar .mds-nav-pill:visited {
+        background-color: transparent;
+        color: var(--retani-course-muted);
+    }
+
+    .secondary-navigation .navigation.secondarynav-tabbar .mds-nav-pill--selected:visited,
+    .secondary-navigation .navigation.secondarynav-tabbar .mds-nav-pill.active:visited {
+        background-color: var(--retani-course-ink);
+        color: var(--retani-course-on-ink);
+    }
+
+    .mds-nav-pill--selected,
+    .mds-nav-pill--selected:visited,
+    .secondarynav-tabbar .mds-nav-pill--selected:visited,
+    .secondarynav-tabbar .mds-nav-pill.active,
+    .mds-nav-pill.active,
+    .nav-link.active {
+        background-color: var(--retani-course-ink);
+        color: var(--retani-course-on-ink);
+
+        &:hover {
+            color: var(--retani-course-on-ink);
+        }
+    }
+}
+
+.retani-header-tabtools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+
+    &:empty {
+        display: none;
+    }
+}
+
+// Collapse all / Expand all, in the tab bar or (without a tab bar) above the sections.
+button.section-collapsemenu.retani-course-toggleall {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: $retani-course-control-height;
+    padding: 0 10px;
+    background-color: var(--retani-course-surface);
+    border: 1px solid var(--retani-course-line);
+    border-radius: $retani-course-radius-sm;
+    font-family: $retani-course-font-family;
+    font-size: 0.75rem;
+    color: var(--retani-course-ink);
+    white-space: nowrap;
+
+    .collapseall,
+    .expandall {
+        align-items: center;
+        gap: 6px;
+    }
+
+    .collapseall {
+        display: flex;
+    }
+
+    &.collapsed .collapseall {
+        display: none;
+    }
+
+    &.collapsed .expandall {
+        display: flex;
+    }
+
+    .icon {
+        margin: 0;
+        color: var(--retani-course-muted);
+    }
+
+    &:hover {
+        background-color: var(--retani-course-hover);
+
+        .collapsemenu-text {
+            text-decoration: none;
+        }
+    }
+}
+
+// Course content.
+.retani-course-content {
+    color: var(--retani-course-ink);
+
+    .retani-course-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 12px;
+    }
+
+    .retani-section-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+    }
+
+    // Top-level sections are cards; delegated sections (subsections) keep the lighter nested look.
+    .retani-section-list > .course-section {
+        margin: 0;
+        padding: 0;
+        background-color: var(--retani-course-surface);
+        border: 1px solid var(--retani-course-line);
+        border-radius: $retani-course-radius;
+
+        &.current {
+            border-color: var(--retani-course-ink);
+        }
+
+        > .section-item {
+            padding: 0;
+            border: 0;
+        }
+
+        > .section-item > .course-section-header {
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            border-radius: $retani-course-radius $retani-course-radius 0 0;
+
+            &:hover {
+                background-color: var(--retani-course-hover);
+            }
+        }
+
+        > .section-item > .content {
+            background-color: var(--retani-course-canvas);
+            border-top: 1px solid var(--retani-course-line);
+            border-radius: 0 0 $retani-course-radius $retani-course-radius;
+            padding: 12px;
+        }
+
+        // The general section has no header: let its content sit on the card.
+        > .section-item:not(:has(> .course-section-header .sectionname)) > .content {
+            border-top: 0;
+            border-radius: $retani-course-radius;
+        }
+    }
+
+    .sectionname {
+        margin: 0;
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+
+        a {
+            color: var(--retani-course-ink);
+            text-decoration: none;
+        }
+    }
+
+    // Chevron button in a bordered square, as in the mockup.
+    .course-section-header .icons-collapse-expand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        margin-right: 14px !important; // stylelint-disable-line declaration-no-important
+        padding: 0;
+        background-color: var(--retani-course-surface);
+        border: 1px solid var(--retani-course-ink);
+        border-radius: $retani-course-radius-sm;
+        color: var(--retani-course-ink);
+
+        &.collapsed {
+            border-color: var(--retani-course-line);
+        }
+
+        .expanded-icon,
+        .collapsed-icon {
+            padding: 0 !important; // stylelint-disable-line declaration-no-important
+        }
+    }
+
+    .summarytext {
+        font-size: 0.75rem;
+        color: var(--retani-course-muted);
+        text-wrap: pretty;
+    }
+
+    // Activities: white rows on the section canvas.
+    .section {
+        > .activity,
+        .activity {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+    }
+
+    // The activity list carries .d-block, so space the rows with margins rather than a flex gap.
+    ul.section {
+        margin: 0;
+        padding: 0;
+
+        > .activity + .activity {
+            margin-top: 8px;
+        }
+    }
+
+    .activity-item {
+        padding: 12px 12px 12px 14px;
+        background-color: var(--retani-course-surface);
+        border: 1px solid var(--retani-course-line);
+        border-radius: $retani-course-radius-sm;
+
+        &:not(.activityinline) {
+            border: 1px solid var(--retani-course-line);
+        }
+
+        &.highlight,
+        &:focus-within {
+            border-color: var(--retani-course-ink);
+        }
+    }
+
+    .activity-icon.activityiconcontainer {
+        border-radius: $retani-course-radius-sm;
+    }
+
+    .activityname,
+    .activityname .aalink {
+        font-size: 0.84375rem;
+        font-weight: 500;
+        color: var(--retani-course-ink);
+        text-decoration: none;
+    }
+
+    .activitytitle .text-uppercase,
+    .activitytitle .activityiconcontainer + div .text-uppercase {
+        font-size: 0.65625rem;
+        letter-spacing: 0.04em;
+        color: var(--retani-course-muted);
+    }
+
+    // Manual completion: "Mark as done" outlined, "Done" filled ink.
+    [data-action="toggle-manual-completion"].btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 30px;
+        padding: 0 10px;
+        border-radius: $retani-course-radius-sm;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background-color: var(--retani-course-surface);
+        border: 1px solid var(--retani-course-line);
+        color: var(--retani-course-ink);
+
+        &.btn-success,
+        &[data-toggletype="manual:undo"] {
+            background-color: var(--retani-course-ink);
+            border-color: var(--retani-course-ink);
+            color: var(--retani-course-on-ink);
+
+            .icon {
+                color: var(--retani-course-lime);
+            }
+        }
+    }
+}
+
+// The "done / total" chip drawn on each section header by theme_retani_studio/courseprogress.
+.retani-section-progress {
+    display: flex;
+    align-items: center;
+    flex: none;
+    gap: 5px;
+    height: 24px;
+    margin-left: auto;
+    padding: 0 8px;
+    background-color: var(--retani-course-canvas);
+    border-radius: 5px;
+    font-size: 0.6875rem;
+    color: var(--retani-course-ink);
+    white-space: nowrap;
+
+    + * {
+        margin-left: 0 !important; // stylelint-disable-line declaration-no-important
+    }
+}
+
+.retani-section-progress-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--retani-course-line);
+
+    .is-started > & {
+        background-color: var(--retani-course-ink);
+    }
+
+    .is-complete > & {
+        background-color: var(--retani-course-lime);
+    }
+}
+
+// Course outline in the left bar.
+.retani-leftbar-course {
+    flex: none;
+    padding: 10px;
+    border-bottom: 1px solid var(--retani-leftbar-divider);
+}
+
+.retani-leftbar-coursetoggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 42px;
+    padding: 6px 6px 6px 10px;
+    text-align: start;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--retani-leftbar-hover);
+    }
+
+    &.is-open {
+        background-color: var(--retani-leftbar-surface);
+        border-color: var(--retani-leftbar-control-border);
+    }
+
+    .is-collapsed & {
+        justify-content: center;
+        padding: 6px 0;
+    }
+}
+
+.retani-leftbar-coursetext {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 1px;
+    min-width: 0;
+    line-height: 1.3;
+}
+
+.retani-leftbar-coursecaption {
+    font-size: 0.625rem;
+    color: var(--retani-leftbar-text-muted);
+}
+
+.retani-leftbar-coursename {
+    overflow: hidden;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.retani-leftbar-coursetile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 26px;
+    height: 26px;
+    background-color: var(--retani-leftbar-tile-bg);
+    border: 1px solid var(--retani-leftbar-tile-border);
+    border-radius: 5px;
+    color: var(--retani-leftbar-icon);
+
+    .is-open > & {
+        background-color: var(--retani-leftbar-tile-active-bg);
+        border-color: var(--retani-leftbar-tile-active-bg);
+        color: var(--retani-leftbar-tile-active-icon);
+    }
+}
+
+.retani-leftbar-nav[hidden],
+.retani-leftbar-outline[hidden] {
+    display: none;
+}
+
+.retani-leftbar-outline {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 12px 10px 14px;
+}
+
+.retani-courseoutline-head {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    height: 28px;
+    margin-bottom: 4px;
+    padding: 0 4px 0 8px;
+
+    .retani-leftbar & {
+        display: flex;
+    }
+}
+
+.retani-courseoutline-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 0.65625rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--retani-leftbar-text-muted);
+}
+
+.retani-courseoutline-toggleall {
+    @include collapsemenu-toggle;
+    flex: none;
+    white-space: nowrap;
+    padding: 2px 4px;
+    background: none;
+    border: 0;
+    font-size: 0.71875rem;
+    color: var(--retani-leftbar-link);
+    text-decoration: underline;
+    text-decoration-color: $retani-leftbar-lime;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+// Moodle's course index, restyled to the outline of the mockup while it sits in the bar.
+.retani-leftbar .courseindex {
+    font-size: $retani-leftbar-font-size;
+
+    .courseindex-section {
+        margin-bottom: 2px;
+        border-left: 0;
+
+        &.current {
+            border-left: 0;
+        }
+    }
+
+    .courseindex-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 32px;
+        padding: 0 8px 0 6px;
+        border: 1px solid transparent;
+        border-radius: 6px;
+
+        &:hover {
+            background-color: var(--retani-leftbar-hover);
+        }
+
+        &.pageitem {
+            background-color: var(--retani-leftbar-surface);
+            border-color: var(--retani-leftbar-control-border);
+            color: var(--retani-leftbar-text);
+
+            a {
+                color: var(--retani-leftbar-text);
+            }
+        }
+    }
+
+    .courseindex-link,
+    .courseindex-chevron {
+        color: var(--retani-leftbar-text);
+        font-size: inherit;
+    }
+
+    .courseindex-section-title .courseindex-link {
+        font-weight: 500;
+    }
+
+    .courseindex-chevron {
+        width: auto;
+        padding: 0;
+    }
+
+    .current-badge {
+        display: none;
+    }
+
+    .courseindex-sectioncontent {
+        margin: 2px 0 6px 12px;
+        padding-left: 9px;
+        border-left: 1px solid var(--retani-leftbar-control-border);
+
+        .courseindex-item {
+            min-height: 28px;
+            padding: 0 8px;
+            font-size: 0.75rem;
+
+            .courseindex-link {
+                color: var(--retani-leftbar-text-secondary);
+                font-weight: 400;
+            }
+
+            &.pageitem .courseindex-link {
+                color: var(--retani-leftbar-text);
+                font-weight: 500;
+            }
+        }
+    }
+
+    // The completion icon comes first in the markup; show it after the name, at the end of the row.
+    .completioninfo {
+        order: 2;
+        margin-left: auto;
+    }
+
+    .courseindex-locked {
+        order: 1;
+    }
+}
+
+// The bar is on screen from lg up: the course index lives in it there, so its drawer and toggle are not used.
+@include media-breakpoint-up(lg) {
+    .has-retani-leftbar.has-retani-courseoutline {
+        #theme_retani_studio-drawers-courseindex,
+        .drawer-toggles .drawer-left-toggle {
+            display: none !important; // stylelint-disable-line declaration-no-important
+        }
+    }
+}
+
+.dir-rtl {
+    .retani-header-tabtools {
+        margin-right: auto;
+        margin-left: 0;
+    }
+
+    .retani-section-progress {
+        margin-right: auto;
+        margin-left: 0;
+    }
+
+    .retani-leftbar .courseindex .courseindex-sectioncontent {
+        margin: 2px 12px 6px 0;
+        padding-right: 9px;
+        padding-left: 0;
+        border-right: 1px solid var(--retani-leftbar-control-border);
+        border-left: 0;
+    }
+}

@@ -1,0 +1,163 @@
+// Alerts, styled after mockup/alert.png: a flat, pale surface with a hairline border.
+// Every .alert gets the Retani surface; notifications rendered by templates/core/notification_base.mustache
+// also carry .retani-alert and get the single-row layout (icon, title + message, action link, close).
+$retani-alert-font-family: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif !default;
+$retani-alert-radius: 5px !default;
+
+.alert {
+    --retani-alert-bg: #f1f1ec;
+    --retani-alert-line: #dedcd5;
+    --retani-alert-text: #3a3a36;
+    --retani-alert-strong: #111111;
+    --retani-alert-accent: #111111;
+
+    @include dark-mode {
+        --retani-alert-bg: var(--#{$prefix}tertiary-bg);
+        --retani-alert-line: var(--#{$prefix}border-color);
+        --retani-alert-text: var(--#{$prefix}body-color);
+        --retani-alert-strong: var(--#{$prefix}emphasis-color);
+        --retani-alert-accent: var(--#{$prefix}emphasis-color);
+    }
+
+    // Feed Bootstrap's own alert variables, so its rules pick up the Retani palette.
+    --#{$prefix}alert-bg: var(--retani-alert-bg);
+    --#{$prefix}alert-color: var(--retani-alert-text);
+    --#{$prefix}alert-border-color: var(--retani-alert-line);
+    --#{$prefix}alert-link-color: var(--retani-alert-strong);
+    --#{$prefix}alert-border-radius: #{$retani-alert-radius};
+    --#{$prefix}alert-padding-x: 1rem;
+    --#{$prefix}alert-padding-y: 0.75rem;
+
+    border-left-color: var(--retani-alert-line);
+    font-family: $retani-alert-font-family;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+
+    .alert-heading,
+    strong,
+    b {
+        color: var(--retani-alert-strong);
+    }
+
+    // Links read as quiet underlined text, not bold coloured links.
+    a,
+    .alert-link {
+        color: var(--retani-alert-strong);
+        font-weight: 400;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+
+        &:hover,
+        &:focus {
+            color: var(--retani-alert-strong);
+            text-decoration-thickness: 2px;
+        }
+    }
+
+    .btn-close {
+        color: var(--retani-alert-strong);
+        opacity: 0.8;
+
+        &:hover,
+        &:focus {
+            opacity: 1;
+        }
+    }
+
+    // Status alerts keep the neutral surface; the border and icon carry the status colour.
+    &.alert-danger {
+        --retani-alert-line: #{rgba($danger, 0.45)};
+        --retani-alert-accent: #{$danger};
+    }
+
+    &.alert-warning {
+        --retani-alert-line: #{rgba($warning, 0.6)};
+        --retani-alert-accent: #{shade-color($warning, 40%)};
+    }
+
+    &.alert-success {
+        --retani-alert-line: #{rgba($success, 0.45)};
+        --retani-alert-accent: #{$success};
+    }
+}
+
+// Single-row notification layout.
+.alert.retani-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    &.alert-dismissible {
+        padding-right: var(--#{$prefix}alert-padding-x);
+    }
+
+    .retani-alert-icon {
+        display: inline-flex;
+        flex-shrink: 0;
+        color: var(--retani-alert-accent);
+
+        .icon {
+            width: 14px;
+            height: 14px;
+            margin: 0;
+            font-size: 14px;
+        }
+    }
+
+    // Title and message flow as one line of text: "Title - message".
+    .retani-alert-body {
+        flex: 1 1 auto;
+        min-width: 0;
+
+        > p,
+        > div {
+            display: inline;
+            margin: 0;
+        }
+    }
+
+    .retani-alert-title {
+        display: inline;
+        margin: 0;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: 600;
+        line-height: inherit;
+        color: var(--retani-alert-strong);
+    }
+
+    .retani-alert-separator {
+        margin: 0 0.15rem;
+    }
+
+    .retani-alert-action {
+        flex-shrink: 0;
+        margin-left: 1.5rem;
+        white-space: nowrap;
+    }
+
+    .btn-close {
+        position: static;
+        flex-shrink: 0;
+        width: 0.75rem;
+        height: 0.75rem;
+        padding: 0.25rem;
+        margin-left: 0.5rem;
+        background-size: 0.75rem;
+    }
+
+    @include media-breakpoint-down(sm) {
+        align-items: flex-start;
+        flex-wrap: wrap;
+
+        .retani-alert-body {
+            flex-basis: calc(100% - 4rem);
+        }
+
+        .retani-alert-action {
+            order: 3;
+            margin-left: calc(14px + 0.75rem);
+        }
+    }
+}

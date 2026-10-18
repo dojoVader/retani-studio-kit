@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_retani_studio/retani/course_outline
+
+    The course index with a "Course outline" heading and an expand/collapse all toggle.
+
+    It is rendered inside the course index drawer. On wide screens the LeftBar component moves this whole
+    element into the left bar, under the "Current course" row, and moves it back into the drawer when the
+    screen gets too narrow for the bar. The heading is only shown while it is in the bar.
+
+    Context variables required for this template:
+    * courseindex - HTML of the course index (core_course_drawer()).
+
+    Example context (json):
+    {
+        "courseindex": "<nav id=\"courseindex\"></nav>"
+    }
+}}
+<div class="retani-courseoutline" data-region="retani-courseoutline">
+    <div class="retani-courseoutline-head" id="retani-courseoutline-controls">
+        <span class="retani-courseoutline-title">{{#str}}leftbar:courseoutline, theme_retani_studio{{/str}}</span>
+        <button type="button"
+                class="retani-courseoutline-toggleall"
+                aria-expanded="true"
+                data-action="toggleallcourseindexsections">
+            <span class="collapseall text-nowrap">{{#str}}collapseall{{/str}}</span>
+            <span class="expandall text-nowrap">{{#str}}expandall{{/str}}</span>
+        </button>
+    </div>
+    {{{courseindex}}}
+</div>
+{{#js}}
+require(['theme_retani_studio/courseindexdrawercontrols'], function(component) {
+    component.init('retani-courseoutline-controls');
+});
+{{/js}}

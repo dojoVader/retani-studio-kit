@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_retani_studio/retani/block_sidebar
+
+    The right-hand block bar, in place of the Boost block drawer.
+
+    The bar is the theme_retani_studio/blocksidebar/BlockSidebar React component. The blocks are rendered by
+    Moodle in the "retani-blocksidebar-blocks" region below it, and the component moves them into its body, so
+    each block keeps its own markup and JavaScript. Without JavaScript the blocks simply show in the bar.
+
+    Context variables required for this template:
+    * reactprops - JSON props for the BlockSidebar component, from theme_retani_studio\output\block_sidebar.
+    * open - Whether the bar starts open.
+    * blocks - The rendered side-pre blocks.
+    * strings - The bar's strings.
+
+    Example context (json):
+    {
+        "reactprops": "{}",
+        "open": true,
+        "blocks": "<section class=\"block card\">Block</section>",
+        "strings": {"blocks": "Blocks"}
+    }
+}}
+<aside id="retani-blocksidebar" class="retani-blocksidebar d-print-none{{#open}} is-open{{/open}}" aria-label="{{strings.blocks}}">
+    {{#react}}
+    {
+        "component": "@moodle/lms/theme_retani_studio/blocksidebar/BlockSidebar",
+        "class": "retani-blocksidebar-mount",
+        "props": {{{reactprops}}}
+    }
+    <div class="retani-blocksidebar-panel">
+        <div class="retani-blocksidebar-header">
+            <h2 class="retani-blocksidebar-title">{{strings.blocks}}</h2>
+        </div>
+    </div>
+    {{/react}}
+    <div class="retani-blocksidebar-blocks" data-region="retani-blocksidebar-blocks">
+        {{{blocks}}}
+    </div>
+</aside>

@@ -1,0 +1,215 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/settings_link_page
+
+    Displays the admin tree as a list of grouped links.
+
+    On the site administration index (admin/search.php) the theme renderer adds "tabs", and each tab pane
+    is drawn as a card of groups, as in mockup/general.png: the group title and page count on the left,
+    its pages in a grid on the right. Settings forms get a dot and a chevron, other admin tools an arrow.
+    The pane ids match the secondary navigation tabs (#link<key>), which switch between them.
+    Without "tabs" (other callers) the core markup is kept.
+
+    Context variables (on top of the core ones):
+    * tabs - List of {key, title, description, active, groups: [{title, url, count, countlabel,
+      links: [{text, url, issettings}]}]}
+
+    Example context (json):
+    {
+        "node": {
+            "text": "Root of menu",
+            "key": "test0",
+            "display": true,
+            "children": []
+        },
+        "hastabs": true,
+        "tabs": [
+            {
+                "key": "root",
+                "title": "General",
+                "description": "Site-wide notifications, features and shared tools.",
+                "active": true,
+                "groups": [
+                    {
+                        "title": "General",
+                        "url": null,
+                        "count": 2,
+                        "countlabel": "2 pages",
+                        "links": [
+                            {"text": "Notifications", "url": "#", "issettings": false},
+                            {"text": "Advanced features", "url": "#", "issettings": true}
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}}
+{{#hastabs}}
+<div class="tab-content retani-adminindex" data-region="retani-adminindex">
+    {{#tabs}}
+        <div class="tab-pane{{#active}} active{{/active}}" id="link{{key}}"
+             data-title="{{title}}" data-description="{{description}}">
+            <div class="retani-adminindex-card">
+                {{#groups}}
+                    <section class="retani-adminindex-group">
+                        <div class="retani-adminindex-grouphead">
+                            <h2 class="retani-adminindex-grouptitle">
+                                {{#url}}<a href="{{url}}">{{title}}</a>{{/url}}
+                                {{^url}}{{title}}{{/url}}
+                            </h2>
+                            <span class="retani-adminindex-count">{{countlabel}}</span>
+                        </div>
+                        <ul class="retani-adminindex-links">
+                            {{#links}}
+                                <li>
+                                    <a class="retani-adminindex-link{{#issettings}} is-settings{{/issettings}}" href="{{url}}">
+                                        <span class="retani-adminindex-linktext">{{text}}</span>
+                                        {{#issettings}}
+                                            <svg class="retani-adminindex-linkicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        {{/issettings}}
+                                        {{^issettings}}
+                                            <svg class="retani-adminindex-linkicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><path d="M5.5 10.5 10.5 5.5M6.5 5.5h4v4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        {{/issettings}}
+                                    </a>
+                                </li>
+                            {{/links}}
+                        </ul>
+                    </section>
+                {{/groups}}
+            </div>
+        </div>
+    {{/tabs}}
+</div>
+{{#js}}
+    require(['theme_retani_studio/adminindex'], function(AdminIndex) {
+        AdminIndex.init();
+    });
+{{/js}}
+{{/hastabs}}
+{{^hastabs}}
+{{^secondarynavigation}}
+    <ul class="nav nav-tabs" role="tablist">
+        <!-- First the top most node and immediate children -->
+        <li class="nav-item">
+            <a class="nav-link active" href="#link{{node.key}}" data-bs-toggle="tab" role="tab" aria-selected="true">{{node.text}}</a>
+        </li>
+        <!-- Now the first level children with sub nodes -->
+        {{#node.children}}
+            {{#children.count}}
+                {{#display}}
+                    {{^is_short_branch}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#link{{key}}" data-bs-toggle="tab" role="tab" aria-selected="false" tabindex="-1">{{text}}</a>
+                        </li>
+                    {{/is_short_branch}}
+                {{/display}}
+            {{/children.count}}
+        {{/node.children}}
+    </ul>
+{{/secondarynavigation}}
+<div class="tab-content mt-3">
+    <div class="tab-pane active" id="link{{node.key}}" {{^secondarynavigation}}role="tabpanel"{{/secondarynavigation}}>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3">
+                </div>
+                <div class="col">
+                    <ul class="list-unstyled">
+                        {{#node.children}}
+                            {{^children.count}}
+                                {{#display}}
+                                    <li><a href="{{{action}}}">{{text}}</a></li>
+                                {{/display}}
+                            {{/children.count}}
+                        {{/node.children}}
+                    </ul>
+                </div>
+            </div>
+
+            {{#node.children}}
+                {{#display}}
+                    {{#children.count}}
+                        {{#is_short_branch}}
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    {{#action}}<h4><a href="{{action}}">{{text}}</a></h4>{{/action}}
+                                    {{^action}}<h4>{{text}}</h4>{{/action}}
+                                </div>
+                                <div class="col">
+                                    <ul class="list-unstyled">
+                                        {{#children}}
+                                            {{> core/settings_link_page_single }}
+                                        {{/children}}
+                                    </ul>
+                                </div>
+                            </div>
+                        {{/is_short_branch}}
+                    {{/children.count}}
+                {{/display}}
+            {{/node.children}}
+        </div>
+    </div>
+    {{#node.children}}
+        {{#children.count}}
+            <div class="tab-pane" id="link{{key}}" {{^secondarynavigation}}role="tabpanel"{{/secondarynavigation}}>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            {{#action}}<h4><a href="{{action}}">{{text}}</a></h4>{{/action}}
+                            {{^action}}<h4>{{text}}</h4>{{/action}}
+                        </div>
+                        <div class="col-sm-9">
+                            <ul class="list-unstyled">
+                                {{#children}}
+                                    {{#display}}
+                                        {{^children.count}}
+                                            <li><a href="{{{action}}}">{{text}}</a></li>
+                                        {{/children.count}}
+                                    {{/display}}
+                                {{/children}}
+                            </ul>
+                        </div>
+                    </div>
+                    {{#children}}
+                        {{#display}}
+                            {{#children.count}}
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        {{#action}}<h4><a href="{{action}}">{{text}}</a></h4>{{/action}}
+                                        {{^action}}<h4>{{text}}</h4>{{/action}}
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <ul class="list-unstyled">
+                                            {{#children}}
+                                                {{> core/settings_link_page_single }}
+                                            {{/children}}
+                                        </ul>
+                                    </div>
+                                </div>
+                            {{/children.count}}
+                        {{/display}}
+                    {{/children}}
+                </div>
+            </div>
+        {{/children.count}}
+    {{/node.children}}
+</div>
+{{/hastabs}}
