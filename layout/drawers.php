@@ -60,10 +60,18 @@ if (!$courseindex) {
 // Retractable left bar, for users who are signed in to an account of their own.
 $leftbar = false;
 if (isloggedin() && !isguestuser()) {
-    $leftbar = (new \theme_retani_studio\output\left_bar($PAGE))->export_for_template($OUTPUT);
+    $hascourseoutline = !empty($courseindex);
+    $leftbar = (new \theme_retani_studio\output\left_bar($PAGE, $hascourseoutline))->export_for_template($OUTPUT);
     $extraclasses[] = 'has-retani-leftbar';
     if ($leftbar['collapsed']) {
         $extraclasses[] = 'retani-leftbar-collapsed';
+    }
+    if ($hascourseoutline) {
+        // On wide screens the course index lives in the left bar's course outline (the LeftBar component moves it
+        // there), so its drawer never opens; on small screens, where the bar is hidden, the drawer is used as usual.
+        $extraclasses[] = 'has-retani-courseoutline';
+        $courseindexopen = false;
+        $extraclasses = array_diff($extraclasses, ['drawer-open-index']);
     }
 }
 
@@ -71,12 +79,9 @@ if (isloggedin() && !isguestuser()) {
 $bodyattributes = $OUTPUT->body_attributes($extraclasses);
 $forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 
-$secondarynavigation = false;
 $overflow = '';
 if ($PAGE->has_secondary_navigation()) {
-    $tablistnav = $PAGE->has_tablist_secondary_navigation();
-    $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);
-    $secondarynavigation = $moremenu->export_for_template($OUTPUT);
+    // The secondary navigation itself is drawn by core_renderer::full_header() as the header tab bar.
     $overflowdata = $PAGE->secondarynav->get_overflow_menu_data();
     if (!is_null($overflowdata)) {
         $selectmenu = new \core\output\select_menu(
@@ -118,7 +123,6 @@ $templatecontext = [
     'blockdraweropen' => $blockdraweropen,
     'courseindex' => $courseindex,
     'primarymoremenu' => $primarymenu['moremenu'],
-    'secondarymoremenu' => $secondarynavigation ?: false,
     'mobileprimarynav' => $primarymenu['mobileprimarynav'],
     'usermenu' => $primarymenu['user'],
     'langmenu' => $primarymenu['lang'],

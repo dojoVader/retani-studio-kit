@@ -48,6 +48,9 @@ class provider implements
     /** The user preference for the light or dark colour mode. */
     public const COLOUR_MODE = colour_mode::PREFERENCE;
 
+    /** The user preference for showing the course outline in the left bar. */
+    public const LEFTBAR_OUTLINE = \theme_retani_studio\output\left_bar::OUTLINE_PREFERENCE;
+
     /**
      * Returns meta data about this system.
      *
@@ -58,6 +61,7 @@ class provider implements
         $items->add_user_preference(self::DRAWER_OPEN_INDEX, 'privacy:metadata:preference:draweropenindex');
         $items->add_user_preference(self::DRAWER_OPEN_BLOCK, 'privacy:metadata:preference:draweropenblock');
         $items->add_user_preference(self::COLOUR_MODE, 'privacy:metadata:preference:colourmode');
+        $items->add_user_preference(self::LEFTBAR_OUTLINE, 'privacy:metadata:preference:leftbaroutline');
         return $items;
     }
 
@@ -106,6 +110,17 @@ class provider implements
                 self::COLOUR_MODE,
                 $colourmodepref,
                 get_string('privacy:colourmode:' . $colourmodepref, 'theme_retani_studio')
+            );
+        }
+
+        $outlinepref = get_user_preferences(self::LEFTBAR_OUTLINE, null, $userid);
+
+        if (isset($outlinepref)) {
+            writer::export_user_preference(
+                'theme_retani_studio',
+                self::LEFTBAR_OUTLINE,
+                $outlinepref,
+                get_string($outlinepref ? 'privacy:leftbaroutlineopen' : 'privacy:leftbaroutlineclosed', 'theme_retani_studio')
             );
         }
     }

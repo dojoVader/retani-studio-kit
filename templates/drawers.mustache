@@ -29,6 +29,8 @@
     * regionmainsettingsmenu - HTML for the region main settings menu
     * hasregionmainsettingsmenu - There is a region main settings menu on this page.
     * leftbar - Context for theme_retani_studio/retani/left_bar, or false when the bar is not shown.
+      When leftbar.hascourseoutline is set, the course index is wrapped in theme_retani_studio/retani/course_outline,
+      which the LeftBar component moves into the bar on wide screens.
 
     Example context (json):
     {
@@ -69,7 +71,12 @@
             {{$drawercontrols}}{{> theme_retani_studio/courseindexdrawercontrols}}{{/drawercontrols}}
             {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
             {{$drawercontent}}
-                {{{courseindex}}}
+                {{#leftbar.hascourseoutline}}
+                    {{> theme_retani_studio/retani/course_outline }}
+                {{/leftbar.hascourseoutline}}
+                {{^leftbar.hascourseoutline}}
+                    {{{courseindex}}}
+                {{/leftbar.hascourseoutline}}
             {{/drawercontent}}
             {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
             {{$drawerstate}}show-drawer-left{{/drawerstate}}
@@ -142,11 +149,6 @@
                 {{/hasblocks}}
             </div>
             {{{ output.full_header }}}
-            {{#secondarymoremenu}}
-                <div class="secondary-navigation d-print-none">
-                    {{> core/secondarymoremenu}}
-                </div>
-            {{/secondarymoremenu}}
             <div id="page-content" class="pb-3 d-print-block">
                 <div id="region-main-box">
                     {{#hasregionmainsettingsmenu}}

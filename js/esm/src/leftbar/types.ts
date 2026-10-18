@@ -23,7 +23,7 @@
 /** Names of the icons the bar knows how to draw (see ./icons). */
 export type IconName =
     | 'dashboard' | 'calendar' | 'courses' | 'management' | 'users' | 'grades' | 'reports'
-    | 'badges' | 'competencies' | 'admin' | 'help' | 'sidebar';
+    | 'badges' | 'competencies' | 'admin' | 'help' | 'sidebar' | 'outline';
 
 export interface Brand {
     name: string;
@@ -45,6 +45,17 @@ export interface CategoryData {
     selected: number | null;
     manageurl: string | null;
     managelabel: string | null;
+}
+
+/** The course of the current page, whose index the bar can show as the course outline. */
+export interface CurrentCourse {
+    id: number;
+    name: string;
+    url: string;
+    /** Whether the outline is shown (instead of the navigation menu) when the page loads. */
+    outlineopen: boolean;
+    /** Name of the user preference that stores whether the outline is shown. */
+    preference: string;
 }
 
 export interface NavChild {
@@ -92,6 +103,8 @@ export interface LeftBarStrings {
     /** Course count label with {$a} for the number. */
     coursecount: string;
     usermenu: string;
+    currentcourse: string;
+    courseoutline: string;
 }
 
 export interface LeftBarProps {
@@ -100,6 +113,8 @@ export interface LeftBarProps {
     preference: string;
     brand: Brand;
     categories: CategoryData;
+    /** Null on pages that do not belong to a course with a course index. */
+    course: CurrentCourse | null;
     navigation: NavItem[];
     footernavigation: NavItem[];
     user: User;

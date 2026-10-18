@@ -39,6 +39,9 @@ class left_bar implements renderable, templatable {
     /** @var string User preference holding whether the bar is collapsed. */
     public const PREFERENCE = 'theme_retani_studio_leftbar_collapsed';
 
+    /** @var string User preference holding whether the course outline is shown in place of the navigation menu. */
+    public const OUTLINE_PREFERENCE = 'theme_retani_studio_leftbar_outline';
+
     /** @var int Maximum number of enrolled courses listed under "My courses". */
     protected const MAX_COURSES = 6;
 
@@ -49,10 +52,13 @@ class left_bar implements renderable, templatable {
      * Constructor.
      *
      * @param moodle_page $page The page the bar is rendered on.
+     * @param bool $hascourseoutline Whether the page has a course index the bar can show as the course outline.
      */
     public function __construct(
         /** @var moodle_page The page the bar is rendered on. */
         protected moodle_page $page,
+        /** @var bool Whether the page has a course index the bar can show as the course outline. */
+        protected bool $hascourseoutline = false,
     ) {
     }
 
@@ -88,6 +94,7 @@ class left_bar implements renderable, templatable {
                 'logourl' => $logourl ? (new url($logourl))->out(false) : null,
             ],
             'categories' => $this->get_categories(),
+            'course' => $this->get_course(),
             'navigation' => $navigation,
             'footernavigation' => $footer,
             'user' => $this->get_user($output),
@@ -99,6 +106,8 @@ class left_bar implements renderable, templatable {
                 'categories' => get_string('categories'),
                 'coursecount' => get_string('leftbar:coursecount', 'theme_retani_studio'),
                 'usermenu' => get_string('usermenu'),
+                'currentcourse' => get_string('leftbar:currentcourse', 'theme_retani_studio'),
+                'courseoutline' => get_string('leftbar:courseoutline', 'theme_retani_studio'),
             ],
         ];
 
@@ -106,6 +115,7 @@ class left_bar implements renderable, templatable {
             'reactprops' => json_encode($props, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             'collapsed' => $props['collapsed'],
             'brand' => $props['brand'],
+            'hascourseoutline' => $props['course'] !== null,
             // Flattened links for the static fallback rendered before (or without) JavaScript.
             'fallbacklinks' => array_map(
                 fn(array $item): array => ['label' => $item['label'], 'url' => $item['url'], 'active' => $item['active']],
@@ -152,6 +162,25 @@ class left_bar implements renderable, templatable {
             'selected' => $current ?? ($items[0]['id'] ?? null),
             'manageurl' => $canmanage ? (new url('/course/management.php'))->out(false) : null,
             'managelabel' => $canmanage ? get_string('coursemgmt', 'admin') : null,
+        ];
+    }
+
+    /**
+     * The course the page belongs to, shown under the category selector as the toggle for the course outline.
+     *
+     * @return array|null Null when the page has no course index to show.
+     */
+    protected function get_course(): ?array {
+        $course = $this->page->course;
+        if (!$this->hascourseoutline || !$course || $course->id == SITEID) {
+            return null;
+        }
+        return [
+            'id' => (int) $course->id,
+            'name' => format_string($course->fullname, true, ['context' => \core\context\course::instance($course->id)]),
+            'url' => (new url('/course/view.php', ['id' => $course->id]))->out(false),
+            'outlineopen' => (bool) get_user_preferences(self::OUTLINE_PREFERENCE, true),
+            'preference' => self::OUTLINE_PREFERENCE,
         ];
     }
 

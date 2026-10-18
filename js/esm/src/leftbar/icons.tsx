@@ -36,6 +36,7 @@ const PATHS: Record<IconName, string> = {
         + 'M4.9 19.1L7 17M17 7l2.1-2.1',
     help: 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z',
     sidebar: 'M3 7a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3zM9 4v16',
+    outline: 'M4 5h4M4 12h4M4 19h4M12 5h8M14 12h6M14 19h6M6 5v14',
 };
 
 /**

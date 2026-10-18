@@ -260,6 +260,78 @@ class core_renderer extends \core_renderer {
     }
 
     /**
+     * Renders the page header (core/full_header).
+     *
+     * On top of the core header data this adds:
+     * - "coursehero": the course card (tags, name, contact, counts and progress) on course-level pages;
+     * - "secondarynav": the secondary navigation, drawn as the tab bar under the header.
+     *
+     * @return string
+     */
+    public function full_header() {
+        $pagetype = $this->page->pagetype;
+        $homepage = get_home_page();
+        $homepagetype = null;
+        // Add a special case since /my/courses is a part of the /my subsystem.
+        if ($homepage == HOMEPAGE_MY || $homepage == HOMEPAGE_MYCOURSES) {
+            $homepagetype = 'my-index';
+        } else if ($homepage == HOMEPAGE_SITE) {
+            $homepagetype = 'site-index';
+        }
+        if (
+            $this->page->include_region_main_settings_in_header_actions() &&
+                !$this->page->blocks->is_block_present('settings')
+        ) {
+            // Only include the region main settings if the page has requested it and it doesn't already have
+            // the settings block on it. The region main settings are included in the settings block and
+            // duplicating the content causes behat failures.
+            $this->page->add_header_action(html_writer::div(
+                $this->region_main_settings_menu(),
+                'd-print-none',
+                ['id' => 'region-main-settings-menu']
+            ));
+        }
+
+        $header = new \stdClass();
+        $header->settingsmenu = $this->context_header_settings_menu();
+        $header->hasnavbar = empty($this->page->layout_options['nonavbar']);
+        $header->navbar = $this->navbar();
+        $header->pageheadingbutton = $this->page_heading_button();
+        $header->courseheader = $this->course_header();
+        $header->headeractions = $this->page->get_header_actions();
+        $header->headerextras = $this->page->get_header_extras();
+        if (!empty($pagetype) && !empty($homepagetype) && $pagetype == $homepagetype) {
+            $header->welcomemessage = \core_user::welcome_message();
+        }
+
+        $course = $this->page->course;
+        $iscoursepage = $course && $course->id != SITEID && $this->page->context->contextlevel == CONTEXT_COURSE;
+        if ($iscoursepage) {
+            // The hero renders the page h1 itself, so the context header is not needed.
+            $header->coursehero = (new course_header($course))->export_for_template($this);
+        } else {
+            $header->contextheader = $this->context_header();
+        }
+        $header->secondarynav = $this->secondary_navigation();
+
+        return $this->render_from_template('core/full_header', $header);
+    }
+
+    /**
+     * Export the secondary navigation for the tab bar in core/full_header.
+     *
+     * @return array|null Context for core/secondarymoremenu, or null when the page has none.
+     */
+    protected function secondary_navigation(): ?array {
+        if (!$this->page->has_secondary_navigation()) {
+            return null;
+        }
+        $tablistnav = $this->page->has_tablist_secondary_navigation();
+        $moremenu = new \core\navigation\output\more_menu($this->page->secondarynav, 'nav-tabs', true, $tablistnav);
+        return $moremenu->export_for_template($this);
+    }
+
+    /**
      * See if this is the first view of the current cm in the session if it has fake blocks.
      *
      * (We track up to 100 cms so as not to overflow the session.)

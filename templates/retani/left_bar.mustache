@@ -27,11 +27,13 @@
     * collapsed - Whether the bar starts collapsed.
     * brand - Site name, home URL and optional logo URL.
     * fallbacklinks - Top-level links for the no-JavaScript fallback.
+    * hascourseoutline - Whether the page has a course index for the bar's course outline.
 
     Example context (json):
     {
-        "reactprops": "{\"collapsed\":false,\"preference\":\"theme_retani_studio_leftbar_collapsed\",\"brand\":{\"name\":\"EduCore\",\"url\":\"/\",\"logourl\":null},\"categories\":{\"items\":[],\"selected\":null,\"manageurl\":null,\"managelabel\":null},\"navigation\":[],\"footernavigation\":[],\"user\":{\"fullname\":\"Ada Lovelace\",\"email\":\"ada@example.com\",\"role\":\"\",\"initials\":\"AL\",\"avatarurl\":\"\",\"hasavatar\":false,\"items\":[]},\"strings\":{\"collapse\":\"Collapse sidebar\",\"expand\":\"Expand sidebar\",\"navigation\":\"Site navigation\",\"switchcategory\":\"Switch category\",\"categories\":\"Course categories\",\"coursecount\":\"{$a} courses\",\"usermenu\":\"User menu\"} }",
+        "reactprops": "{\"collapsed\":false,\"preference\":\"theme_retani_studio_leftbar_collapsed\",\"brand\":{\"name\":\"EduCore\",\"url\":\"/\",\"logourl\":null},\"categories\":{\"items\":[],\"selected\":null,\"manageurl\":null,\"managelabel\":null},\"course\":null,\"navigation\":[],\"footernavigation\":[],\"user\":{\"fullname\":\"Ada Lovelace\",\"email\":\"ada@example.com\",\"role\":\"\",\"initials\":\"AL\",\"avatarurl\":\"\",\"hasavatar\":false,\"items\":[]},\"strings\":{\"collapse\":\"Collapse sidebar\",\"expand\":\"Expand sidebar\",\"navigation\":\"Site navigation\",\"switchcategory\":\"Switch category\",\"categories\":\"Course categories\",\"coursecount\":\"{$a} courses\",\"usermenu\":\"User menu\",\"currentcourse\":\"Current course\",\"courseoutline\":\"Course outline\"} }",
         "collapsed": false,
+        "hascourseoutline": false,
         "brand": {"name": "EduCore", "url": "/", "logourl": null},
         "fallbacklinks": [
             {"label": "Dashboard", "url": "/my/", "active": true},
