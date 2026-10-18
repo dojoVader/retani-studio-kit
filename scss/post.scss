@@ -1,12 +1,21 @@
-.page-header-headings h2{
-  font-size:19px;
-  font-weight:200;
+.page-header-headings h2 {
+  font-size: 19px;
+  font-weight: 200;
 }
 
-#page.drawers{
+#page.drawers {
   background: #f3f3ee;
 }
 
 :root {
-  --bs-body-bg: #f3f3ee ;
+  --bs-body-bg: #f3f3ee;
+}
+
+// Carousel
+#carousel-item-main {
+  padding: 1%;
+
+  a.dropdown-item {
+    margin-bottom: 1px !important;
+  }
 }
