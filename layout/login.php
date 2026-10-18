@@ -47,8 +47,6 @@ $templatecontext = [
         'year' => userdate(time(), '%Y'),
         'sitename' => format_string($SITE->fullname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     ]),
-    // The login page uses the Retani typeface (Geist), loaded by theme_retani_studio/head.
-    'retanifont' => true,
 ];
 
 echo $OUTPUT->render_from_template('theme_retani_studio/login', $templatecontext);

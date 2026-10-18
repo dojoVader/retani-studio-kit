@@ -67,6 +67,7 @@ if (isloggedin() && !isguestuser()) {
     }
 }
 
+
 $bodyattributes = $OUTPUT->body_attributes($extraclasses);
 $forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 
@@ -127,9 +128,8 @@ $templatecontext = [
     'overflow' => $overflow,
     'headercontent' => $headercontent,
     'addblockbutton' => $addblockbutton,
-    'leftbar' => $leftbar,
-    // The left bar uses the Retani typeface (Geist), loaded by theme_retani_studio/head.
-    'retanifont' => !empty($leftbar),
+    'leftbar' => $leftbar
+
 ];
 
 echo $OUTPUT->render_from_template('theme_retani_studio/drawers', $templatecontext);
