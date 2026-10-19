@@ -9,6 +9,13 @@
 
 :root {
   --bs-body-bg: #f3f3ee;
+  --bs-btn-font-size: 0.75rem !important;
+  --bs-border-radius: 0.2rem;
+  --bs-body-font-size: 0.75rem;
+}
+
+.form-control{
+  font-size: 0.75rem;
 }
 
 // Carousel
@@ -35,10 +42,16 @@
   display: flex;
 }
 
-div.settingsform {
+div.settingsform, body.admin div[role="main"], #region-main > div[role="main"]{
   h2 {
     font-size: 1.25em;
-    margin-top: 2%;
   }
 
+}
+
+.mform:not(fieldset) {
+  background: white;
+  padding: 3% 2%;
+  border-radius: 3px;
+  box-shadow: 1px 1px 5px 0px #c5c5c5;
 }
