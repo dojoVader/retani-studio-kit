@@ -1,0 +1,432 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_retani_studio/frontpage
+
+    The site home landing page. The courses come from the course catalogue, everything else from the theme settings.
+
+    Example context (json):
+    {
+        "uniqid": "retani-fp-1",
+        "style": "--fp-ac: #00704A;",
+        "homeurl": "#",
+        "brandname": "Meridian",
+        "brandaccent": "Bank Academy",
+        "navlinks": [{"label": "Courses", "url": "#courses"}],
+        "loginurl": "#",
+        "loginlabel": "Log in",
+        "hero": {"title": "Build a banking career", "text": "Courses taught by bankers.", "search": true,
+            "searchurl": "#", "placeholder": "Search courses", "buttontext": "Search", "imageurl": ""},
+        "courses": false, "offers": false, "stats": false, "paths": false, "featured": false, "pricing": false,
+        "testimonials": false, "faq": false, "news": false, "partners": false, "cta": false,
+        "footer": {"columns": [], "subscribe": false},
+        "copyright": "© 2026 Meridian Bank Academy",
+        "output": {"doctype": "<!DOCTYPE html>", "page_title": "Home", "main_content": ""}
+    }
+}}
+{{> theme_retani_studio/head }}
+
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+
+<div id="page-wrapper">
+
+    {{{ output.standard_top_of_body_html }}}
+
+    <div id="{{uniqid}}" class="retani-fp" style="{{style}}">
+
+        <header class="fp-header">
+            <div class="fp-header-inner">
+                <a href="{{homeurl}}" class="fp-brand">
+                    {{#logourl}}<img src="{{logourl}}" alt="{{sitename}}" class="fp-brand-logo">{{/logourl}}
+                    {{^logourl}}{{brandname}}{{#brandaccent}} <span class="fp-accent">{{brandaccent}}</span>{{/brandaccent}}{{/logourl}}
+                </a>
+                <nav class="fp-nav" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+                    {{#navlinks}}<a href="{{url}}">{{label}}</a>{{/navlinks}}
+                </nav>
+                <div class="fp-header-actions">
+                    {{^isloggedin}}
+                        <a href="{{loginurl}}" class="fp-login">{{loginlabel}}</a>
+                    {{/isloggedin}}
+                    {{#isloggedin}}
+                        <a href="{{dashboardurl}}" class="fp-login">{{#str}}myhome, core{{/str}}</a>
+                    {{/isloggedin}}
+                    {{#contact}}
+                        <a href="{{url}}" class="fp-btn fp-btn-outline fp-btn-sm">{{text}}</a>
+                    {{/contact}}
+                    {{{ output.edit_switch }}}
+                    {{#usermenu}}
+                        <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
+                            {{> core/user_menu }}
+                        </div>
+                    {{/usermenu}}
+                </div>
+                <button type="button" class="fp-menu-toggle" data-action="fp-menu" aria-expanded="false"
+                        aria-controls="{{uniqid}}-mobilenav" aria-label="{{#str}}menu, core{{/str}}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" aria-hidden="true">
+                        <path class="fp-menu-open-icon" d="M4 7h16M4 12h16M4 17h16"></path>
+                        <path class="fp-menu-close-icon" d="M6 6l12 12M18 6L6 18"></path>
+                    </svg>
+                </button>
+            </div>
+            <nav id="{{uniqid}}-mobilenav" class="fp-mobilenav" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+                {{#navlinks}}<a href="{{url}}">{{label}}</a>{{/navlinks}}
+                {{^isloggedin}}<a href="{{loginurl}}">{{loginlabel}}</a>{{/isloggedin}}
+                {{#isloggedin}}<a href="{{dashboardurl}}">{{#str}}myhome, core{{/str}}</a>{{/isloggedin}}
+                {{#contact}}<a href="{{url}}">{{text}}</a>{{/contact}}
+            </nav>
+        </header>
+
+        {{#hero}}
+        <section class="fp-hero">
+            {{#title}}<h1 class="fp-hero-title">{{title}}</h1>{{/title}}
+            {{#text}}<p class="fp-hero-text">{{text}}</p>{{/text}}
+            {{#search}}
+                <form class="fp-hero-form" action="{{searchurl}}" method="get" role="search">
+                    <label for="{{uniqid}}-search" class="visually-hidden">{{placeholder}}</label>
+                    <input type="search" id="{{uniqid}}-search" name="search" placeholder="{{placeholder}}" required>
+                    <button type="submit" class="fp-btn fp-btn-primary">{{buttontext}}</button>
+                </form>
+            {{/search}}
+            {{#imageurl}}
+                <div class="fp-hero-image" style="background-image: url('{{imageurl}}');" role="presentation"></div>
+            {{/imageurl}}
+            {{^imageurl}}<div class="fp-hero-spacer"></div>{{/imageurl}}
+        </section>
+        {{/hero}}
+
+        {{#offers}}
+        <section class="fp-section fp-offers">
+            <div class="fp-container fp-center">
+                {{#title}}<h2 class="fp-title">{{title}}</h2>{{/title}}
+                {{#text}}<p class="fp-lead">{{text}}</p>{{/text}}
+                <div class="fp-offers-grid">
+                    {{#items}}
+                    <div class="fp-offer">
+                        <span class="fp-offer-icon">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="{{icon}}"></path>
+                            </svg>
+                        </span>
+                        <h3 class="fp-offer-title">{{title}}</h3>
+                        <p class="fp-offer-text">{{text}}</p>
+                    </div>
+                    {{/items}}
+                </div>
+            </div>
+        </section>
+        {{/offers}}
+
+        {{#courses}}
+        <section id="courses" class="fp-section fp-muted fp-courses" data-region="fp-courses">
+            <div class="fp-container">
+                <div class="fp-center">
+                    {{#title}}<h2 class="fp-title">{{title}}</h2><span class="fp-rule"></span>{{/title}}
+                    {{#hastabs}}
+                    <div class="fp-tabs" role="tablist">
+                        {{#tabs}}
+                        <button type="button" role="tab" class="fp-tab" data-fp-category="{{id}}"
+                                aria-selected="{{#selected}}true{{/selected}}{{^selected}}false{{/selected}}">{{name}}</button>
+                        {{/tabs}}
+                    </div>
+                    {{/hastabs}}
+                </div>
+                {{#hasitems}}
+                <div class="fp-grid fp-course-grid">
+                    {{#items}}
+                        {{> theme_retani_studio/frontpage/course_card }}
+                    {{/items}}
+                </div>
+                {{/hasitems}}
+                {{^hasitems}}
+                    <p class="fp-empty">{{#str}}nocoursesyet, core{{/str}}</p>
+                {{/hasitems}}
+                {{#buttons.0}}
+                <div class="fp-actions">
+                    {{#buttons}}
+                    <a href="{{url}}" class="fp-btn {{#primary}}fp-btn-primary{{/primary}}{{^primary}}fp-btn-ghost{{/primary}}">{{text}}</a>
+                    {{/buttons}}
+                </div>
+                {{/buttons.0}}
+            </div>
+        </section>
+        {{/courses}}
+
+        {{#stats}}
+        <section class="fp-stats">
+            <div class="fp-stats-grid">
+                {{#items}}
+                <div class="fp-stat">
+                    <span class="fp-stat-value">{{value}}</span>
+                    <span class="fp-stat-label">{{label}}</span>
+                </div>
+                {{/items}}
+            </div>
+        </section>
+        {{/stats}}
+
+        {{#paths}}
+        <section id="paths" class="fp-section fp-paths">
+            <div class="fp-container">
+                {{#title}}<div class="fp-center"><h2 class="fp-title">{{title}}</h2><span class="fp-rule"></span></div>{{/title}}
+                <div class="fp-grid fp-paths-grid">
+                    {{#items}}
+                    <div class="fp-path">
+                        {{#label}}<span class="fp-path-label">{{label}}</span>{{/label}}
+                        <h3 class="fp-path-title">{{title}}</h3>
+                        {{#text}}<p class="fp-path-text">{{text}}</p>{{/text}}
+                        {{#buttontext}}<a href="{{url}}" class="fp-path-btn">{{buttontext}}</a>{{/buttontext}}
+                    </div>
+                    {{/items}}
+                </div>
+            </div>
+        </section>
+        {{/paths}}
+
+        {{#featured}}
+        <section class="fp-section fp-muted fp-featured">
+            <div class="fp-container">
+                {{#heading}}<div class="fp-center"><h2 class="fp-title">{{heading}}</h2><span class="fp-rule"></span></div>{{/heading}}
+                <div class="fp-featured-grid">
+                    <div class="fp-featured-media" {{#imageurl}}style="background-image: url('{{imageurl}}');"{{/imageurl}}>
+                        {{#videourl}}
+                        <a href="{{videourl}}" class="fp-play" target="_blank" rel="noopener"
+                           aria-label="{{#str}}fp_playvideo, theme_retani_studio{{/str}}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
+                        </a>
+                        {{/videourl}}
+                    </div>
+                    <div class="fp-featured-body">
+                        {{#title}}<h3 class="fp-featured-title">{{title}}</h3>{{/title}}
+                        {{#text}}<p class="fp-featured-text">{{text}}</p>{{/text}}
+                        {{#points.0}}
+                        <ul class="fp-checklist">
+                            {{#points}}
+                            <li>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"
+                                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
+                                <span>{{.}}</span>
+                            </li>
+                            {{/points}}
+                        </ul>
+                        {{/points.0}}
+                        <div class="fp-featured-actions">
+                            {{#button}}<a href="{{url}}" class="fp-btn fp-btn-primary">{{text}}</a>{{/button}}
+                            {{#price}}<span class="fp-featured-price">{{pricelabel}} <strong>{{price}}</strong></span>{{/price}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {{/featured}}
+
+        {{#pricing}}
+        <section id="pricing" class="fp-section fp-pricing" data-region="fp-pricing">
+            <div class="fp-container fp-narrow">
+                <div class="fp-center">
+                    {{#title}}<h2 class="fp-title">{{title}}</h2><span class="fp-rule"></span>{{/title}}
+                    <div class="fp-period" role="group">
+                        <button type="button" data-fp-period="monthly" aria-pressed="true">{{#str}}fp_monthly, theme_retani_studio{{/str}}</button>
+                        <button type="button" data-fp-period="yearly" aria-pressed="false">{{yearlylabel}}</button>
+                    </div>
+                </div>
+                <div class="fp-plans">
+                    {{#plans}}
+                    <div class="fp-plan {{#featured}}fp-plan-featured{{/featured}}" style="--fp-plan: {{colour}}; --fp-plan-tint: {{tint}};">
+                        <div class="fp-plan-name">{{name}}</div>
+                        <div class="fp-plan-head">
+                            <span class="fp-plan-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{icon}}"></path></svg>
+                            </span>
+                            <div class="fp-plan-price fp-monthly">
+                                <span class="fp-plan-amount">{{monthly}}</span>
+                                {{^isfree}}<span class="fp-plan-per">{{#str}}fp_permonth, theme_retani_studio{{/str}}</span>{{/isfree}}
+                            </div>
+                            <div class="fp-plan-price fp-yearly">
+                                <span class="fp-plan-amount">{{yearly}}</span>
+                                {{^isfree}}<span class="fp-plan-per">{{#str}}fp_peryear, theme_retani_studio{{/str}}</span>{{/isfree}}
+                            </div>
+                        </div>
+                        <ul class="fp-plan-features">
+                            {{#features}}
+                            <li class="{{#excluded}}fp-excluded{{/excluded}}">{{text}}</li>
+                            {{/features}}
+                        </ul>
+                        <div class="fp-plan-foot">
+                            <a href="{{url}}" class="fp-plan-btn">{{buttontext}}</a>
+                        </div>
+                    </div>
+                    {{/plans}}
+                </div>
+            </div>
+        </section>
+        {{/pricing}}
+
+        {{#testimonials}}
+        <section class="fp-testimonials" data-region="fp-testimonials">
+            <div class="fp-testimonials-inner">
+                <svg width="40" height="32" viewBox="0 0 22 18" fill="rgba(255,255,255,.45)" aria-hidden="true">
+                    <path d="M0 18V10C0 4.5 3 1 8.5 0l1 2.5C6.5 3.5 5 5.5 5 8h4v10zm12 0V10c0-5.5 3-9 8.5-10l1 2.5C18.5 3.5 17 5.5 17 8h4v10z"></path>
+                </svg>
+                {{#items}}
+                <figure class="fp-testimonial" data-fp-testimonial-panel="{{index}}" {{^active}}hidden{{/active}}>
+                    <blockquote>“{{quote}}”</blockquote>
+                    <span class="fp-stars" aria-hidden="true">★★★★★</span>
+                    <figcaption><span class="fp-testimonial-name">{{name}}</span>{{#role}}<span class="fp-testimonial-role">{{role}}</span>{{/role}}</figcaption>
+                </figure>
+                {{/items}}
+                {{#multiple}}
+                <div class="fp-testimonial-people">
+                    {{#items}}
+                    <button type="button" data-fp-testimonial="{{index}}" aria-label="{{name}}"
+                            aria-pressed="{{#active}}true{{/active}}{{^active}}false{{/active}}" style="background: {{colour}};">{{initials}}</button>
+                    {{/items}}
+                </div>
+                {{/multiple}}
+            </div>
+        </section>
+        {{/testimonials}}
+
+        {{#faq}}
+        <section id="faq" class="fp-section fp-faq">
+            <div class="fp-container fp-narrow">
+                {{#title}}<div class="fp-center"><h2 class="fp-title">{{title}}</h2><span class="fp-rule"></span></div>{{/title}}
+                <div class="fp-faq-grid">
+                    {{#items}}
+                    <details class="fp-faq-item" {{#open}}open{{/open}}>
+                        <summary>
+                            <span class="fp-faq-letter" aria-hidden="true">{{letter}}</span>
+                            <span class="fp-faq-question">{{question}}</span>
+                            <span class="fp-faq-sign" aria-hidden="true"></span>
+                        </summary>
+                        <p>{{answer}}</p>
+                    </details>
+                    {{/items}}
+                </div>
+            </div>
+        </section>
+        {{/faq}}
+
+        {{#news}}
+        <section id="news" class="fp-section fp-muted fp-news">
+            <div class="fp-container">
+                {{#title}}<div class="fp-center"><h2 class="fp-title">{{title}}</h2><span class="fp-rule"></span></div>{{/title}}
+                <div class="fp-grid">
+                    {{#items}}
+                    <a href="{{url}}" class="fp-news-card">
+                        <div class="fp-news-image" {{#imageurl}}style="background-image: url('{{imageurl}}');"{{/imageurl}}></div>
+                        <div class="fp-news-body">
+                            <span class="fp-news-meta">{{date}}{{#author}} · {{#str}}fp_by, theme_retani_studio{{/str}} <span class="fp-accent">{{author}}</span>{{/author}}</span>
+                            <span class="fp-news-title">{{title}}</span>
+                            {{#summary}}<span class="fp-news-summary">{{summary}}</span>{{/summary}}
+                        </div>
+                    </a>
+                    {{/items}}
+                </div>
+                {{#button}}<div class="fp-actions"><a href="{{url}}" class="fp-btn fp-btn-primary">{{text}}</a></div>{{/button}}
+            </div>
+        </section>
+        {{/news}}
+
+        {{#partners}}
+        <section class="fp-section fp-partners">
+            <div class="fp-container fp-narrow fp-center">
+                {{#title}}<h2 class="fp-title">{{title}}</h2><span class="fp-rule"></span>{{/title}}
+                <div class="fp-partners-grid">
+                    {{#logos}}<div class="fp-partner"><img src="{{url}}" alt="{{name}}" loading="lazy"></div>{{/logos}}
+                </div>
+            </div>
+        </section>
+        {{/partners}}
+
+        {{#showsitecontent}}
+        <section class="fp-section fp-sitecontent">
+            <div class="fp-container">
+        {{/showsitecontent}}
+        {{^showsitecontent}}
+        <div hidden>
+        {{/showsitecontent}}
+                <div id="region-main">
+                    {{{ output.course_content_header }}}
+                    {{{ output.main_content }}}
+                    {{{ output.activity_navigation }}}
+                    {{{ output.course_content_footer }}}
+                </div>
+        {{#showsitecontent}}
+            </div>
+        </section>
+        {{/showsitecontent}}
+        {{^showsitecontent}}
+        </div>
+        {{/showsitecontent}}
+
+        {{#cta}}
+        <section class="fp-cta">
+            <div class="fp-cta-inner">
+                <span class="fp-cta-text">{{text}}</span>
+                {{#button}}<a href="{{url}}" class="fp-btn fp-btn-light">{{text}}</a>{{/button}}
+            </div>
+        </section>
+        {{/cta}}
+
+        <footer class="fp-footer">
+            {{#footer}}
+            <div class="fp-footer-grid">
+                {{#columns}}
+                <div class="fp-footer-col">
+                    {{#title}}<span class="fp-footer-title">{{title}}</span>{{/title}}
+                    {{#links}}<a href="{{url}}">{{label}}</a>{{/links}}
+                </div>
+                {{/columns}}
+                {{#subscribe}}
+                <div class="fp-footer-col fp-footer-subscribe">
+                    {{#title}}<span class="fp-footer-title">{{title}}</span>{{/title}}
+                    {{#text}}<span class="fp-footer-text">{{text}}</span>{{/text}}
+                    {{#url}}
+                    <form action="{{url}}" method="post" target="_blank">
+                        <label for="{{uniqid}}-subscribe" class="visually-hidden">{{#str}}email, core{{/str}}</label>
+                        <input type="email" id="{{uniqid}}-subscribe" name="email" placeholder="{{#str}}email, core{{/str}}" required>
+                        <button type="submit" class="fp-btn fp-btn-primary fp-btn-sm">{{buttontext}}</button>
+                    </form>
+                    {{/url}}
+                </div>
+                {{/subscribe}}
+            </div>
+            {{/footer}}
+            <div class="fp-footer-bottom">
+                {{copyright}} {{#str}}fp_poweredby, theme_retani_studio{{/str}} <span class="fp-accent">Moodle</span>.
+            </div>
+            {{{ output.standard_footer_html }}}
+        </footer>
+    </div>
+    {{{ output.standard_end_of_body_html }}}
+</div>
+
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_retani_studio/loader');
+require(['theme_retani_studio/loader'], function() {
+    M.util.js_complete('theme_retani_studio/loader');
+});
+require(['theme_retani_studio/frontpage'], function(frontpage) {
+    frontpage.init('{{uniqid}}');
+});
+{{/js}}

@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_retani_studio/frontpage/course_card
+
+    A course from the catalogue, as a card on the site home.
+
+    Example context (json):
+    {
+        "id": 2,
+        "url": "#",
+        "name": "Branch Operations Essentials",
+        "summary": "Teller operations, cash management, account opening and KYC.",
+        "imageurl": "",
+        "tint": "#DFF3EA",
+        "avatarcolour": "#0E7C5A",
+        "categoryid": 1,
+        "category": "Operations",
+        "teacher": {"name": "Adaeze Okafor", "role": "Teacher", "initials": "AO"},
+        "learners": "1,240 learners",
+        "showprice": true,
+        "price": "Free",
+        "isfree": true
+    }
+}}
+<div class="fp-course" data-fp-course="{{categoryid}}">
+    <a href="{{url}}" class="fp-course-media" style="background-color: {{tint}};{{#imageurl}} background-image: url('{{imageurl}}');{{/imageurl}}" tabindex="-1" aria-hidden="true">
+        {{#category}}<span class="fp-course-cat">{{category}}</span>{{/category}}
+    </a>
+    <div class="fp-course-body">
+        <a href="{{url}}" class="fp-course-name">{{name}}</a>
+        {{#summary}}<span class="fp-course-summary">{{summary}}</span>{{/summary}}
+        <span class="fp-course-meta">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21c0-4 3-6 7-6s7 2 7 6"></path></svg>
+            {{learners}}
+        </span>
+    </div>
+    {{#teacher}}
+    <div class="fp-course-foot">
+        <span class="fp-avatar" style="background: {{avatarcolour}};" aria-hidden="true">{{initials}}</span>
+        <div class="fp-course-teacher"><span>{{name}}</span><span>{{role}}</span></div>
+        {{#showprice}}<span class="fp-course-price {{#isfree}}fp-free{{/isfree}}">{{price}}</span>{{/showprice}}
+    </div>
+    {{/teacher}}
+    {{^teacher}}
+    {{#showprice}}
+    <div class="fp-course-foot">
+        <span class="fp-course-teacher"></span>
+        <span class="fp-course-price {{#isfree}}fp-free{{/isfree}}">{{price}}</span>
+    </div>
+    {{/showprice}}
+    {{/teacher}}
+</div>
