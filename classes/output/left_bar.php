@@ -312,6 +312,11 @@ class left_bar implements renderable, templatable {
                 $this->child(get_string('advancedfeatures', 'admin'),
                     new url('/admin/settings.php', ['section' => 'optionalsubsystems'])),
             ];
+
+            // Declare the children to be null so we can pass the general link first
+
+            $children = [];
+            $children[] = $this->child('General', new url('/admin/search.php', ['#' => 'linkroot']));
             foreach ($categories as $category => $label) {
                 $children[] = $this->child($label, new url('/admin/category.php', ['category' => $category]));
             }
