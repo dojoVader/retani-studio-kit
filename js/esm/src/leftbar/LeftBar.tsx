@@ -59,6 +59,7 @@ const savePreference = (preference: string, value: boolean): void => {
  */
 export default function LeftBar({
     collapsed: initiallycollapsed,
+    mobile = false,
     preference,
     brand,
     categories,
@@ -68,15 +69,18 @@ export default function LeftBar({
     user,
     strings,
 }: LeftBarProps) {
-    const [collapsed, setCollapsed] = useState<boolean>(initiallycollapsed);
+    const [collapsed, setCollapsed] = useState<boolean>(!mobile && initiallycollapsed);
     const [openmenu, setOpenmenu] = useState<OpenMenu>(null);
     const [outlineopen, setOutlineopen] = useState<boolean>(course?.outlineopen ?? false);
     const outlineid = useId();
 
     // Keep the page layout in step: the body class sets how much room the rest of the page leaves for the bar.
+    // The mobile copy sits in a drawer and must leave the desktop bar's layout alone.
     useEffect(() => {
-        document.body.classList.toggle(COLLAPSED_CLASS, collapsed);
-    }, [collapsed]);
+        if (!mobile) {
+            document.body.classList.toggle(COLLAPSED_CLASS, collapsed);
+        }
+    }, [collapsed, mobile]);
 
     const setAndSave = useCallback((value: boolean) => {
         setCollapsed(value);
@@ -108,8 +112,9 @@ export default function LeftBar({
     const togglelabel = collapsed ? strings.expand : strings.collapse;
 
     return (
-        <div className={`retani-leftbar-inner${collapsed ? ' is-collapsed' : ''}`}>
-            <div className="retani-leftbar-header">
+        <div className={`retani-leftbar-inner${collapsed ? ' is-collapsed' : ''}${mobile ? ' is-mobile' : ''}`}>
+            {/* The mobile drawer has its own heading with the brand and a close button. */}
+            {!mobile && <div className="retani-leftbar-header">
                 {!collapsed && (
                     <a className="retani-leftbar-brand" href={brand.url}>
                         {brand.logourl ? (
@@ -131,7 +136,7 @@ export default function LeftBar({
                 >
                     <Icon name="sidebar" size={16} strokeWidth={1.6} />
                 </button>
-            </div>
+            </div>}
 
             <CategorySelector
                 data={categories}

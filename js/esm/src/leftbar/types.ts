@@ -109,6 +109,8 @@ export interface LeftBarStrings {
 
 export interface LeftBarProps {
     collapsed: boolean;
+    /** Rendered inside the mobile primary drawer: no header, no collapse button, no page layout changes. */
+    mobile?: boolean;
     /** Name of the user preference that stores the collapsed state. */
     preference: string;
     brand: Brand;

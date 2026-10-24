@@ -593,6 +593,17 @@ body.has-retani-leftbar {
     }
 }
 
+// The bar inside the mobile primary drawer: it fills the drawer body instead of sitting fixed beside the page.
+.retani-leftbar.retani-leftbar-mobile {
+    display: block;
+    position: static;
+    width: auto;
+    height: 100%;
+    background-color: transparent;
+    border: 0;
+    transition: none;
+}
+
 // The bar is a desktop layout; smaller screens keep the standard navbar and drawers.
 @include media-breakpoint-up(lg) {
     .has-retani-leftbar {

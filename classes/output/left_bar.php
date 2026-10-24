@@ -111,16 +111,30 @@ class left_bar implements renderable, templatable {
             ],
         ];
 
+        // Flattened links for the static fallback rendered before (or without) JavaScript.
+        $fallbacklinks = array_map(
+            fn(array $item): array => ['label' => $item['label'], 'url' => $item['url'], 'active' => $item['active']],
+            array_merge($navigation, $footer),
+        );
+
+        // The same bar inside the mobile primary drawer: never collapsed, and without the course outline, since on
+        // small screens the course index stays in its own drawer.
+        $mobileprops = array_merge($props, ['collapsed' => false, 'mobile' => true, 'course' => null]);
+
         return [
             'reactprops' => json_encode($props, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             'collapsed' => $props['collapsed'],
             'brand' => $props['brand'],
             'hascourseoutline' => $props['course'] !== null,
-            // Flattened links for the static fallback rendered before (or without) JavaScript.
-            'fallbacklinks' => array_map(
-                fn(array $item): array => ['label' => $item['label'], 'url' => $item['url'], 'active' => $item['active']],
-                array_merge($navigation, $footer),
-            ),
+            'fallbacklinks' => $fallbacklinks,
+            'mobile' => [
+                'ismobile' => true,
+                'reactprops' => json_encode($mobileprops, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+                'collapsed' => false,
+                'brand' => $props['brand'],
+                'hascourseoutline' => false,
+                'fallbacklinks' => $fallbacklinks,
+            ],
         ];
     }
 
