@@ -1,0 +1,423 @@
+// Quiz attempt pieces from mockup/Retani Quiz.dc.html:
+// - the quiz navigation block (#mod_quiz_navblock, theme_retani_studio\output\mod_quiz_renderer): an answered
+//   count beside the title, a five-column grid of square question buttons, a legend and the actions at the bottom;
+// - the countdown timer (theme_retani_studio/mod_quiz/timer), as a small card in the same style.
+// The block card itself is styled by retani_blocksidebar.scss. Uses $retani-admin-font-family and
+// $retani-admin-mono-family from retani_adminsettings.scss.
+
+.path-mod-quiz {
+    --retani-quiz-canvas: #f4f3ef;
+    --retani-quiz-surface: #{$white};
+    --retani-quiz-line: #dedcd5;
+    --retani-quiz-ink: #111;
+    --retani-quiz-ink-hover: #2a2a2a;
+    --retani-quiz-on-ink: #{$white};
+    --retani-quiz-muted: #6b6a64;
+    --retani-quiz-lime: #95bf47;
+    --retani-quiz-lime-tint: #f3f8ea;
+    --retani-quiz-danger: #d93a2e;
+
+    @include dark-mode {
+        --retani-quiz-canvas: var(--#{$prefix}tertiary-bg);
+        --retani-quiz-surface: var(--#{$prefix}body-bg);
+        --retani-quiz-line: var(--#{$prefix}border-color);
+        --retani-quiz-ink: var(--#{$prefix}body-color);
+        --retani-quiz-ink-hover: var(--#{$prefix}secondary-color);
+        --retani-quiz-on-ink: var(--#{$prefix}body-bg);
+        --retani-quiz-muted: var(--#{$prefix}secondary-color);
+        --retani-quiz-lime-tint: rgba(149, 191, 71, 0.16);
+        --retani-quiz-danger: #f0736a;
+    }
+}
+
+// Quiz navigation block.
+.path-mod-quiz #mod_quiz_navblock {
+    font-family: $retani-admin-font-family;
+
+    > .card-body {
+        position: relative;
+    }
+
+    // "3/10 answered", on the title row at the top right of the card.
+    .retani-quiznav-meta {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        font-size: 0.71875rem;
+        line-height: 1.3rem;
+        color: var(--retani-quiz-muted);
+    }
+
+    .card-title {
+        padding-right: 7rem;
+    }
+
+    #quiznojswarning {
+        margin-bottom: 12px;
+        font-size: 0.75rem;
+        color: var(--retani-quiz-muted);
+    }
+
+    #user-picture {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        font-size: 0.78125rem;
+        font-weight: 500;
+    }
+
+    .retani-quiznav-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 16px;
+        margin: 0;
+    }
+
+    // Section headings span the whole row.
+    h3.mod_quiz-section-heading {
+        grid-column: 1 / -1;
+        margin: 6px 0 0;
+        padding: 0;
+        font-family: $retani-admin-font-family;
+        font-size: 0.6875rem;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--retani-quiz-muted);
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    // Question buttons. The default (not answered) is a white tile; state classes come from core.
+    .qnbutton {
+        display: flex;
+        position: relative;
+        float: none;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        height: auto;
+        aspect-ratio: 1;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        border: 1.5px solid var(--retani-quiz-line);
+        border-radius: 6px;
+        background: var(--retani-quiz-surface);
+        color: var(--retani-quiz-ink);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        transition: border-color 0.15s, background-color 0.15s;
+
+        &:hover {
+            text-decoration: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--retani-quiz-ink);
+            outline-offset: 2px;
+            text-decoration: none;
+        }
+
+        // Core draws the current page as an inner border; here it is the ring below.
+        .thispageholder {
+            display: none;
+        }
+
+        // The flag: a lime triangle in the top right corner, shown for flagged questions.
+        .trafficlight {
+            display: none;
+            position: absolute;
+            inset: 0 0 auto auto;
+            width: 12px;
+            height: 12px;
+            margin: 0;
+            border: 0;
+            border-radius: 0;
+            background: var(--retani-quiz-lime);
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+        }
+
+        &.flagged .trafficlight {
+            display: block;
+        }
+
+        &.thispage {
+            box-shadow: 0 0 0 2px var(--retani-quiz-surface), 0 0 0 3.5px var(--retani-quiz-ink);
+        }
+
+        // Answered: black tile.
+        &.answersaved,
+        &.complete,
+        &.requiresgrading {
+            border-color: var(--retani-quiz-ink);
+            background-color: var(--retani-quiz-ink);
+            color: var(--retani-quiz-on-ink);
+        }
+
+        // An answer that could not be saved as it is.
+        &.invalidanswer {
+            border-style: dashed;
+            border-color: var(--retani-quiz-danger);
+        }
+
+        // Review with correctness: lime for right, black for wrong, a lime tint for partly right, grey for none.
+        &.correct {
+            border-color: var(--retani-quiz-lime);
+            background-color: var(--retani-quiz-lime);
+            color: #111;
+        }
+
+        &.incorrect {
+            border-color: var(--retani-quiz-ink);
+            background-color: var(--retani-quiz-ink);
+            color: var(--retani-quiz-on-ink);
+        }
+
+        &.partiallycorrect {
+            border-color: var(--retani-quiz-lime);
+            background-color: var(--retani-quiz-lime-tint);
+            color: var(--retani-quiz-ink);
+        }
+
+        &.notanswered {
+            border-color: var(--retani-quiz-line);
+            background-color: var(--retani-quiz-canvas);
+            color: var(--retani-quiz-muted);
+        }
+
+        &.blocked {
+            border-color: var(--retani-quiz-line);
+            background-color: var(--retani-quiz-canvas);
+            color: var(--retani-quiz-muted);
+            opacity: 0.7;
+        }
+    }
+
+    a.qnbutton:hover {
+        border-color: var(--retani-quiz-ink);
+    }
+
+    // Questions that cannot be reached yet (sequential navigation), and description items without a link.
+    span.qnbutton {
+        cursor: default;
+    }
+
+    // With all questions on one page every button is "this page", so the ring would mark nothing.
+    .allquestionsononepage .qnbutton.thispage {
+        box-shadow: none;
+    }
+
+    .retani-quiznav-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 12px;
+        margin: 14px 0 0;
+        padding: 0;
+        list-style: none;
+        font-size: 0.6875rem;
+        color: var(--retani-quiz-muted);
+    }
+
+    .retani-quiznav-legenditem {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+    }
+
+    .retani-quiznav-swatch {
+        width: 10px;
+        height: 10px;
+        flex: none;
+        border: 1.5px solid var(--retani-quiz-line);
+        border-radius: 3px;
+        background-color: var(--retani-quiz-surface);
+
+        &.is-answered,
+        &.is-incorrect {
+            border-color: var(--retani-quiz-ink);
+            background-color: var(--retani-quiz-ink);
+        }
+
+        &.is-flagged,
+        &.is-correct {
+            border-color: var(--retani-quiz-lime);
+            background-color: var(--retani-quiz-lime);
+        }
+
+        &.is-partiallycorrect {
+            border-color: var(--retani-quiz-lime);
+            background-color: var(--retani-quiz-lime-tint);
+        }
+
+        &.is-notanswered {
+            background-color: var(--retani-quiz-canvas);
+        }
+    }
+
+    // Actions: "Finish attempt ..." and the other links as light buttons, "Start a new preview" as the dark one.
+    .retani-quiznav-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        clear: both;
+        margin: 14px 0 0;
+        padding-top: 12px;
+        border-top: 1px solid var(--retani-quiz-line);
+
+        .autosave_info {
+            font-size: 0.6875rem;
+            color: var(--retani-quiz-muted);
+        }
+
+        > a,
+        > input[type="button"],
+        .singlebutton .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 34px;
+            margin: 0;
+            padding: 0 12px;
+            border: 1px solid var(--retani-quiz-line);
+            border-radius: 6px;
+            background-color: var(--retani-quiz-canvas);
+            color: var(--retani-quiz-ink);
+            font-size: 0.78125rem;
+            font-weight: 500;
+            text-decoration: none;
+            box-shadow: none;
+
+            &:hover {
+                background-color: var(--retani-quiz-surface);
+                color: var(--retani-quiz-ink);
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--retani-quiz-ink);
+                outline-offset: 1px;
+            }
+        }
+
+        .singlebutton {
+            margin: 0;
+
+            form,
+            div {
+                margin: 0;
+            }
+
+            .btn {
+                border-color: var(--retani-quiz-ink);
+                background-color: var(--retani-quiz-ink);
+                color: var(--retani-quiz-on-ink);
+
+                &:hover {
+                    border-color: var(--retani-quiz-ink-hover);
+                    background-color: var(--retani-quiz-ink-hover);
+                    color: var(--retani-quiz-on-ink);
+                }
+            }
+        }
+    }
+}
+
+// Countdown timer: a small card at the top right, with the show/hide button beside it, that stays in view while
+// scrolling. Core's JavaScript shows the wrapper (display: flex) once the timer starts.
+.path-mod-quiz #quiz-timer-wrapper.retani-quiztimer {
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    margin: 0 0 12px auto;
+    font-family: $retani-admin-font-family;
+
+    #quiz-timer {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 38px;
+        margin: 0;
+        padding: 0 10px 0 5px;
+        border: 1px solid var(--retani-quiz-line);
+        border-radius: 8px;
+        background-color: var(--retani-quiz-surface);
+        color: var(--retani-quiz-ink);
+        transition: border-color 0.15s;
+    }
+
+    .retani-quiztimer-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        flex: none;
+        border-radius: 5px;
+        background-color: var(--retani-quiz-ink);
+        color: var(--retani-quiz-lime);
+    }
+
+    .retani-quiztimer-label {
+        font-size: 0.75rem;
+        color: var(--retani-quiz-muted);
+        white-space: nowrap;
+    }
+
+    .retani-quiztimer-value {
+        min-width: 4.5em;
+        font-family: $retani-admin-mono-family;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.01em;
+    }
+
+    .retani-quiztimer-toggle {
+        height: 38px;
+        margin: 0;
+        padding: 0 12px;
+        border: 1px solid var(--retani-quiz-line);
+        border-radius: 8px;
+        background-color: var(--retani-quiz-canvas);
+        color: var(--retani-quiz-ink);
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1;
+
+        &:hover:not(:disabled) {
+            background-color: var(--retani-quiz-surface);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+        }
+    }
+
+    // The last 100 seconds (core adds a timeleftN class, and gives it a red background we replace): the card's
+    // border, icon and time turn red.
+    #quiz-timer[class*="timeleft"] {
+        border-color: var(--retani-quiz-danger);
+        background-color: var(--retani-quiz-surface);
+        color: var(--retani-quiz-ink);
+
+        .retani-quiztimer-icon {
+            background-color: var(--retani-quiz-danger);
+            color: $white;
+        }
+
+        .retani-quiztimer-value {
+            color: var(--retani-quiz-danger);
+        }
+    }
+}
+
+#page-mod-quiz-summary #quiz-timer-wrapper.retani-quiztimer {
+    margin-right: auto;
+}

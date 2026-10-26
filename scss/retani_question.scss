@@ -1,0 +1,446 @@
+// Questions on quiz pages (attempt, review): the question card from mockup/Retani Quiz.dc.html.
+// A white card in two columns: the info panel on a canvas background (number, state chip, mark, flag button, edit
+// link, version chip), then the question text and the choices as bordered rows. Below the md breakpoint the info
+// panel becomes a row on top. Uses the --retani-quiz-* colours from retani_quiz.scss, and $retani-admin-font-family
+// and $retani-admin-mono-family from retani_adminsettings.scss.
+
+.path-mod-quiz .que {
+    display: grid;
+    grid-template-columns: 168px minmax(0, 1fr);
+    gap: 0;
+    align-items: stretch;
+    margin: 0 0 12px;
+    overflow: hidden;
+    border: 1px solid var(--retani-quiz-line);
+    border-radius: 8px;
+    background-color: var(--retani-quiz-surface);
+    color: var(--retani-quiz-ink);
+    font-family: $retani-admin-font-family;
+    transition: border-color 0.15s;
+
+    &:focus-within {
+        border-color: var(--retani-quiz-ink);
+    }
+
+    // Info panel.
+    .info {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 10px;
+        width: auto;
+        margin: 0;
+        padding: 16px;
+        border: 0;
+        border-right: 1px solid var(--retani-quiz-line);
+        border-radius: 0;
+        background-color: var(--retani-quiz-canvas);
+
+        > div {
+            margin: 0;
+            font-size: 0.71875rem;
+        }
+    }
+
+    h3.no {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin: 0;
+        font-family: $retani-admin-font-family;
+        font-size: 0.65625rem;
+        font-weight: 400;
+        line-height: 1;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--retani-quiz-muted);
+    }
+
+    span.qno {
+        font-size: 1.375rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        text-transform: none;
+        color: var(--retani-quiz-ink);
+    }
+
+    // State chip with a coloured dot.
+    .info .state {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 22px;
+        padding: 2px 8px;
+        border: 1px solid var(--retani-quiz-line);
+        border-radius: 5px;
+        background-color: var(--retani-quiz-surface);
+        font-size: 0.6875rem;
+        line-height: 1.2;
+        color: var(--retani-quiz-ink);
+
+        &::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            flex: none;
+            border-radius: 50%;
+            background-color: var(--retani-quiz-state-dot, var(--retani-quiz-line));
+        }
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    &.answersaved,
+    &.complete,
+    &.requiresgrading,
+    &.correct,
+    &.partiallycorrect {
+        --retani-quiz-state-dot: var(--retani-quiz-lime);
+    }
+
+    &.incorrect {
+        --retani-quiz-state-dot: var(--retani-quiz-ink);
+    }
+
+    &.invalidanswer {
+        --retani-quiz-state-dot: var(--retani-quiz-danger);
+    }
+
+    .info .grade {
+        color: var(--retani-quiz-muted);
+    }
+
+    // Flag: a small outlined button; white with a dark border once flagged. Without JavaScript it is the label of a
+    // checkbox; with it, core swaps in an a.aabtn with aria-pressed.
+    .info .questionflag {
+        > label,
+        > .aabtn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 26px;
+            margin: 0;
+            padding: 0 8px 0 6px;
+            border: 1px solid var(--retani-quiz-line);
+            border-radius: 5px;
+            background-color: transparent;
+            font-size: 0.71875rem;
+            color: var(--retani-quiz-ink);
+            text-decoration: none;
+            white-space: nowrap;
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--retani-quiz-surface);
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--retani-quiz-ink);
+                outline-offset: 1px;
+            }
+        }
+
+        > .aabtn[aria-pressed="true"],
+        > input:checked + label {
+            border-color: var(--retani-quiz-ink);
+            background-color: var(--retani-quiz-surface);
+        }
+
+        .questionflagimage {
+            width: 12px;
+            height: 12px;
+            padding: 0;
+        }
+    }
+
+    .info .editquestion a {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--retani-quiz-muted);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--retani-quiz-ink);
+        }
+
+        .icon {
+            margin: 0;
+            font-size: 0.6875rem;
+            color: inherit;
+        }
+    }
+
+    // Version chip ("v1 (latest)"). Bootstrap's colour utilities are !important, so these have to be too.
+    .info .badge {
+        display: inline-flex;
+        align-items: center;
+        height: 20px;
+        padding: 0 7px;
+        border: 1px solid var(--retani-quiz-line);
+        border-radius: 4px;
+        background-color: var(--retani-quiz-surface) !important; // stylelint-disable-line declaration-no-important
+        color: var(--retani-quiz-muted) !important; // stylelint-disable-line declaration-no-important
+        font-family: $retani-admin-mono-family;
+        font-size: 0.625rem;
+        font-weight: 400;
+    }
+
+    // Question.
+    .content {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-width: 0;
+        padding: 20px;
+    }
+
+    .formulation {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: none;
+        color: inherit;
+    }
+
+    .qtext {
+        margin: 0 0 14px;
+        font-size: 0.96875rem;
+        font-weight: 500;
+        line-height: 1.45;
+        letter-spacing: -0.01em;
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .ablock {
+        margin: 0;
+    }
+
+    .prompt:not(.visually-hidden) {
+        margin-bottom: 8px;
+        font-size: 0.75rem;
+        color: var(--retani-quiz-muted);
+    }
+
+    // Outcome, feedback and comments: a canvas panel.
+    .outcome,
+    .comment {
+        margin: 0;
+        padding: 10px 12px;
+        border: 1px solid var(--retani-quiz-line);
+        border-radius: 6px;
+        background: var(--retani-quiz-canvas);
+        color: var(--retani-quiz-ink);
+        font-size: 0.78125rem;
+        line-height: 1.5;
+
+        a {
+            color: var(--retani-quiz-ink);
+            text-decoration-color: var(--retani-quiz-lime);
+            text-underline-offset: 3px;
+        }
+    }
+
+    .validationerror {
+        margin-top: 8px;
+        font-size: 0.75rem;
+        color: var(--retani-quiz-danger);
+    }
+
+    .im-controls {
+        margin: 0;
+    }
+
+    // Multiple choice: each choice is a bordered row with a letter tile and a radio ring. The real input is
+    // stretched over the row and drawn as its border and background, so the whole row is clickable and the
+    // checked, focus and disabled states come from the input itself.
+    &.multichoice {
+        .answer {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            counter-reset: retani-choice;
+
+            > div {
+                display: flex;
+                position: relative;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 6px 12px;
+                min-height: 44px;
+                padding: 8px 12px 8px 8px;
+                counter-increment: retani-choice;
+
+                // Everything but the input sits above it and lets clicks through to it.
+                > :not(input) {
+                    position: relative;
+                    z-index: 1;
+                    pointer-events: none;
+                }
+
+                > .specificfeedback {
+                    flex-basis: 100%;
+                    padding-left: 40px;
+                    font-size: 0.75rem;
+                    color: var(--retani-quiz-muted);
+                }
+            }
+
+            input[type="radio"],
+            input[type="checkbox"] {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                border: 1px solid var(--retani-quiz-line);
+                border-radius: 6px;
+                background-color: var(--retani-quiz-surface);
+                appearance: none;
+                cursor: pointer;
+                transition: border-color 0.15s, background-color 0.15s;
+
+                &:hover:not(:disabled) {
+                    border-color: var(--retani-quiz-ink);
+                }
+
+                &:focus-visible {
+                    outline: 2px solid var(--retani-quiz-ink);
+                    outline-offset: 2px;
+                }
+
+                &:checked {
+                    border-color: var(--retani-quiz-ink);
+                    background-color: #fafaf8;
+
+                    @include dark-mode {
+                        background-color: var(--retani-quiz-canvas);
+                    }
+                }
+
+                &:disabled {
+                    cursor: default;
+                }
+            }
+
+            [data-region="answer-label"] {
+                display: flex;
+                flex: 1;
+                align-items: center;
+                gap: 12px;
+                min-width: 0;
+                font-size: 0.8125rem;
+                line-height: 1.4;
+
+                // Letter tile.
+                &::before {
+                    content: counter(retani-choice, upper-alpha);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 28px;
+                    height: 28px;
+                    flex: none;
+                    border: 1px solid var(--retani-quiz-line);
+                    border-radius: 5px;
+                    background-color: var(--retani-quiz-canvas);
+                    color: var(--retani-quiz-muted);
+                    font-size: 0.71875rem;
+                    font-weight: 600;
+                }
+
+                // Radio ring (square for multiple answers).
+                &::after {
+                    content: "";
+                    width: 16px;
+                    height: 16px;
+                    flex: none;
+                    margin-left: auto;
+                    border: 1.5px solid var(--retani-quiz-line);
+                    border-radius: 50%;
+                }
+
+                // The tile replaces the core numbering.
+                .answernumber {
+                    display: none;
+                }
+
+                .flex-fill {
+                    min-width: 0;
+                    margin: 0 !important; // stylelint-disable-line declaration-no-important
+
+                    p:last-child {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+
+            input[type="checkbox"] ~ [data-region="answer-label"]::after {
+                border-radius: 4px;
+            }
+
+            input:checked ~ [data-region="answer-label"] {
+                &::before {
+                    border-color: var(--retani-quiz-ink);
+                    background-color: var(--retani-quiz-ink);
+                    color: var(--retani-quiz-on-ink);
+                }
+
+                &::after {
+                    border-color: var(--retani-quiz-ink);
+                    background: radial-gradient(circle, var(--retani-quiz-lime) 0 4px, transparent 4.5px);
+                }
+            }
+
+            // Review: the chosen answer marked right (lime) or wrong (dark).
+            > div.correct > input {
+                border-color: var(--retani-quiz-lime);
+                background-color: var(--retani-quiz-lime-tint);
+            }
+
+            > div.correct > input ~ [data-region="answer-label"]::before {
+                border-color: var(--retani-quiz-lime);
+                background-color: var(--retani-quiz-lime);
+                color: #111;
+            }
+
+            > div.incorrect > input {
+                border-color: var(--retani-quiz-ink);
+            }
+        }
+
+        // "Clear my choice": an underlined text link.
+        .qtype_multichoice_clearchoice {
+            margin-top: 10px;
+
+            a.btn-link {
+                margin: 0 !important; // stylelint-disable-line declaration-no-important
+                padding: 0;
+                border: 0;
+                font-size: 0.75rem;
+                color: var(--retani-quiz-ink);
+                text-decoration: underline;
+                text-decoration-color: var(--retani-quiz-lime);
+                text-underline-offset: 3px;
+            }
+        }
+    }
+
+    @include media-breakpoint-down(md) {
+        grid-template-columns: minmax(0, 1fr);
+
+        .info {
+            flex-direction: row;
+            align-items: center;
+            border-right: 0;
+            border-bottom: 1px solid var(--retani-quiz-line);
+        }
+    }
+}
