@@ -27,6 +27,7 @@ const savePreference = /* @__PURE__ */ __name((preference, value) => {
 }, "savePreference");
 function LeftBar({
   collapsed: initiallycollapsed,
+  mobile = false,
   preference,
   brand,
   categories,
@@ -36,13 +37,15 @@ function LeftBar({
   user,
   strings
 }) {
-  const [collapsed, setCollapsed] = useState(initiallycollapsed);
+  const [collapsed, setCollapsed] = useState(!mobile && initiallycollapsed);
   const [openmenu, setOpenmenu] = useState(null);
   const [outlineopen, setOutlineopen] = useState(course?.outlineopen ?? false);
   const outlineid = useId();
   useEffect(() => {
-    document.body.classList.toggle(COLLAPSED_CLASS, collapsed);
-  }, [collapsed]);
+    if (!mobile) {
+      document.body.classList.toggle(COLLAPSED_CLASS, collapsed);
+    }
+  }, [collapsed, mobile]);
   const setAndSave = useCallback((value) => {
     setCollapsed(value);
     setOpenmenu(null);
@@ -65,26 +68,26 @@ function LeftBar({
   }, [course, collapsed, outlineopen, setAndSave]);
   const outlineshown = Boolean(course) && !collapsed && outlineopen;
   const togglelabel = collapsed ? strings.expand : strings.collapse;
-  return /* @__PURE__ */ jsxDEV("div", { className: `retani-leftbar-inner${collapsed ? " is-collapsed" : ""}`, children: [
-    /* @__PURE__ */ jsxDEV("div", { className: "retani-leftbar-header", children: [
+  return /* @__PURE__ */ jsxDEV("div", { className: `retani-leftbar-inner${collapsed ? " is-collapsed" : ""}${mobile ? " is-mobile" : ""}`, children: [
+    !mobile && /* @__PURE__ */ jsxDEV("div", { className: "retani-leftbar-header", children: [
       !collapsed && /* @__PURE__ */ jsxDEV("a", { className: "retani-leftbar-brand", href: brand.url, children: brand.logourl ? /* @__PURE__ */ jsxDEV("img", { className: "retani-leftbar-logo", src: brand.logourl, alt: brand.name }, void 0, false, {
         fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-        lineNumber: 116,
+        lineNumber: 121,
         columnNumber: 29
       }, this) : /* @__PURE__ */ jsxDEV("span", { className: "retani-leftbar-sitename", children: [
         brand.name,
         /* @__PURE__ */ jsxDEV("span", { className: "retani-leftbar-sitename-dot", "aria-hidden": "true", children: "." }, void 0, false, {
           fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-          lineNumber: 119,
+          lineNumber: 124,
           columnNumber: 45
         }, this)
       ] }, void 0, true, {
         fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-        lineNumber: 118,
+        lineNumber: 123,
         columnNumber: 29
       }, this) }, void 0, false, {
         fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-        lineNumber: 114,
+        lineNumber: 119,
         columnNumber: 21
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -98,7 +101,7 @@ function LeftBar({
           onClick: toggleCollapsed,
           children: /* @__PURE__ */ jsxDEV(Icon, { name: "sidebar", size: 16, strokeWidth: 1.6 }, void 0, false, {
             fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-            lineNumber: 132,
+            lineNumber: 137,
             columnNumber: 21
           }, this)
         },
@@ -106,15 +109,15 @@ function LeftBar({
         false,
         {
           fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-          lineNumber: 124,
+          lineNumber: 129,
           columnNumber: 17
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-      lineNumber: 112,
-      columnNumber: 13
+      lineNumber: 117,
+      columnNumber: 25
     }, this),
     /* @__PURE__ */ jsxDEV(
       CategorySelector,
@@ -130,7 +133,7 @@ function LeftBar({
       false,
       {
         fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-        lineNumber: 136,
+        lineNumber: 141,
         columnNumber: 13
       },
       this
@@ -150,28 +153,28 @@ function LeftBar({
         false,
         {
           fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-          lineNumber: 147,
+          lineNumber: 152,
           columnNumber: 21
         },
         this
       ),
       /* @__PURE__ */ jsxDEV(CourseOutline, { visible: outlineshown, id: outlineid, label: strings.courseoutline }, void 0, false, {
         fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-        lineNumber: 155,
+        lineNumber: 160,
         columnNumber: 21
       }, this)
     ] }, void 0, true, {
       fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-      lineNumber: 146,
+      lineNumber: 151,
       columnNumber: 17
     }, this),
     /* @__PURE__ */ jsxDEV("nav", { className: "retani-leftbar-nav", "aria-label": strings.navigation, hidden: outlineshown, children: /* @__PURE__ */ jsxDEV(NavigationMenu, { items: navigation, collapsed, onExpand: expand }, void 0, false, {
       fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-      lineNumber: 160,
+      lineNumber: 165,
       columnNumber: 17
     }, this) }, void 0, false, {
       fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-      lineNumber: 159,
+      lineNumber: 164,
       columnNumber: 13
     }, this),
     footernavigation.length > 0 && /* @__PURE__ */ jsxDEV("div", { className: "retani-leftbar-footer", children: /* @__PURE__ */ jsxDEV(
@@ -186,13 +189,13 @@ function LeftBar({
       false,
       {
         fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-        lineNumber: 165,
+        lineNumber: 170,
         columnNumber: 21
       },
       this
     ) }, void 0, false, {
       fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-      lineNumber: 164,
+      lineNumber: 169,
       columnNumber: 17
     }, this),
     /* @__PURE__ */ jsxDEV(
@@ -209,14 +212,14 @@ function LeftBar({
       false,
       {
         fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-        lineNumber: 170,
+        lineNumber: 175,
         columnNumber: 13
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/theme/retani_studio/js/esm/src/leftbar/LeftBar.tsx",
-    lineNumber: 111,
+    lineNumber: 115,
     columnNumber: 9
   }, this);
 }

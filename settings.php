@@ -105,9 +105,6 @@ if ($ADMIN->fulltree) {
     // Must add the page after definiting all the settings!
     $settings->add($page);
 
-    // Front page (site home landing page) tabs.
-    require(__DIR__ . '/settings/frontpage.php');
-
     // Advanced settings.
     $page = new admin_settingpage('theme_retani_studio_advanced', get_string('advancedsettings', 'theme_retani_studio'));
 

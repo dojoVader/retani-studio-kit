@@ -23,6 +23,7 @@
 import type {IconName} from './types';
 
 const PATHS: Record<IconName, string> = {
+    home: 'M3 11l9-8 9 8M5 9.5V21h5v-6h4v6h5V9.5',
     dashboard: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
     calendar: 'M3 5h18v16H3zM3 10h18M8 3v4M16 3v4',
     courses: 'M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z',

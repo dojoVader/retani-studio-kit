@@ -67,8 +67,7 @@ $THEME->layouts = [
     ),
     // The site home page.
     'frontpage' => array(
-        // A landing page built from the theme's front page settings; it falls back to drawers.php when switched off.
-        'file' => 'frontpage.php',
+        'file' => 'drawers.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
         'options' => array('nonavbar' => true),

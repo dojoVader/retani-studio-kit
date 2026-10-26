@@ -209,6 +209,16 @@ class left_bar implements renderable, templatable {
         $system = context_system::instance();
         $items = [];
 
+        // The site home link, as in core's primary navigation: only while Home is enabled, and with redirect=0 when
+        // the user's start page is the dashboard or My courses, so index.php doesn't send them straight back there.
+        if (!empty($CFG->enablemyhome)) {
+            $homeurl = new url('/');
+            if (isloggedin() && !isguestuser() && in_array(get_home_page(), [HOMEPAGE_MY, HOMEPAGE_MYCOURSES])) {
+                $homeurl->param('redirect', 0);
+            }
+            $items[] = $this->item('home', get_string('home'), 'home', $homeurl);
+        }
+
         $items[] = $this->item('dashboard', get_string('myhome'), 'dashboard', new url('/my/'));
         $items[] = $this->item('calendar', get_string('calendar', 'calendar'), 'calendar',
             new url('/calendar/view.php', ['view' => 'month']));

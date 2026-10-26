@@ -22,7 +22,7 @@
 
 /** Names of the icons the bar knows how to draw (see ./icons). */
 export type IconName =
-    | 'dashboard' | 'calendar' | 'courses' | 'management' | 'users' | 'grades' | 'reports'
+    | 'home' | 'dashboard' | 'calendar' | 'courses' | 'management' | 'users' | 'grades' | 'reports'
     | 'badges' | 'competencies' | 'admin' | 'help' | 'sidebar' | 'outline';
 
 export interface Brand {

@@ -92,9 +92,8 @@ function theme_retani_studio_get_extra_scss($theme) {
  * @return bool
  */
 function theme_retani_studio_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    $frontpagefile = str_starts_with($filearea, \theme_retani_studio\output\frontpage::PREFIX);
     if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'logo' || $filearea === 'backgroundimage' ||
-        $filearea === 'loginbackgroundimage' || $frontpagefile)) {
+        $filearea === 'loginbackgroundimage')) {
         $theme = theme_config::load('retani_studio');
         // By default, theme files must be cache-able by both browsers and proxies.
         if (!array_key_exists('cacheability', $options)) {

@@ -8,6 +8,7 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 const PATHS = {
+  home: "M3 11l9-8 9 8M5 9.5V21h5v-6h4v6h5V9.5",
   dashboard: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
   calendar: "M3 5h18v16H3zM3 10h18M8 3v4M16 3v4",
   courses: "M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z",
@@ -45,7 +46,7 @@ function Icon({ name, path, size = 13, strokeWidth = 2.2 }) {
       focusable: "false",
       children: /* @__PURE__ */ jsxDEV("path", { d }, void 0, false, {
         fileName: "public/theme/retani_studio/js/esm/src/leftbar/icons.tsx",
-        lineNumber: 72,
+        lineNumber: 73,
         columnNumber: 13
       }, this)
     },
@@ -53,7 +54,7 @@ function Icon({ name, path, size = 13, strokeWidth = 2.2 }) {
     false,
     {
       fileName: "public/theme/retani_studio/js/esm/src/leftbar/icons.tsx",
-      lineNumber: 70,
+      lineNumber: 71,
       columnNumber: 9
     },
     this
@@ -72,7 +73,7 @@ function Caret({ up = false }) {
       focusable: "false",
       children: /* @__PURE__ */ jsxDEV("path", { d: up ? "M2 6.5h6L5 3z" : "M2 3.5h6L5 7z", fill: "currentColor" }, void 0, false, {
         fileName: "public/theme/retani_studio/js/esm/src/leftbar/icons.tsx",
-        lineNumber: 88,
+        lineNumber: 89,
         columnNumber: 13
       }, this)
     },
@@ -80,7 +81,7 @@ function Caret({ up = false }) {
     false,
     {
       fileName: "public/theme/retani_studio/js/esm/src/leftbar/icons.tsx",
-      lineNumber: 86,
+      lineNumber: 87,
       columnNumber: 9
     },
     this
@@ -90,7 +91,7 @@ __name(Caret, "Caret");
 function Check() {
   return /* @__PURE__ */ jsxDEV(Icon, { path: "M5 12l5 5 9-10", size: 13, strokeWidth: 2.4 }, void 0, false, {
     fileName: "public/theme/retani_studio/js/esm/src/leftbar/icons.tsx",
-    lineNumber: 99,
+    lineNumber: 100,
     columnNumber: 12
   }, this);
 }
