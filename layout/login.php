@@ -32,11 +32,21 @@ $leftinstructions = !empty($CFG->auth_instructions)
     ? format_text($CFG->auth_instructions, FORMAT_MOODLE, ['context' => context_system::instance()])
     : null;
 
+// Logo uploaded in the theme settings, shown at the top of the left panel.
+$logourl = $PAGE->theme->setting_file_url('logo', 'logo');
+
+$sitename = format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]);
+
 $templatecontext = [
-    'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
+    'sitename' => $sitename,
     'output' => $OUTPUT,
     'bodyattributes' => $bodyattributes,
     'leftinstructions' => $leftinstructions,
+    'logourl' => $logourl,
+    'copyright' => get_string('copyright', 'theme_retani_studio', [
+        'year' => userdate(time(), '%Y'),
+        'sitename' => format_string($SITE->fullname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
+    ]),
 ];
 
 echo $OUTPUT->render_from_template('theme_retani_studio/login', $templatecontext);

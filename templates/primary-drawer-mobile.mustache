@@ -20,6 +20,9 @@
 
     This template renders the mobile version of the top navbar menu in a drawer.
 
+    When the page has the Retani left bar (leftbar.mobile, from theme_retani_studio\output\left_bar), the drawer
+    shows that bar via theme_retani_studio/retani/left_bar; otherwise it lists mobileprimarynav.
+
     Example context (json):
     {
         "output": {
@@ -66,6 +69,10 @@
         </a>
     {{/drawerheading}}
     {{$drawercontent}}
+        {{#leftbar.mobile}}
+            {{> theme_retani_studio/retani/left_bar }}
+        {{/leftbar.mobile}}
+        {{^leftbar.mobile}}
         <div class="list-group">
             {{#mobileprimarynav}}
                 {{#haschildren}}
@@ -99,6 +106,7 @@
                 {{/haschildren}}
             {{/mobileprimarynav}}
         </div>
+        {{/leftbar.mobile}}
     {{/drawercontent}}
     {{$drawerstate}}show-drawer-primary{{/drawerstate}}
 {{/ theme_retani_studio/drawer}}

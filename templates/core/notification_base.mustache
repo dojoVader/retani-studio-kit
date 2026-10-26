@@ -1,0 +1,70 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/notification_base
+
+    Retani notification: a single row of icon, bold title followed by the message, an optional
+    action link on the right, and the close button (mockup/alert.png).
+
+    Context variables required for this template:
+    * message A cleaned string (use clean_text()) to display.
+    * extraclasses Additional classes to apply to the notification.
+    * closebutton Whether a close button should be displayed to dismiss the message.
+    * announce Whether the notification should be announced to screen readers.
+    * headinglevel The optional heading level to use for the title (1-6). Defaults to 3.
+    * title Optional title, shown in bold before the message.
+    * titleicon Optional icon shown at the start of the row.
+    * action Optional {url, text} link shown at the end of the row.
+
+    Example context (json):
+    {
+        "message": "Design courses decreased by 8% this week. Consider updating lesson materials or adding interactive tasks.",
+        "closebutton": 1,
+        "announce": 1,
+        "title": "Improve Course Engagement",
+        "headinglevel": 4,
+        "titleicon": {
+            "icon": "i/circleinfo",
+            "component": "core"
+        },
+        "action": {
+            "url": "#",
+            "text": "Course Management"
+        }
+    }
+}}
+<div class="alert {{$alertclass}}alert-secondary{{/alertclass}} retani-alert alert-block fade in {{ extraclasses }} {{#closebutton}}alert-dismissible{{/closebutton}}" {{!
+        }}{{# announce }} role="alert" data-aria-autofocus="true"{{/ announce }}>
+    {{#titleicon}}
+        <span class="retani-alert-icon">{{#pix}}{{icon}}, {{component}}{{/pix}}</span>
+    {{/titleicon}}
+    <div class="retani-alert-body">
+        {{#title}}
+            <h{{#headinglevel}}{{.}}{{/headinglevel}}{{^headinglevel}}3{{/headinglevel}} class="retani-alert-title">{{.}}</h{{#headinglevel}}{{.}}{{/headinglevel}}{{^headinglevel}}3{{/headinglevel}}>
+            <span class="retani-alert-separator" aria-hidden="true">-</span>
+        {{/title}}
+        {{{ message }}}
+    </div>
+    {{#action}}
+        <a class="retani-alert-action" href="{{url}}">{{text}}</a>
+    {{/action}}
+    {{# closebutton }}{{!
+    }}<button type="button" class="btn-close" data-bs-dismiss="alert">
+        <span class="visually-hidden">{{#str}}dismissnotification, core{{/str}}</span>
+    </button>{{!
+    }}{{/ closebutton }}
+</div>

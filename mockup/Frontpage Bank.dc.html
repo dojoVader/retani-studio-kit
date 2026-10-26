@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&amp;display=swap">
+<script src="./image-slot.js"></script>
+<style>
+html,body{margin:0;background:#FFFFFF;font-family:'Poppins',system-ui,sans-serif;color:#2B2F36;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:var(--ac,#00704A);text-decoration:none}a:hover{color:color-mix(in oklab,var(--ac,#00704A) 82%,black)}
+button,input{font-family:inherit}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="min-width:0">
+
+  <header style="position:sticky;top:0;z-index:50;background:#FFFFFF;border-bottom:1px solid #F0F0F0">
+    <div style="max-width:1140px;margin:0 auto;padding:0 20px;height:68px;display:flex;align-items:center;gap:24px">
+      <a href="#" style="font-size:19px;font-weight:600;color:#2B2F36;letter-spacing:-.01em;flex:none;white-space:nowrap">Meridian<span style="color:var(--ac,#00704A)"> Bank Academy</span></a>
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+        <nav style="flex:1;display:flex;justify-content:center;gap:30px;font-size:12.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase">
+          <sc-for list="{{ navLinks }}" as="n" hint-placeholder-count="5"><a href="{{ n.href }}" style="color:{{ n.color }};white-space:nowrap">{{ n.label }}</a></sc-for>
+        </nav>
+        <a href="#" style="font-size:12px;font-weight:500;color:#2B2F36;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap">Log in / Register</a>
+        <a href="#" style="height:34px;padding:0 18px;border-radius:999px;border:1.5px solid var(--ac,#00704A);color:var(--ac,#00704A);font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;white-space:nowrap">Contact</a>
+      </sc-if>
+      <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+        <span style="flex:1"></span>
+        <button onClick="{{ toggleMenu }}" aria-label="Menu" style="width:40px;height:40px;border-radius:8px;border:1px solid #E6E6E6;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2B2F36" stroke-width="2" stroke-linecap="round"><path d="{{ menuIcon }}"></path></svg></button>
+      </sc-if>
+    </div>
+    <sc-if value="{{ menuShown }}" hint-placeholder-val="{{ false }}">
+      <nav style="display:flex;flex-direction:column;padding:6px 20px 16px;border-top:1px solid #F0F0F0;font-size:14px">
+        <sc-for list="{{ navLinks }}" as="n"><a href="{{ n.href }}" onClick="{{ closeMenu }}" style="padding:10px 0;color:{{ n.color }}">{{ n.label }}</a></sc-for>
+        <a href="#" style="padding:10px 0;color:#2B2F36">Log in / Register</a>
+      </nav>
+    </sc-if>
+  </header>
+
+  <section style="background:var(--hero,#E2F1EA);padding:72px 20px 0;text-align:center">
+    <h1 style="margin:0 auto;max-width:640px;font-size:clamp(26px,3.6vw,36px);line-height:1.25;font-weight:400;letter-spacing:-.01em;color:#1F2A2A;text-wrap:balance">Build a banking career that grows with you</h1>
+    <p style="margin:14px auto 0;max-width:560px;font-size:14px;line-height:1.7;color:#4C5B58;text-wrap:pretty">CIBN-aligned courses in operations, credit, compliance and digital banking, taught by practising bankers from our own branches and head office.</p>
+    <sc-if value="{{ notJoined }}" hint-placeholder-val="{{ true }}">
+      <form onSubmit="{{ join }}" style="margin:28px auto 0;max-width:440px;display:flex;padding:5px;border-radius:999px;background:#FFFFFF">
+        <input type="email" required="{{ true }}" value="{{ email }}" onChange="{{ onEmail }}" placeholder="Your email" aria-label="Email" style="flex:1;min-width:0;border:0;outline:0;background:transparent;padding:0 18px;font-size:13.5px;color:#2B2F36">
+        <button type="submit" style="height:42px;padding:0 24px;border-radius:999px;border:0;background:var(--ac,#00704A);color:#FFFFFF;font-size:12.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;white-space:nowrap" style-hover="background:color-mix(in oklab,var(--ac,#00704A) 82%,black)">Enrol now</button>
+      </form>
+    </sc-if>
+    <sc-if value="{{ joined }}" hint-placeholder-val="{{ false }}">
+      <div style="margin:28px auto 0;display:inline-flex;align-items:center;gap:8px;height:52px;padding:0 22px;border-radius:999px;background:#FFFFFF;font-size:13.5px;color:#1F2A2A"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DBE7E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>Check {{ email }} to finish signing up</div>
+    </sc-if>
+    <div style="position:relative;max-width:1240px;height:clamp(160px,22vw,250px);margin:48px auto 0">
+      <image-slot id="bnk-hero" shape="rect" fit="cover" src="https://images.unsplash.com/photo-1573164574397-dd250bc8a598?w=1600&amp;q=70&amp;auto=format&amp;fit=crop" credit="Christina @ wocintechchat.com M" credit-href="https://unsplash.com/@wocintechchat" placeholder="Hero image (bankers in training)" style="position:absolute;inset:0"></image-slot>
+    </div>
+  </section>
+
+  <section style="padding:84px 20px">
+    <div style="max-width:1140px;margin:0 auto;text-align:center">
+      <h2 style="margin:0;font-size:24px;font-weight:500;color:#1F2A2A">Why train with us</h2>
+      <p style="margin:14px auto 0;max-width:520px;font-size:13.5px;line-height:1.7;color:#7A8085">Practical training built around how Nigerian banks actually work, from the banking hall to the boardroom.</p>
+      <div style="margin-top:44px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:32px">
+        <sc-for list="{{ offers }}" as="o" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:0 12px">
+            <span style="width:64px;height:64px;border-radius:50%;border:1.5px dashed color-mix(in oklab,var(--ac,#00704A) 50%,white);display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-width="1.6" style="stroke:var(--ac,#00704A)" stroke-linecap="round" stroke-linejoin="round"><path d="{{ o.d }}"></path></svg></span>
+            <span style="font-size:15px;font-weight:500;color:#1F2A2A">{{ o.t }}</span>
+            <span style="max-width:260px;font-size:13px;line-height:1.7;color:#7A8085;text-wrap:pretty">{{ o.s }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="courses" style="background:#F6F7F9;padding:84px 20px">
+    <div style="max-width:1140px;margin:0 auto">
+      <div style="text-align:center">
+        <h2 style="margin:0;font-size:24px;font-weight:500;color:#1F2A2A">Popular Courses</h2>
+        <span style="display:block;width:44px;height:2px;margin:12px auto 0;background:var(--ac,#00704A)"></span>
+        <div role="tablist" style="margin-top:24px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px">
+          <sc-for list="{{ cats }}" as="c" hint-placeholder-count="5">
+            <button role="tab" aria-selected="{{ c.on }}" onClick="{{ c.onClick }}" style="height:30px;padding:0 16px;border-radius:999px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:11.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;white-space:nowrap">{{ c.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:36px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:24px">
+        <sc-for list="{{ courses }}" as="c" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column;background:#FFFFFF;border-radius:6px;overflow:hidden;border:1px solid #ECEDEF" style-hover="border-color:color-mix(in oklab,var(--ac,#00704A) 50%,white)">
+            <div style="position:relative;aspect-ratio:16/10;background:{{ c.tint }}">
+              <image-slot id="{{ c.img }}" shape="rect" src="{{ c.src }}" credit="{{ c.credit }}" credit-href="{{ c.href }}" placeholder="Course image" style="position:absolute;inset:0"></image-slot>
+              <span style="position:absolute;left:0;bottom:12px;height:22px;padding:0 10px;background:#2B2F36;color:#FFFFFF;font-size:10.5px;font-weight:500;display:flex;align-items:center;white-space:nowrap;pointer-events:none">{{ c.cat }}</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px;padding:18px">
+              <a href="#" style="font-size:15px;font-weight:500;line-height:1.4;color:#1F2A2A">{{ c.name }}</a>
+              <span style="font-size:12.5px;line-height:1.65;color:#7A8085;text-wrap:pretty">{{ c.desc }}</span>
+              <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#7A8085"><span style="color:#F6B21B;letter-spacing:1px;white-space:nowrap">★★★★★</span><span style="white-space:nowrap">{{ c.reviewsLabel }}</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid #F0F1F3">
+              <span style="width:30px;height:30px;flex:none;border-radius:50%;background:{{ c.avBg }};color:#FFFFFF;font-size:10.5px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ c.initials }}</span>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3"><span style="font-size:12px;font-weight:500;color:#1F2A2A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.by }}</span><span style="font-size:10.5px;color:#9AA0A6">{{ c.role }}</span></div>
+              <span style="font-size:14px;font-weight:600;color:{{ c.priceColor }};white-space:nowrap">{{ c.price }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:40px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+        <a href="#" style="height:40px;padding:0 24px;border-radius:999px;background:var(--ac,#00704A);color:#FFFFFF;font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;white-space:nowrap">View all courses</a>
+        <a href="#" style="height:40px;padding:0 24px;border-radius:999px;border:1px solid #D9DCE0;color:#2B2F36;font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;white-space:nowrap">Explore learning paths</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="position:relative;background:var(--ac,#00704A);padding:64px 20px;overflow:hidden">
+    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.14) 1px,transparent 1.4px);background-size:16px 16px"></div>
+    <div style="position:relative;max-width:900px;margin:0 auto;display:grid;grid-template-columns:{{ statCols }};gap:28px;text-align:center;color:#FFFFFF;pointer-events:none">
+      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:34px;font-weight:600;letter-spacing:-.01em">{{ s.v }}</span><span style="font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;opacity:.92">{{ s.l }}</span></div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="tracks" style="padding:84px 20px">
+    <div style="max-width:1140px;margin:0 auto">
+      <div style="text-align:center">
+        <h2 style="margin:0;font-size:24px;font-weight:500;color:#1F2A2A">Learning Paths</h2>
+        <span style="display:block;width:44px;height:2px;margin:12px auto 0;background:var(--ac,#00704A)"></span>
+      </div>
+      <div style="margin-top:40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:24px">
+        <sc-for list="{{ tracks }}" as="t" hint-placeholder-count="6">
+          <div onMouseEnter="{{ t.hover }}" style="display:flex;flex-direction:column;gap:10px;padding:26px 24px;border-radius:4px;background:{{ t.bg }};border-bottom:1px solid {{ t.line }};transition:background .2s">
+            <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:{{ t.sub }}">{{ t.count }} courses</span>
+            <span style="font-size:15.5px;font-weight:500;color:{{ t.color }}">{{ t.t }}</span>
+            <span style="font-size:12.5px;line-height:1.65;color:{{ t.sub }};text-wrap:pretty">{{ t.s }}</span>
+            <a href="#" style="align-self:flex-start;margin-top:6px;height:30px;padding:0 16px;border-radius:999px;border:1px solid {{ t.btnBorder }};color:{{ t.color }};font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;white-space:nowrap">View path</a>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#F6F7F9;padding:84px 20px">
+    <div style="max-width:1140px;margin:0 auto">
+      <div style="text-align:center">
+        <h2 style="margin:0;font-size:24px;font-weight:500;color:#1F2A2A">Featured Certification</h2>
+        <span style="display:block;width:44px;height:2px;margin:12px auto 0;background:var(--ac,#00704A)"></span>
+      </div>
+      <div style="margin-top:40px;display:grid;grid-template-columns:{{ featCols }};gap:40px;align-items:center">
+        <div style="position:relative;aspect-ratio:16/10;border-radius:4px;overflow:hidden;background:#E9ECEF">
+          <image-slot id="bnk-featured" shape="rect" src="https://images.unsplash.com/photo-1666866854783-8943590e37c8?w=1600&amp;q=70&amp;auto=format&amp;fit=crop" credit="Raymond Owusu-Afriyie" credit-href="https://unsplash.com/@raystudiosgh" placeholder="Course video still" style="position:absolute;inset:0"></image-slot>
+          <button onClick="{{ playTrailer }}" aria-label="Play trailer" style="position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;border:0;background:var(--ac,#00704A);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;box-shadow:0 0 0 10px color-mix(in oklab,var(--ac,#00704A) 25%,transparent)"><svg width="20" height="20" viewBox="0 0 24 24" fill="#FFFFFF"><path d="{{ playIcon }}"></path></svg></button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+          <span style="font-size:18px;font-weight:500;line-height:1.4;color:#1F2A2A">Certified Credit Analyst Programme</span>
+          <p style="margin:0;font-size:13px;line-height:1.75;color:#7A8085">A 12-week programme in financial statement analysis, cash-flow lending and credit risk rating, built on real Nigerian SME and corporate loan files.</p>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <sc-for list="{{ featPoints }}" as="p" hint-placeholder-count="4">
+              <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.6;color:#4C5258"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:4px;stroke:var(--ac,#00704A)"><path d="M5 12l5 5 9-10"></path></svg><span style="flex:1;min-width:0">{{ p }}</span></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:8px">
+            <a href="#" style="height:40px;padding:0 24px;border-radius:999px;background:var(--ac,#00704A);color:#FFFFFF;font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;white-space:nowrap">Apply now</a>
+            <span style="font-size:13px;color:#7A8085;white-space:nowrap">Fee <span style="color:var(--ac,#00704A);font-weight:600">₦350,000</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <sc-if value="{{ showPricing }}" hint-placeholder-val="{{ true }}">
+  <section id="pricing" style="padding:84px 20px">
+    <div style="max-width:1000px;margin:0 auto">
+      <div style="text-align:center">
+        <h2 style="margin:0;font-size:24px;font-weight:500;color:#1F2A2A">Membership Plans</h2>
+        <span style="display:block;width:44px;height:2px;margin:12px auto 0;background:var(--ac,#00704A)"></span>
+        <div style="margin-top:22px;display:inline-flex;padding:3px;border-radius:999px;background:#F1F2F4">
+          <button onClick="{{ setMonthly }}" style="height:30px;padding:0 16px;border-radius:999px;border:0;background:{{ mBg }};color:{{ mColor }};font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">Monthly</button>
+          <button onClick="{{ setYearly }}" style="height:30px;padding:0 16px;border-radius:999px;border:0;background:{{ yBg }};color:{{ yColor }};font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">Yearly · save 15%</button>
+        </div>
+      </div>
+      <div style="margin-top:36px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;align-items:start">
+        <sc-for list="{{ plans }}" as="p" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;background:#FFFFFF;border:1px solid #ECEDEF;border-radius:4px;overflow:hidden;transform:translateY({{ p.lift }}px);box-shadow:{{ p.shadow }}">
+            <div style="height:40px;background:{{ p.color }};color:#FFFFFF;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center">{{ p.name }}</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:26px 20px 18px;border-bottom:1px solid #F0F1F3">
+              <span style="width:56px;height:56px;border-radius:50%;background:{{ p.tint }};display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="{{ p.color }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="{{ p.d }}"></path></svg></span>
+              <div style="display:flex;align-items:baseline;gap:4px;margin-top:8px;white-space:nowrap"><span style="font-size:30px;font-weight:600;color:#1F2A2A;letter-spacing:-.01em">{{ p.price }}</span><span style="font-size:11.5px;color:#9AA0A6">{{ p.per }}</span></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;padding:20px 26px">
+              <sc-for list="{{ p.feats }}" as="f">
+                <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:{{ f.color }}"><span style="width:5px;height:5px;flex:none;border-radius:50%;background:{{ f.dot }}"></span><span style="text-decoration:{{ f.deco }}">{{ f.t }}</span></div>
+              </sc-for>
+            </div>
+            <div style="padding:6px 26px 26px">
+              <a href="#" style="height:38px;border-radius:999px;border:1px solid {{ p.btnBorder }};background:{{ p.btnBg }};color:{{ p.btnColor }};font-size:11.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;white-space:nowrap">{{ p.btnLabel }}</a>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <section style="background:var(--ac,#00704A);padding:72px 20px;color:#FFFFFF;text-align:center">
+    <div style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:18px">
+      <svg width="40" height="32" viewBox="0 0 22 18" fill="rgba(255,255,255,.45)"><path d="M0 18V10C0 4.5 3 1 8.5 0l1 2.5C6.5 3.5 5 5.5 5 8h4v10zm12 0V10c0-5.5 3-9 8.5-10l1 2.5C18.5 3.5 17 5.5 17 8h4v10z"></path></svg>
+      <p style="margin:0;font-size:clamp(15px,1.8vw,18px);line-height:1.75;font-weight:300;font-style:italic;text-wrap:pretty">“{{ tQuote }}”</p>
+      <span style="color:#FFE08A;letter-spacing:2px">★★★★★</span>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-size:13.5px;font-weight:500;white-space:nowrap">{{ tName }}</span><span style="font-size:12.5px;font-weight:300;opacity:.92;white-space:nowrap">{{ tRole }}</span></div>
+      <div style="display:flex;gap:12px;margin-top:6px">
+        <sc-for list="{{ tPeople }}" as="p" hint-placeholder-count="3">
+          <button onClick="{{ p.onClick }}" aria-label="{{ p.name }}" style="width:{{ p.size }}px;height:{{ p.size }}px;border-radius:50%;border:2px solid {{ p.ring }};background:{{ p.bg }};color:#FFFFFF;font-size:12px;font-weight:600;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;transition:all .2s">{{ p.i }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" style="padding:84px 20px">
+    <div style="max-width:1000px;margin:0 auto">
+      <div style="text-align:center">
+        <h2 style="margin:0;font-size:24px;font-weight:500;color:#1F2A2A">Frequently Asked Questions</h2>
+        <span style="display:block;width:44px;height:2px;margin:12px auto 0;background:var(--ac,#00704A)"></span>
+      </div>
+      <div style="margin-top:40px;display:grid;grid-template-columns:{{ faqCols }};gap:16px 40px;align-items:start">
+        <sc-for list="{{ faqs }}" as="q" hint-placeholder-count="6">
+          <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #F0F1F3">
+            <span style="width:30px;height:30px;flex:none;border-radius:50%;background:{{ q.badgeBg }};color:{{ q.badgeColor }};font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ q.l }}</span>
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+              <button onClick="{{ q.onClick }}" aria-expanded="{{ q.open }}" style="display:flex;align-items:flex-start;gap:10px;border:0;background:none;padding:5px 0 0;cursor:pointer;text-align:left;font-size:14px;font-weight:500;line-height:1.45;color:#1F2A2A"><span style="flex:1">{{ q.q }}</span><span style="font-size:18px;line-height:1;color:var(--ac,#00704A);flex:none">{{ q.sign }}</span></button>
+              <sc-if value="{{ q.open }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:12.5px;line-height:1.75;color:#7A8085;text-wrap:pretty">{{ q.a }}</p></sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="news" style="background:#F6F7F9;padding:84px 20px">
+    <div style="max-width:1140px;margin:0 auto">
+      <div style="text-align:center">
+        <h2 style="margin:0;font-size:24px;font-weight:500;color:#1F2A2A">Recent News</h2>
+        <span style="display:block;width:44px;height:2px;margin:12px auto 0;background:var(--ac,#00704A)"></span>
+      </div>
+      <div style="margin-top:40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:24px">
+        <sc-for list="{{ news }}" as="n" hint-placeholder-count="3">
+          <a href="#" style="display:flex;flex-direction:column;background:#FFFFFF;border-radius:4px;overflow:hidden;color:#1F2A2A">
+            <div style="position:relative;aspect-ratio:16/10;background:#E9ECEF"><image-slot id="{{ n.id }}" shape="rect" src="{{ n.src }}" credit="{{ n.credit }}" credit-href="{{ n.href }}" placeholder="News image" style="position:absolute;inset:0"></image-slot></div>
+            <div style="display:flex;flex-direction:column;gap:8px;padding:18px">
+              <span style="font-size:11px;color:#9AA0A6">{{ n.date }} · by <span style="color:var(--ac,#00704A)">{{ n.by }}</span></span>
+              <span style="font-size:14.5px;font-weight:500;line-height:1.45">{{ n.t }}</span>
+              <span style="font-size:12.5px;line-height:1.7;color:#7A8085;text-wrap:pretty">{{ n.s }}</span>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+      <div style="margin-top:36px;display:flex;justify-content:center"><a href="#" style="height:40px;padding:0 24px;border-radius:999px;background:var(--ac,#00704A);color:#FFFFFF;font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;white-space:nowrap">View all news</a></div>
+    </div>
+  </section>
+
+  <section style="padding:72px 20px">
+    <div style="max-width:1000px;margin:0 auto;text-align:center">
+      <h2 style="margin:0;font-size:24px;font-weight:500;color:#1F2A2A">Accreditation &amp; Partners</h2>
+      <span style="display:block;width:44px;height:2px;margin:12px auto 0;background:var(--ac,#00704A)"></span>
+      <div style="margin-top:36px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px">
+        <sc-for list="{{ partners }}" as="p" hint-placeholder-count="4">
+          <div style="position:relative;height:60px;opacity:.75"><image-slot id="{{ p.id }}" shape="rect" fit="contain" placeholder="Partner logo" style="position:absolute;inset:0"></image-slot></div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--ac,#00704A);padding:28px 20px">
+    <div style="max-width:1000px;margin:0 auto;display:flex;align-items:center;flex-wrap:wrap;gap:16px 24px">
+      <span style="flex:1;min-width:240px;font-size:17px;font-weight:500;color:#FFFFFF">Start your next banking certification this quarter</span>
+      <a href="#" style="height:38px;padding:0 24px;border-radius:999px;border:1.5px solid #FFFFFF;color:#FFFFFF;font-size:11.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;white-space:nowrap" style-hover="background:#FFFFFF;color:var(--ac,#00704A)">Apply now</a>
+    </div>
+  </section>
+
+  <footer style="background:var(--deep,#0F2A1F);color:#C9CDD2;padding:56px 20px 0">
+    <div style="max-width:1000px;margin:0 auto;display:grid;grid-template-columns:{{ footCols }};gap:32px">
+      <sc-for list="{{ footLinks }}" as="c" hint-placeholder-count="2">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#FFFFFF">{{ c.t }}</span>
+          <sc-for list="{{ c.links }}" as="l"><a href="#" style="font-size:12.5px;color:#A9AFB6" style-hover="color:#FFFFFF">{{ l }}</a></sc-for>
+        </div>
+      </sc-for>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#FFFFFF">Subscribe today</span>
+        <span style="font-size:12.5px;line-height:1.7;color:#A9AFB6">New courses, exam dates and regulatory updates, once a month.</span>
+        <sc-if value="{{ notFootSub }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ footSubscribe }}" style="display:flex;flex-direction:column;gap:10px">
+            <input type="email" required="{{ true }}" value="{{ footEmail }}" onChange="{{ onFootEmail }}" placeholder="Your email" aria-label="Email" style="height:40px;padding:0 0 0 2px;border:0;border-bottom:1px solid #4A4F56;background:transparent;color:#FFFFFF;font-size:13px;outline:0">
+            <button type="submit" style="align-self:flex-end;height:36px;padding:0 22px;border-radius:999px;border:0;background:var(--ac,#00704A);color:#FFFFFF;font-size:11.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;cursor:pointer">Subscribe</button>
+          </form>
+        </sc-if>
+        <sc-if value="{{ footSub }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:#7FE0B0">Thanks — you’re subscribed.</span></sc-if>
+      </div>
+    </div>
+    <div style="max-width:1000px;margin:44px auto 0;padding:18px 0;border-top:1px solid #3D4148;text-align:center;font-size:11.5px;color:#8A9098">© 2026 Meridian Bank Academy. Powered by <span style="color:var(--ac,#00704A)">Retani Studio</span>.</div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;palette&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;label&quot;:&quot;Palette (accent · hero · footer)&quot;,&quot;options&quot;:[[&quot;#00704A&quot;,&quot;#E2F1EA&quot;,&quot;#0F2A1F&quot;],[&quot;#8B1E3F&quot;,&quot;#F4E6EA&quot;,&quot;#2A1720&quot;],[&quot;#1E3A8A&quot;,&quot;#E3E9F7&quot;,&quot;#141D33&quot;],[&quot;#0F5F4F&quot;,&quot;#DFEFEA&quot;,&quot;#13261F&quot;],[&quot;#5B2A86&quot;,&quot;#ECE4F5&quot;,&quot;#211633&quot;]],&quot;default&quot;:[&quot;#00704A&quot;,&quot;#E2F1EA&quot;,&quot;#0F2A1F&quot;],&quot;tsType&quot;:&quot;string[]&quot;},&quot;showPricing&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;label&quot;:&quot;Show pricing section&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { cat: 'All', track: 1, yearly: false, t: 1, faq: { 0: true }, email: '', joined: false, footEmail: '', footSub: false, playing: false, menu: false, vw: typeof window !== 'undefined' ? window.innerWidth : 1280 };
+  D = {"photos":{"courses":[["1601597111158-2fceff292cdc","Eduardo Soares","eduschadesoares"],["flagged/photo-1559733404-9b79677fc959","Loui Kiær","plutonicmedia"],["1582139329536-e7284fece509","Jason Dent","jdent"],["1563013544-824ae1b704d3","rupixen","rupixen"],["1553729459-efe14ef6055d","Alexander Mils","alexandermils"],["1622295023825-6e319464b810","Emmanuel Ikwuegbu","emmages"],["1709534486708-fb8f94150d0a","Jakub Żerdzicki","jakubzerdzicki"]],"news":[["1486406146926-c627a92ad1ab","Sean Pollock","seanpollock"],["1681826291722-70bd7e9e6fc3","Atlantic Money","atlanticmoney"],["1622295023876-0cdf583c41f6","Emmanuel Ikwuegbu","emmages"]]},"prefix":"bnk-","palette":["#00704A","#E2F1EA","#0F2A1F"],"nav":[["Home","#"],["Courses","#courses"],["Learning Paths","#tracks"],["Plans","#pricing"],["News","#news"]],"offers":[["Taught by practising bankers","Every course is led by branch managers, credit officers and compliance leads who do the job daily.","M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21c0-4 3-6 7-6s7 2 7 6M16 3a4 4 0 0 1 0 8M22 21c0-3-2-5-4-5.5"],["Recognised certification","CIBN-aligned courses with CPD credits and certificates employers across the industry recognise.","M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM8.5 14L7 22l5-3 5 3-1.5-8"],["Learn on any device","Self-paced lessons, live virtual classes and offline downloads in the Moodle app.","M7 2h10v20H7zM11 18h2"]],"cats":["All","Operations","Credit & Risk","Compliance","Digital Banking","Treasury"],"courses":[["Operations","Branch Operations Essentials","Teller operations, cash management, account opening and KYC in the banking hall.",4.8,1240,"Mrs. Adaeze Okafor","Branch manager, Ikeja",45000],["Credit & Risk","Credit Analysis and Loan Appraisal","Read financial statements, assess cash flow and structure SME loans.",4.9,876,"Mr. Tunde Bakare","Head, Credit Risk",120000],["Compliance","AML/CFT and Regulatory Compliance","Spot suspicious transactions and meet CBN and NFIU reporting rules.",4.8,1532,"Barr. Hauwa Musa","Chief Compliance Officer",0],["Digital Banking","Digital Banking and Payments","USSD, mobile apps, NIP transfers, cards and open banking in Nigeria.",4.7,948,"Engr. Chidi Nwosu","Head, Digital Channels",75000],["Treasury","Treasury and Foreign Exchange","Money markets, FX dealing, liquidity management and the NAFEM window.",4.8,412,"Mr. Femi Adeyemi","Group Treasurer",150000],["Operations","Customer Experience and Relationship Banking","Grow and keep customer relationships with service and advisory skills.",4.7,689,"Mrs. Ngozi Eze","Head, Retail Banking",35000],["Credit & Risk","IFRS 9 and Financial Reporting","Expected credit loss models, impairment and reporting for banks.",4.8,357,"Mr. Tunde Bakare","Head, Credit Risk",95000]],"stats":[["42,000","Bankers trained"],["68","Courses"],["35","Expert faculty"],["120","Partner institutions"]],"tracks":[["Graduate Trainee Programme",12,"Foundations of banking, products, operations and ethics for new entrants."],["Branch Operations",9,"Teller, customer service, cash and branch control for front-office staff."],["Credit & Risk Management",11,"Credit appraisal, risk rating, recovery and portfolio management."],["Compliance & AML",8,"KYC, AML/CFT, sanctions screening and regulatory reporting."],["Digital Banking & Fintech",10,"Payments, cybersecurity, data and agency banking."],["Leadership & Management",7,"Managing teams, sales targets and performance in a bank."]],"featPoints":["Real loan files from SME and corporate lending","Weekly live sessions with senior credit officers","Final assessment and CPD-accredited certificate","Mentorship from a relationship manager"],"plans":[["Individual","#E5656B","#FDECEC",15000,[["Access to 20 core courses",1],["Certificates of completion",1],["Mobile and offline learning",1],["Live virtual classes",0],["Team reporting dashboard",0]]],["Professional","#2F80D1","#E6F0FB",35000,[["Full course library",1],["Certificates and CPD credits",1],["Mobile and offline learning",1],["Live virtual classes",1],["Exam preparation packs",1]]],["Institution","#3DBFA8","#E2F6F2",250000,[["Up to 50 staff seats",1],["Full course library",1],["Team reporting dashboard",1],["Custom learning paths",1],["Dedicated account manager",1]]]],"planMult":12,"planDisc":0.85,"per":["/ month","/ year"],"freePer":"","planBtn":"Choose","testimonials":[["OA","Oluwaseun Alade","Credit Analyst, Lagos","The credit analysis course used real loan files. Within a month I was writing appraisals my line manager signed off without changes.","#0E7C5A"],["BI","Blessing Ibekwe","Customer Service Officer, Enugu","Branch Operations Essentials gave me the confidence to handle cash, complaints and account opening on my first posting.","#2F80D1"],["MS","Musa Sani","Compliance Officer, Abuja","The AML course is practical and current. The case studies mirror exactly what we see in transaction monitoring every day.","#9C2F5E"]],"faqs":[["Who can enrol in these courses?","Our own staff, staff of partner banks and microfinance institutions, and individuals preparing for a banking career."],["Are the certificates recognised?","Courses are aligned to the CIBN curriculum and carry CPD credits. Certificates are issued after the final assessment."],["Can I learn while working?","Yes. Lessons are self-paced, live classes run in the evenings and recordings are available for every session."],["Is compliance training free for staff?","Mandatory courses such as AML/CFT and information security are free for all Meridian staff."],["How do I pay?","Pay by card, bank transfer or USSD. Institutions can be invoiced monthly or yearly."],["Can I study on my phone?","Yes. All courses work in the Moodle app on Android and iOS, including offline downloads for low-data areas."]],"news":[["16 Oct 2026","Academy","Q4 Graduate Trainee intake now open","Applications close 15 November for the next cohort of graduate trainees."],["3 Oct 2026","Digital Banking","New course on open banking in Nigeria","Learn how APIs and customer-consented data are changing products."],["22 Sep 2026","Compliance","Updated AML/CFT module released","Refreshed case studies reflect the latest regulatory guidance."]],"footLinks":[{"t":"Quick links","links":["About the academy","Courses","Learning paths","Plans","Certification"]},{"t":"Learners","links":["Learner portal","Training calendar","Certificates","Exam guides","Policies"]}]};
+  icons = ['M4 19h16M6 15l3-4 3 2 5-7', 'M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21c0-4 3-6 7-6s7 2 7 6M16 3a4 4 0 0 1 0 8M22 21c0-3-2-5-4-5.5'];
+  avs = [['#0E7C5A', '#DFF3EA'], ['#1F4E9C', '#E3ECFA'], ['#B26A00', '#FBEFD9'], ['#9C2F5E', '#F8E3EC'], ['#6A3FB5', '#ECE4F8'], ['#0E6E8C', '#DFF0F5']];
+  ph(p) { if (!p) return { src: '', credit: '', href: '' }; return { src: 'https://images.unsplash.com/' + (p[0].startsWith('flagged') ? p[0] : 'photo-' + p[0]) + '?w=900&q=70&auto=format&fit=crop', credit: p[1], href: 'https://unsplash.com/@' + p[2] }; }
+  rootRef = el => { this.root = el; this.applyTheme(); };
+  palette() { const d = this.D.palette, p = this.props.palette; if (Array.isArray(p) && p.length) return [p[0], p[1] || d[1], p[2] || d[2]]; if (typeof p === 'string' && p) return [p, d[1], d[2]]; return d; }
+  applyTheme() { if (!this.root) return; const [a, h, k] = this.palette(); this.root.style.setProperty('--ac', a); this.root.style.setProperty('--hero', h); this.root.style.setProperty('--deep', k); }
+  componentDidMount() { this.onR = () => this.setState({ vw: window.innerWidth }); window.addEventListener('resize', this.onR); this.onR(); this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+  componentWillUnmount() { window.removeEventListener('resize', this.onR); }
+  renderVals() {
+    const s = this.state, D = this.D, vw = s.vw, wide = vw >= 1040;
+    const AC = 'var(--ac,' + D.palette[0] + ')', SOFT = 'color-mix(in oklab,' + AC + ' 12%,white)';
+    const ngn = n => '₦' + n.toLocaleString('en-NG');
+    const list = D.courses.filter(c => s.cat === 'All' || c[0] === s.cat).slice(0, 6);
+    const t = D.testimonials[s.t];
+    return {
+      rootRef: this.rootRef, showPricing: this.props.showPricing ?? true,
+      wide, narrow: !wide, menuShown: !wide && s.menu, menuIcon: s.menu ? 'M6 6l12 12M18 6L6 18' : 'M4 7h16M4 12h16M4 17h16',
+      toggleMenu: () => this.setState(st => ({ menu: !st.menu })), closeMenu: () => this.setState({ menu: false }),
+      navLinks: D.nav.map(([label, href], i) => ({ label, href, color: i === 0 ? AC : '#2B2F36' })),
+      email: s.email, onEmail: e => this.setState({ email: e.target.value }), joined: s.joined, notJoined: !s.joined,
+      join: e => { e.preventDefault(); if (s.email.trim()) this.setState({ joined: true }); },
+      offers: D.offers.map(([t2, s2, d]) => ({ t: t2, s: s2, d })),
+      cats: D.cats.map(label => { const on = label === s.cat; return { label, on, bg: on ? AC : '#FFFFFF', color: on ? '#FFFFFF' : '#7A8085', border: on ? AC : '#E3E5E8', onClick: () => this.setState({ cat: label }) }; }),
+      courses: list.map(c => { const k = D.courses.indexOf(c), av = this.avs[k % this.avs.length]; return { cat: c[0], name: c[1], desc: c[2], reviewsLabel: c[3] + ' (' + c[4].toLocaleString('en-NG') + ' reviews)', by: c[5], role: c[6], price: c[7] ? ngn(c[7]) : 'Free', priceColor: c[7] ? '#2B2F36' : '#1E9E64', avBg: av[0], tint: av[1], initials: c[5].replace(/^(Mrs?\.|Mr\.|Dr\.|Prof\.|Engr\.|Barr\.)\s+/, '').split(' ').map(w => w[0]).join('').slice(0, 2), img: D.prefix + 'course-' + k, ...this.ph(D.photos.courses[k]) }; }),
+      statCols: vw < 560 ? 'repeat(2,minmax(0,1fr))' : 'repeat(4,minmax(0,1fr))',
+      stats: D.stats.map(([v, l]) => ({ v, l })),
+      tracks: D.tracks.map(([tt, count, ss], i) => { const on = i === s.track; return { t: tt, count, s: ss, hover: () => this.setState({ track: i }),
+        bg: on ? AC : '#FFFFFF', line: on ? AC : '#ECEDEF', color: on ? '#FFFFFF' : '#1F2A2A', sub: on ? SOFT : '#7A8085', btnBorder: on ? '#FFFFFF' : '#D9DCE0' }; }),
+      featCols: wide ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)',
+      playIcon: s.playing ? 'M7 5h4v14H7zM13 5h4v14h-4z' : 'M8 5v14l11-7z', playTrailer: () => this.setState(st => ({ playing: !st.playing })),
+      featPoints: D.featPoints,
+      mBg: s.yearly ? 'transparent' : '#FFFFFF', mColor: s.yearly ? '#7A8085' : '#1F2A2A', yBg: s.yearly ? '#FFFFFF' : 'transparent', yColor: s.yearly ? '#1F2A2A' : '#7A8085',
+      setMonthly: () => this.setState({ yearly: false }), setYearly: () => this.setState({ yearly: true }),
+      plans: D.plans.map(([name, color, tint, m, feats], i) => { const mid = i === 1 && wide; return { name, color, tint, d: this.icons[i % 3],
+        price: m ? ngn(s.yearly ? Math.round(m * D.planMult * D.planDisc / 1000) * 1000 : m) : 'Free', per: m ? D.per[s.yearly ? 1 : 0] : D.freePer,
+        btnLabel: D.planBtn + ' ' + name, lift: mid ? -12 : 0, shadow: mid ? '0 18px 40px rgba(31,42,42,.10)' : 'none',
+        btnBg: i === 1 ? color : '#FFFFFF', btnColor: i === 1 ? '#FFFFFF' : '#4C5258', btnBorder: i === 1 ? color : '#D9DCE0',
+        feats: feats.map(([ft, ok]) => ({ t: ft, color: ok ? '#4C5258' : '#B5BAC0', dot: ok ? color : '#D9DCE0', deco: ok ? 'none' : 'line-through' })) }; }),
+      tQuote: t[3], tName: t[1], tRole: t[2],
+      tPeople: D.testimonials.map((p, i) => { const on = i === s.t; return { i: p[0], name: p[1], bg: p[4], size: on ? 52 : 42, ring: on ? '#FFFFFF' : 'rgba(255,255,255,.4)', onClick: () => this.setState({ t: i }) }; }),
+      faqCols: wide ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)',
+      faqs: D.faqs.map(([q, a], i) => { const open = !!s.faq[i]; return { l: String.fromCharCode(65 + i), q, a, open, sign: open ? '−' : '+',
+        badgeBg: open ? AC : '#F1F2F4', badgeColor: open ? '#FFFFFF' : '#7A8085', onClick: () => this.setState(st => ({ faq: { ...st.faq, [i]: !st.faq[i] } })) }; }),
+      news: D.news.map(([date, by, t2, s2], k) => ({ date, by, t: t2, s: s2, id: D.prefix + 'news-' + k, ...this.ph(D.photos.news[k]) })),
+      partners: [1, 2, 3, 4].map(k => ({ id: D.prefix + 'partner-' + k })),
+      footCols: vw >= 760 ? '1fr 1fr 1.4fr' : vw >= 480 ? '1fr 1fr' : '1fr',
+      footLinks: D.footLinks,
+      footEmail: s.footEmail, onFootEmail: e => this.setState({ footEmail: e.target.value }), footSub: s.footSub, notFootSub: !s.footSub,
+      footSubscribe: e => { e.preventDefault(); if (s.footEmail.trim()) this.setState({ footSub: true }); },
+    };
+  }
+}
+</script>
+</body>
+</html>

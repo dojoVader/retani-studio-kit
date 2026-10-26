@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap">
+<style>
+html,body{margin:0;background:#F4F3EF;font-family:'Geist',system-ui,sans-serif;color:#111111;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#111111;text-decoration-color:#95BF47;text-underline-offset:3px}a:hover{color:#6B6A64}
+button,input,select{font-family:inherit}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="min-height:100vh;padding:48px 20px;display:flex;justify-content:center;align-items:flex-start">
+  <div style="width:100%;max-width:760px;background:#FFFFFF;border:1px solid #DEDCD5;border-radius:8px">
+    <div style="padding:20px 24px;border-bottom:1px solid #DEDCD5;display:flex;flex-direction:column;gap:4px">
+      <span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6B6A64">Assignment · Wireframe critique</span>
+      <h1 style="margin:0;font-size:24px;font-weight:600;letter-spacing:-.03em">Add submission</h1>
+    </div>
+    <div style="display:grid;grid-template-columns:{{ pageCols }};gap:10px 32px;padding:22px 24px">
+      <div style="display:flex;flex-direction:column;gap:4px;padding-top:6px">
+        <span style="font-size:13.5px;font-weight:500">File submissions</span>
+        <span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;color:#6B6A64">Max 100 MB · 3 files</span>
+      </div>
+      <div style="border:1px solid #DEDCD5;border-radius:6px;overflow:hidden;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid #DEDCD5;background:#F4F3EF">
+          <button onClick="{{ openPicker }}" style="height:32px;padding:0 12px;border-radius:6px;border:1px solid #111111;background:#111111;color:#FFFFFF;font-size:12.5px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Add file</button>
+          <span style="flex:1"></span>
+          <span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;color:#6B6A64">{{ attachedCount }}/3</span>
+        </div>
+        <sc-if value="{{ noAttached }}" hint-placeholder-val="{{ true }}">
+          <div onClick="{{ openPicker }}" style="margin:12px;padding:28px 16px;border:1.5px dashed #DEDCD5;border-radius:6px;text-align:center;font-size:13px;color:#6B6A64;cursor:pointer" style-hover="border-color:#111111;color:#111111">Drag and drop files here, or choose “Add file”.</div>
+        </sc-if>
+        <sc-for list="{{ attached }}" as="a">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid #ECEAE4">
+            <div style="width:34px;height:34px;flex:none;border-radius:6px;background:#F4F3EF;border:1px solid #DEDCD5;display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',ui-monospace,monospace;font-size:9px;color:#111111">{{ a.ext }}</div>
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.name }}</span><span style="font-size:11.5px;color:#6B6A64">{{ a.meta }}</span></div>
+            <button onClick="{{ a.remove }}" title="Remove" style="width:28px;height:28px;flex:none;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.4" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+    <div onMouseDown="{{ backdropDown }}" style="position:fixed;inset:0;z-index:100;background:rgba(17,17,17,.42);display:flex;align-items:center;justify-content:center;padding:{{ overlayPad }}">
+      <div role="dialog" aria-modal="true" aria-labelledby="fp-title" onMouseDown="{{ stop }}" style="position:relative;width:100%;max-width:900px;height:{{ dlgH }};display:flex;flex-direction:column;background:#FFFFFF;border:1px solid #DEDCD5;border-radius:{{ dlgRadius }};overflow:hidden">
+        <div style="display:flex;align-items:center;gap:12px;height:60px;flex:none;padding:0 14px 0 22px;border-bottom:1px solid #DEDCD5">
+          <h2 id="fp-title" style="flex:1;margin:0;font-size:20px;font-weight:600;letter-spacing:-.03em">File picker</h2>
+          <button onClick="{{ closePicker }}" title="Close" style="width:32px;height:32px;border:0;border-radius:6px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+        </div>
+
+        <div style="flex:1;min-height:0;display:grid;grid-template-columns:{{ bodyCols }};grid-template-rows:{{ bodyRows }}">
+          <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+            <nav aria-label="Repositories" style="display:flex;flex-direction:column;gap:2px;padding:12px 10px;background:#F4F3EF;border-right:1px solid #DEDCD5;overflow-y:auto">
+              <sc-for list="{{ repos }}" as="r" hint-placeholder-count="8">
+                <button onClick="{{ r.onClick }}" aria-current="{{ r.on }}" style="display:flex;align-items:center;gap:10px;height:36px;flex:none;padding:0 10px;border-radius:6px;border:1px solid {{ r.border }};background:{{ r.bg }};cursor:pointer;text-align:left;font-size:13px;font-weight:{{ r.weight }};color:{{ r.color }}" style-hover="background:#FFFFFF;color:#111111">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="{{ r.iconColor }}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="{{ r.d }}"></path></svg>
+                  <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.label }}</span>
+                  <sc-if value="{{ r.on }}" hint-placeholder-val="{{ false }}"><span style="width:6px;height:6px;flex:none;border-radius:50%;background:#95BF47"></span></sc-if>
+                </button>
+              </sc-for>
+            </nav>
+          </sc-if>
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:10px 12px;border-bottom:1px solid #DEDCD5;background:#F4F3EF">
+              <div style="position:relative">
+                <select value="{{ repo }}" onChange="{{ onRepoSelect }}" aria-label="Repository" style="appearance:none;-webkit-appearance:none;width:100%;height:36px;padding:0 32px 0 12px;border:1px solid #DEDCD5;border-radius:6px;background:#FFFFFF;font-size:13.5px;color:#111111;outline:0">
+                  <sc-for list="{{ repos }}" as="r"><option value="{{ r.id }}">{{ r.label }}</option></sc-for>
+                </select>
+                <svg width="10" height="10" viewBox="0 0 10 10" style="position:absolute;right:12px;top:50%;margin-top:-5px;pointer-events:none"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg>
+              </div>
+            </div>
+          </sc-if>
+
+          <section style="position:relative;min-width:0;min-height:0;display:flex;flex-direction:column">
+            <sc-if value="{{ isBrowse }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:12px 14px">
+                <div style="flex:1;min-width:160px;max-width:320px;display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid #DEDCD5;border-radius:6px;background:#FFFFFF">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" style="flex:none"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+                  <input value="{{ q }}" onChange="{{ onQ }}" placeholder="Search {{ repoLabel }}" aria-label="Search files" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:13px;color:#111111">
+                </div>
+                <button onClick="{{ refresh }}" title="Refresh" style="width:34px;height:34px;flex:none;border-radius:6px;border:1px solid #DEDCD5;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="border-color:#111111"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:{{ spinAnim }}"><path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"></path></svg></button>
+                <span style="flex:1"></span>
+                <div role="group" aria-label="View" style="display:flex;gap:2px;padding:2px;border-radius:6px;background:#F4F3EF;border:1px solid #DEDCD5">
+                  <sc-for list="{{ views }}" as="v" hint-placeholder-count="3">
+                    <button onClick="{{ v.onClick }}" title="{{ v.label }}" aria-pressed="{{ v.on }}" style="width:32px;height:28px;border:0;border-radius:4px;background:{{ v.bg }};display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{ v.color }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ v.d }}"></path></svg></button>
+                  </sc-for>
+                </div>
+              </div>
+              <nav aria-label="Folder path" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:0 16px 10px;font-size:13px;color:#6B6A64">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#111111" style="flex:none"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                <sc-for list="{{ crumbs }}" as="c" hint-placeholder-count="1">
+                  <sc-if value="{{ c.sep }}" hint-placeholder-val="{{ false }}"><span style="color:#B9B7AE">/</span></sc-if>
+                  <sc-if value="{{ c.link }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.onClick }}" style="border:0;background:none;padding:0;cursor:pointer;font-size:13px;color:#6B6A64" style-hover="color:#111111;text-decoration:underline">{{ c.label }}</button></sc-if>
+                  <sc-if value="{{ c.current }}" hint-placeholder-val="{{ true }}"><span style="color:#111111;font-weight:500">{{ c.label }}</span></sc-if>
+                </sc-for>
+              </nav>
+              <div style="flex:1;min-height:0;margin:0 14px 14px;border:1px solid #DEDCD5;border-radius:6px;overflow-y:auto;background:#FFFFFF">
+                <sc-if value="{{ isGrid }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;padding:14px">
+                    <sc-for list="{{ items }}" as="it" hint-placeholder-count="1">
+                      <button onClick="{{ it.onClick }}" title="{{ it.name }}" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 6px;border:1px solid transparent;border-radius:6px;background:transparent;cursor:pointer;text-align:center" style-hover="background:#F4F3EF;border-color:#DEDCD5">
+                        <div style="width:84px;height:84px;border-radius:6px;border:1px solid #DEDCD5;background:{{ it.tileBg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+                          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.5" stroke-linejoin="round"><path d="{{ it.d }}"></path></svg>
+                          <sc-if value="{{ it.isFile }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:9.5px;letter-spacing:.06em;color:#6B6A64">{{ it.ext }}</span></sc-if>
+                        </div>
+                        <span style="max-width:100%;font-size:12.5px;line-height:1.3;color:#111111;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ it.name }}</span>
+                        <sc-if value="{{ it.hasSub }}" hint-placeholder-val="{{ false }}"><span style="max-width:100%;font-size:10.5px;color:#6B6A64;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.sub }}</span></sc-if>
+                      </button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:grid;grid-template-columns:{{ listCols }};height:34px;align-items:center;padding:0 14px;border-bottom:1px solid #DEDCD5;background:#F4F3EF;font-size:11.5px;font-weight:500;color:#6B6A64;position:sticky;top:0">
+                    <span>Name</span><sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span>Size</span><span>Modified</span></sc-if>
+                  </div>
+                  <sc-for list="{{ items }}" as="it">
+                    <button onClick="{{ it.onClick }}" style="width:100%;display:grid;grid-template-columns:{{ listCols }};align-items:center;min-height:40px;padding:6px 14px;border:0;border-bottom:1px solid #ECEAE4;background:#FFFFFF;cursor:pointer;text-align:left;font-size:13px;color:#111111" style-hover="background:#F4F3EF">
+                      <span style="display:flex;align-items:center;gap:10px;min-width:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linejoin="round" style="flex:none"><path d="{{ it.d }}"></path></svg><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.name }}</span></span>
+                      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;color:#6B6A64">{{ it.size }}</span><span style="font-size:12px;color:#6B6A64">{{ it.date }}</span></sc-if>
+                    </button>
+                  </sc-for>
+                </sc-if>
+                <sc-if value="{{ isTree }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:8px 6px">
+                    <sc-for list="{{ treeRows }}" as="it">
+                      <button onClick="{{ it.onClick }}" style="width:100%;display:flex;align-items:center;gap:8px;min-height:32px;padding:4px 8px 4px {{ it.pad }}px;border:0;border-radius:5px;background:transparent;cursor:pointer;text-align:left;font-size:13px;color:#111111" style-hover="background:#F4F3EF">
+                        <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;opacity:{{ it.chevOp }};transform:rotate({{ it.rot }}deg);transition:transform .15s"><path d="M3.5 2v6L7 5z" fill="#111111"></path></svg>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linejoin="round" style="flex:none"><path d="{{ it.d }}"></path></svg>
+                        <span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.name }}</span>
+                        <span style="font-size:11.5px;color:#6B6A64;flex:none">{{ it.size }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><div style="padding:48px 16px;text-align:center;font-size:13px;color:#6B6A64">{{ emptyText }}</div></sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isUpload }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;max-width:560px">
+                <label style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:28px 16px;border:1.5px dashed {{ dropBorder }};border-radius:6px;background:#F4F3EF;cursor:pointer;text-align:center" style-hover="border-color:#111111">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"></path></svg>
+                  <span style="font-size:13.5px;font-weight:500">{{ upLabel }}</span>
+                  <span style="font-size:12px;color:#6B6A64">Maximum size 100 MB</span>
+                  <input type="file" onChange="{{ onUpFile }}" style="display:none">
+                </label>
+                <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:500">Save as</span><input value="{{ saveAs }}" onChange="{{ onSaveAs }}" placeholder="Keep original name" style="height:36px;padding:0 12px;border:1px solid #DEDCD5;border-radius:6px;font-size:13.5px;color:#111111;outline:0" style-focus="border-color:#111111"></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:500">Author</span><input value="{{ author }}" onChange="{{ onAuthor }}" style="height:36px;padding:0 12px;border:1px solid #DEDCD5;border-radius:6px;font-size:13.5px;color:#111111;outline:0" style-focus="border-color:#111111"></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:500">Licence</span>
+                  <div style="position:relative;max-width:320px"><select value="{{ license }}" onChange="{{ onLicense }}" style="appearance:none;-webkit-appearance:none;width:100%;height:36px;padding:0 32px 0 12px;border:1px solid #DEDCD5;border-radius:6px;background:#FFFFFF;font-size:13.5px;color:#111111;outline:0"><sc-for list="{{ licenses }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select><svg width="10" height="10" viewBox="0 0 10 10" style="position:absolute;right:12px;top:50%;margin-top:-5px;pointer-events:none"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg></div>
+                </div>
+                <div><button onClick="{{ doUpload }}" disabled="{{ upDisabled }}" style="height:38px;padding:0 18px;border-radius:6px;border:1px solid #111111;background:#111111;color:#FFFFFF;font-size:13px;font-weight:500;cursor:pointer;opacity:{{ upOpacity }}">Upload this file</button></div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isSearchRepo }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:6px;padding:16px 14px 12px">
+                <span style="font-size:13px;font-weight:500">{{ srLabel }}</span>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <input value="{{ srVal }}" onChange="{{ onSrVal }}" onKeyDown="{{ onSrKey }}" placeholder="{{ srPh }}" style="flex:1;min-width:200px;height:36px;padding:0 12px;border:1px solid #DEDCD5;border-radius:6px;font-size:13.5px;color:#111111;outline:0" style-focus="border-color:#111111">
+                  <button onClick="{{ doSr }}" style="height:36px;padding:0 16px;border-radius:6px;border:1px solid #111111;background:#111111;color:#FFFFFF;font-size:13px;font-weight:500;cursor:pointer">{{ srBtn }}</button>
+                </div>
+              </div>
+              <div style="flex:1;min-height:0;margin:0 14px 14px;border:1px solid #DEDCD5;border-radius:6px;overflow-y:auto">
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;padding:14px">
+                  <sc-for list="{{ srItems }}" as="it">
+                    <button onClick="{{ it.onClick }}" title="{{ it.name }}" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 6px;border:1px solid transparent;border-radius:6px;background:transparent;cursor:pointer" style-hover="background:#F4F3EF;border-color:#DEDCD5">
+                      <div style="width:84px;height:84px;border-radius:6px;border:1px solid #DEDCD5;background:#F4F3EF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.5" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6zM14 3v5h5"></path></svg><span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:9.5px;color:#6B6A64">{{ it.ext }}</span></div>
+                      <span style="max-width:100%;font-size:12.5px;line-height:1.3;color:#111111;overflow-wrap:anywhere">{{ it.name }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ srEmpty }}" hint-placeholder-val="{{ true }}"><div style="padding:40px 16px;text-align:center;font-size:13px;color:#6B6A64">{{ srEmptyText }}</div></sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;background:#FFFFFF">
+                <div style="display:flex;align-items:center;gap:8px;height:48px;flex:none;padding:0 14px;border-bottom:1px solid #DEDCD5">
+                  <button onClick="{{ closeSheet }}" title="Back" style="width:30px;height:30px;border:0;border-radius:6px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+                  <span style="flex:1;min-width:0;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Select {{ sel.name }}</span>
+                </div>
+                <div style="flex:1;overflow-y:auto;display:grid;grid-template-columns:{{ sheetCols }};gap:20px 28px;padding:20px;align-content:start">
+                  <div style="display:flex;flex-direction:column;gap:10px">
+                    <div style="aspect-ratio:1;border-radius:6px;border:1px solid #DEDCD5;background:#F4F3EF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.3" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6zM14 3v5h5"></path></svg><span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.06em;color:#6B6A64">{{ sel.ext }}</span></div>
+                    <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:12px"><span style="color:#6B6A64">Size</span><span>{{ sel.size }}</span><span style="color:#6B6A64">Modified</span><span>{{ sel.date }}</span><span style="color:#6B6A64">Source</span><span>{{ repoLabel }}</span></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+                    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:500">Save as</span><input value="{{ saveAs }}" onChange="{{ onSaveAs }}" style="height:36px;padding:0 12px;border:1px solid #DEDCD5;border-radius:6px;font-size:13.5px;color:#111111;outline:0" style-focus="border-color:#111111"></div>
+                    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:500">Author</span><input value="{{ author }}" onChange="{{ onAuthor }}" style="height:36px;padding:0 12px;border:1px solid #DEDCD5;border-radius:6px;font-size:13.5px;color:#111111;outline:0" style-focus="border-color:#111111"></div>
+                    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:500">Licence</span>
+                      <div style="position:relative"><select value="{{ license }}" onChange="{{ onLicense }}" style="appearance:none;-webkit-appearance:none;width:100%;height:36px;padding:0 32px 0 12px;border:1px solid #DEDCD5;border-radius:6px;background:#FFFFFF;font-size:13.5px;color:#111111;outline:0"><sc-for list="{{ licenses }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select><svg width="10" height="10" viewBox="0 0 10 10" style="position:absolute;right:12px;top:50%;margin-top:-5px;pointer-events:none"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg></div>
+                    </div>
+                    <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked="{{ asLink }}" onChange="{{ onAsLink }}" style="width:16px;height:16px;margin:0;accent-color:#111111">Link to the file instead of copying it</label>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:flex-end;gap:10px;padding:12px 14px;border-top:1px solid #DEDCD5">
+                  <button onClick="{{ closeSheet }}" style="height:36px;padding:0 16px;border-radius:6px;border:1px solid #DEDCD5;background:#FFFFFF;font-size:13px;font-weight:500;color:#111111;cursor:pointer" style-hover="border-color:#111111">Cancel</button>
+                  <button onClick="{{ selectFile }}" style="height:36px;padding:0 18px;border-radius:6px;border:1px solid #111111;background:#111111;font-size:13px;font-weight:500;color:#FFFFFF;cursor:pointer">Select this file</button>
+                </div>
+              </div>
+            </sc-if>
+          </section>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:110;display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:6px;background:#111111;color:#FFFFFF;font-size:12.5px;white-space:nowrap"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#95BF47" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const FOLDER = 'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z';
+const FILE = 'M6 3h8l5 5v13H6zM14 3v5h5';
+const Fl = (name, size, date) => ({ name, type: 'file', ext: name.split('.').pop().toUpperCase(), size, date: date || '12 Oct 2026' });
+const D = (name, children) => ({ name, type: 'folder', children });
+const TREES = {
+  content: D('System', [D('Category 1', [D('UI Design Fundamentals', [Fl('Wireframe kit.h5p', '2.4 MB'), Fl('Typography basics.h5p', '1.1 MB', '8 Oct 2026')]), D('Figma Mastery Bootcamp', [Fl('Auto layout drill.h5p', '3.2 MB', '2 Oct 2026')])]), Fl('Welcome video.mp4', '18.2 MB', '2 Sep 2026')]),
+  server: D('System', [D('Category 1', [D('UI Design Fundamentals', [D('Course files', [Fl('Syllabus.pdf', '420 KB'), Fl('Grid systems.pdf', '1.8 MB', '9 Oct 2026')]), D('Wireframe critique', [Fl('Brief.docx', '86 KB', '5 Oct 2026')])]), D('Visual Branding Essentials', [Fl('Brand book.pdf', '6.4 MB', '30 Sep 2026'), Fl('Logo pack.zip', '12 MB', '30 Sep 2026')])])]),
+  recent: D('Recent files', [Fl('Syllabus.pdf', '420 KB'), Fl('Hero image.jpg', '2.1 MB', '11 Oct 2026'), Fl('Brand book.pdf', '6.4 MB', '30 Sep 2026'), Fl('Lecture notes.docx', '64 KB', '28 Sep 2026')]),
+  private: D('Private files', [D('Images', [Fl('Profile photo.jpg', '880 KB', '1 Aug 2026'), Fl('Banner.png', '1.4 MB', '1 Aug 2026')]), Fl('CV.pdf', '210 KB', '14 Jul 2026'), Fl('Lecture notes.docx', '64 KB', '28 Sep 2026')]),
+  backups: D('Course backups', [Fl('backup-des101-20261012.mbz', '48 MB'), Fl('backup-des102-20261005.mbz', '36 MB', '5 Oct 2026')]),
+};
+const REPOS = [
+  ['content', 'Content bank', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 'browse'],
+  ['server', 'Server files', 'M4 5h16v6H4zM4 13h16v6H4zM8 8h.01M8 16h.01', 'browse'],
+  ['recent', 'Recent files', 'M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z', 'browse'],
+  ['upload', 'Upload a file', 'M12 16V4M7 9l5-5 5 5M4 20h16', 'upload'],
+  ['url', 'URL downloader', 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1', 'url'],
+  ['private', 'Private files', 'M6 10V8a6 6 0 0 1 12 0v2M5 10h14v11H5z', 'browse'],
+  ['wiki', 'Wikimedia', 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18', 'wiki'],
+  ['backups', 'Course backups', 'M3 7l9-4 9 4-9 4zM3 12l9 4 9-4M3 17l9 4 9-4', 'browse'],
+];
+const LICENSES = ['Licence not specified', 'All rights reserved', 'Public domain', 'Creative Commons – 4.0 International', 'Creative Commons – NoDerivs 4.0', 'Creative Commons – ShareAlike 4.0'];
+
+class Component extends DCLogic {
+  state = { open: true, repo: 'content', paths: {}, view: 'grid', q: '', expanded: { 'System': true }, spinning: false, sel: null, saveAs: '', author: 'Admin User', license: LICENSES[0], asLink: false,
+    upFile: null, srVal: '', srResults: { url: null, wiki: null }, attached: [], toast: null, vw: typeof window !== 'undefined' ? window.innerWidth : 1200 };
+  componentDidMount() {
+    this.onKey = e => { if (e.key !== 'Escape') return; if (this.state.sel) this.setState({ sel: null }); else if (this.state.open) this.setState({ open: false }); };
+    this.onResize = () => this.setState({ vw: window.innerWidth });
+    document.addEventListener('keydown', this.onKey); window.addEventListener('resize', this.onResize);
+  }
+  componentWillUnmount() { document.removeEventListener('keydown', this.onKey); window.removeEventListener('resize', this.onResize); clearTimeout(this.tT); clearTimeout(this.sT); }
+  flash(t) { clearTimeout(this.tT); this.setState({ toast: t }); this.tT = setTimeout(() => this.setState({ toast: null }), 2400); }
+  pick(file) { this.setState({ sel: file, saveAs: file.name, asLink: false }); }
+  renderVals() {
+    const s = this.state, vw = s.vw, wide = vw >= 720;
+    const repo = REPOS.find(r => r[0] === s.repo), kind = repo[3];
+    const root = TREES[s.repo], path = s.paths[s.repo] || [];
+    let node = root; for (const p of path) node = node.children.find(c => c.name === p) || node;
+    const q = s.q.trim().toLowerCase();
+    const mk = (n, sub) => ({ name: n.name, isFile: n.type === 'file', ext: n.ext || '', d: n.type === 'folder' ? FOLDER : FILE, tileBg: n.type === 'folder' ? '#FFFFFF' : '#F4F3EF',
+      size: n.type === 'folder' ? n.children.length + ' items' : n.size, date: n.date || '—', sub: sub || '', hasSub: !!sub,
+      onClick: () => n.type === 'folder' ? this.setState(st => ({ paths: { ...st.paths, [st.repo]: [...(st.paths[st.repo] || []), n.name] }, q: '' })) : this.pick(n) });
+    let items = [];
+    if (kind === 'browse' && root) {
+      if (q) { const walk = (n, trail) => n.children.forEach(c => { if (c.type === 'file' && c.name.toLowerCase().includes(q)) items.push(mk(c, trail.join(' / '))); if (c.type === 'folder') walk(c, [...trail, c.name]); }); walk(root, [root.name]); }
+      else items = [...node.children].sort((a, b) => (a.type === b.type ? a.name.localeCompare(b.name) : a.type === 'folder' ? -1 : 1)).map(c => mk(c));
+    }
+    const treeRows = [];
+    if (kind === 'browse' && root) {
+      const walk = (n, depth, key) => {
+        const k = key ? key + '/' + n.name : n.name, isF = n.type === 'folder', open = !!s.expanded[k];
+        if (q && !isF && !n.name.toLowerCase().includes(q)) return;
+        treeRows.push({ name: n.name, d: isF ? FOLDER : FILE, pad: 8 + depth * 18, rot: open ? 90 : 0, chevOp: isF ? 1 : 0, size: isF ? '' : n.size,
+          onClick: () => isF ? this.setState(st => ({ expanded: { ...st.expanded, [k]: !st.expanded[k] } })) : this.pick(n) });
+        if (isF && (open || q)) n.children.forEach(c => walk(c, depth + 1, k));
+      };
+      walk(root, 0, '');
+    }
+    const crumbs = [root ? root.name : ''].concat(path).map((label, k, arr) => ({ label, sep: k > 0, link: k < arr.length - 1 && !q, current: k === arr.length - 1 || !!q && k === arr.length - 1,
+      onClick: () => this.setState(st => ({ paths: { ...st.paths, [st.repo]: (st.paths[st.repo] || []).slice(0, k) } })) }));
+    const viewDefs = [['grid', 'Icons', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'], ['list', 'List', 'M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01'], ['tree', 'Tree', 'M4 4h6v5H4zM14 10h6v5h-6zM14 17h6v4h-6zM7 9v10h7M7 12.5h7']];
+    const showList = kind === 'browse' && (s.view === 'tree' ? treeRows.length : items.length);
+    const srKind = kind === 'url' || kind === 'wiki';
+    const srRes = s.srResults[kind] || null;
+    const srItems = srRes ? srRes.map(n => ({ name: n.name, ext: n.ext, onClick: () => this.pick(n) })) : [];
+    const sel = s.sel || { name: '', ext: '', size: '', date: '' };
+    return {
+      pageCols: vw < 640 ? 'minmax(0,1fr)' : '180px minmax(0,1fr)',
+      attached: s.attached.map((a, k) => ({ ...a, meta: a.size + ' · ' + a.license + (a.link ? ' · linked' : ''), remove: () => this.setState(st => ({ attached: st.attached.filter((_, j) => j !== k) })) })),
+      attachedCount: s.attached.length, noAttached: !s.attached.length,
+      openPicker: () => this.setState({ open: true }), closePicker: () => this.setState({ open: false, sel: null }),
+      backdropDown: () => this.setState({ open: false, sel: null }), stop: e => e.stopPropagation(),
+      open: s.open, wide, narrow: !wide,
+      overlayPad: wide ? '24px' : '0', dlgH: wide ? 'min(640px, calc(100vh - 48px))' : '100vh', dlgRadius: wide ? '8px' : '0',
+      bodyCols: wide ? '220px minmax(0,1fr)' : 'minmax(0,1fr)', bodyRows: wide ? 'minmax(0,1fr)' : 'auto minmax(0,1fr)',
+      repos: REPOS.map(([id, label, d]) => { const on = id === s.repo; return { id, label, d, on, bg: on ? '#FFFFFF' : 'transparent', border: on ? '#DEDCD5' : 'transparent', color: on ? '#111111' : '#6B6A64', iconColor: on ? '#111111' : '#6B6A64', weight: on ? 500 : 400, onClick: () => this.setState({ repo: id, q: '', sel: null, srVal: '' }) }; }),
+      repo: s.repo, onRepoSelect: e => this.setState({ repo: e.target.value, q: '', sel: null, srVal: '' }), repoLabel: repo[1],
+      isBrowse: kind === 'browse', isUpload: kind === 'upload', isSearchRepo: srKind,
+      q: s.q, onQ: e => this.setState({ q: e.target.value }),
+      refresh: () => { clearTimeout(this.sT); this.setState({ spinning: true }); this.sT = setTimeout(() => this.setState({ spinning: false }), 700); },
+      spinAnim: s.spinning ? 'spin .7s linear infinite' : 'none',
+      views: viewDefs.map(([id, label, d]) => { const on = s.view === id; return { label, d, on, bg: on ? '#FFFFFF' : 'transparent', color: on ? '#111111' : '#6B6A64', onClick: () => this.setState({ view: id }) }; }),
+      crumbs, items, treeRows,
+      isGrid: s.view === 'grid' && !!showList, isList: s.view === 'list' && !!showList, isTree: s.view === 'tree' && !!showList,
+      listCols: wide ? 'minmax(0,1fr) 110px 120px' : 'minmax(0,1fr)',
+      empty: kind === 'browse' && !showList, emptyText: q ? 'No files match “' + s.q.trim() + '”.' : 'This folder is empty.',
+      upLabel: s.upFile ? s.upFile.name : 'Choose a file', dropBorder: s.upFile ? '#111111' : '#DEDCD5',
+      onUpFile: e => { const fl = e.target.files && e.target.files[0]; if (fl) this.setState({ upFile: { name: fl.name, size: fl.size > 1048576 ? (fl.size / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(fl.size / 1024)) + ' KB' }, saveAs: '' }); },
+      upDisabled: !s.upFile, upOpacity: s.upFile ? 1 : .4,
+      doUpload: () => { if (!s.upFile) return; const name = s.saveAs.trim() || s.upFile.name; this.setState(st => ({ attached: [...st.attached, { name, ext: name.split('.').pop().toUpperCase(), size: st.upFile.size, license: st.license, link: false }].slice(-3), upFile: null, saveAs: '', open: false })); this.flash('Uploaded “' + name + '”'); },
+      srLabel: kind === 'url' ? 'URL' : 'Search Wikimedia Commons', srPh: kind === 'url' ? 'https://example.com/file.pdf' : 'e.g. bauhaus poster', srBtn: kind === 'url' ? 'Download' : 'Search',
+      srVal: s.srVal, onSrVal: e => this.setState({ srVal: e.target.value }),
+      doSr: () => this.runSr(kind), onSrKey: e => { if (e.key === 'Enter') this.runSr(kind); },
+      srItems, srEmpty: !srItems.length, srEmptyText: srRes ? 'Nothing found.' : kind === 'url' ? 'Paste a link to a file to download it.' : 'Search for images and media you can reuse.',
+      sheetOpen: !!s.sel, sel, closeSheet: () => this.setState({ sel: null }),
+      sheetCols: vw < 640 ? 'minmax(0,1fr)' : '180px minmax(0,1fr)',
+      saveAs: s.saveAs, onSaveAs: e => this.setState({ saveAs: e.target.value }),
+      author: s.author, onAuthor: e => this.setState({ author: e.target.value }),
+      license: s.license, onLicense: e => this.setState({ license: e.target.value }), licenses: LICENSES,
+      asLink: s.asLink, onAsLink: e => this.setState({ asLink: e.target.checked }),
+      selectFile: () => { const name = s.saveAs.trim() || sel.name; this.setState(st => ({ attached: [...st.attached, { name, ext: sel.ext, size: sel.size, license: st.license, link: st.asLink }].slice(-3), sel: null, open: false })); this.flash('Added “' + name + '”'); },
+      toastOn: !!s.toast, toast: s.toast,
+    };
+  }
+  runSr(kind) {
+    const v = this.state.srVal.trim(); if (!v) return;
+    let res;
+    if (kind === 'url') { const nm = decodeURIComponent(v.split('?')[0].split('/').pop() || 'download') || 'download'; const name = nm.includes('.') ? nm : nm + '.html'; res = [Fl(name, '—', 'Today')]; }
+    else { const base = v.replace(/\s+/g, '_'); res = ['jpg', 'png', 'svg', 'jpg', 'jpg', 'png'].map((ext, k) => Fl(base + '_' + (k + 1) + '.' + ext, (0.4 + k * 0.7).toFixed(1) + ' MB', 'Wikimedia')); }
+    this.setState(st => ({ srResults: { ...st.srResults, [kind]: res } }));
+  }
+}
+</script>
+</body>
+</html>

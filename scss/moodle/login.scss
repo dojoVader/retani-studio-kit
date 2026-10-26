@@ -1,11 +1,53 @@
-$login-layout-left-bg: $primary !default;
-$login-layout-panel-bg: darken($login-layout-left-bg, 25%);
-$login-layout-panel-padding: 3rem !default;
-$login-layout-content-width: 576px !default;
-$login-layout-copy-width: 450px !default;
-$login-input-bg: var(--#{$prefix}gray-100) !default;
+// Login page styles, based on mockup/Retani Login.dc.html.
+
+// Retani palette.
+$retani-canvas: #f4f3ef !default;
+$retani-ink: #111111 !default;
+$retani-line: #dedcd5 !default;
+$retani-muted: #6b6a64 !default;
+$retani-lime: #95bf47 !default;
+$retani-violet: #7756e4 !default;
+$retani-font-family: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif !default;
+
+$login-layout-gap: 20px !default;
+$login-layout-left-radius: 8px !default;
+$login-layout-content-width: 456px !default;
+$login-layout-copy-width: 500px !default;
+$login-carousel-width: 574px !default;
+$login-logo-max-height: 40px !default;
+$login-control-height: 44px !default;
+$login-control-radius: 6px !default;
 
 .pagelayout-login {
+    // Local palette, swapped as a whole for dark mode below.
+    --login-page-bg: #{$retani-canvas};
+    --login-surface: #{$white};
+    --login-surface-hover: #{$retani-canvas};
+    --login-text: #{$retani-ink};
+    --login-text-muted: #{$retani-muted};
+    --login-border: #{$retani-line};
+    --login-focus: #{$retani-ink};
+    --login-link-hover: #{$retani-muted};
+    --login-accent: #{$retani-lime};
+    --login-button-bg: #{$retani-violet};
+    --login-button-border: #{$retani-ink};
+    --login-button-hover-bg: #{$retani-ink};
+
+    @include dark-mode {
+        --login-page-bg: var(--#{$prefix}body-bg);
+        --login-surface: var(--#{$prefix}tertiary-bg);
+        --login-surface-hover: var(--#{$prefix}secondary-bg);
+        --login-text: var(--#{$prefix}body-color);
+        --login-text-muted: var(--#{$prefix}secondary-color);
+        --login-border: var(--#{$prefix}border-color);
+        --login-focus: var(--#{$prefix}body-color);
+        --login-link-hover: var(--#{$prefix}secondary-color);
+        --login-button-border: #{$retani-violet};
+        --login-button-hover-bg: #{darken($retani-violet, 10%)};
+    }
+
+    font-family: $retani-font-family;
+
     #region-main,
     #region-main-box {
         border: 0;
@@ -15,125 +57,425 @@ $login-input-bg: var(--#{$prefix}gray-100) !default;
     #page {
         margin: 0;
         min-height: 100vh;
-        background-color: var(--#{$prefix}white);
+        background-color: var(--login-page-bg);
+        color: var(--login-text);
+    }
+
+    #page-footer {
+        background-color: var(--login-page-bg);
     }
 }
 
+// Dark branded panel. It stays dark in both colour modes.
 .login-layout-left {
-    background-color: $login-layout-left-bg;
+    position: sticky;
+    top: $login-layout-gap;
+    align-self: flex-start;
+    height: calc(100vh - #{$login-layout-gap * 2});
+    min-height: 760px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 42px 24px 72px;
+    border-radius: $login-layout-left-radius;
+    background-color: $retani-ink;
+    color: $white;
 
-    // A photographic panel in both colour modes, so its content stays light whatever the mode.
-    @include dark-mode {
-        color: $white;
+    // Darkens a custom background image (set in lib.php) so the copy stays legible. It has no content,
+    // and so is not rendered, unless an image has been uploaded.
+    &::before {
+        position: absolute;
+        inset: 0;
+        background-color: rgba($retani-ink, 0.72);
+        pointer-events: none;
     }
 
-    position: sticky;
-    top: 0;
-    align-self: flex-start;
-    height: 100vh;
+    > * {
+        position: relative;
+    }
+}
+
+// Logo, or the site name as a wordmark when no logo is set.
+.login-layout-brand {
+    flex: none;
+    max-width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: $login-layout-panel-padding;
 }
 
-.login-layout-left-content {
-    max-width: $login-layout-copy-width;
-    text-align: center;
-    color: color-contrast($login-layout-panel-bg);
-    background-color: rgba($login-layout-panel-bg, 0.65);
-    border-radius: $border-radius;
-    padding: $spacer;
-    margin-bottom: 5rem;
-    blockquote {
-        color: inherit;
-        border-left: 5px solid color-contrast($login-layout-panel-bg);
-    }
-    a {
-        color: inherit;
-        text-decoration: underline;
-    }
+.login-layout-logo {
+    display: block;
+    max-width: 100%;
+    max-height: $login-logo-max-height;
+    object-fit: contain;
 }
 
-.login-layout-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    justify-items: center;
+.login-layout-sitename {
+    padding-left: 2px;
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    color: $retani-canvas;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.login-layout-stat {
+.login-layout-sitename-dot {
+    color: $retani-lime;
+}
+
+// Positioning context is the panel, so that the carousel controls can sit at its foot.
+.login-layout-left > .login-layout-left-content {
+    position: static;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    align-items: center;
+    margin-top: clamp(48px, 10vh, 110px);
+    text-align: center;
+    color: $white;
 }
 
-.login-layout-stat-value {
-    font-size: $h5-font-size;
-    line-height: 1;
+.login-layout-instructions {
+    position: relative;
+    max-width: $login-layout-copy-width;
+    font-size: 0.90625rem;
+    line-height: 1.5;
+    color: $retani-line;
+
+    h1,
+    h2,
+    h3 {
+        font-size: 1.5625rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: $white;
+    }
+
+    blockquote {
+        color: inherit;
+        border-left: 3px solid $retani-lime;
+    }
+
+    a {
+        color: $white;
+        text-decoration: underline;
+        text-decoration-color: $retani-lime;
+        text-underline-offset: 3px;
+    }
 }
 
+// Carousel rendered by theme_retani_studio/LoginCarousel (and its static fallback).
+.login-carousel-mount,
+.login-carousel {
+    width: 100%;
+}
+
+.login-carousel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-carousel-copy {
+    position: relative;
+    max-width: $login-layout-copy-width;
+    min-height: 7.5rem;
+}
+
+.login-layout-left-content .login-carousel-title {
+    margin: 0;
+    font-size: 1.5625rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    color: $white;
+    animation: login-carousel-fade 0.4s ease both;
+}
+
+.login-layout-left-content .login-carousel-body {
+    margin: 0.75rem 0 0;
+    font-size: 0.90625rem;
+    line-height: 1.5;
+    text-wrap: pretty;
+    color: $retani-line;
+    animation: login-carousel-fade 0.4s ease both;
+}
+
+.login-carousel-frame {
+    position: relative;
+    width: min(#{$login-carousel-width}, 100%);
+    aspect-ratio: 574 / 380;
+    margin-top: 1.25rem;
+}
+
+// Tilted translucent card peeking out behind the image.
+.login-carousel-backdrop {
+    position: absolute;
+    inset: -14px 20px;
+    border-radius: 8px;
+    background-color: rgba($white, 0.14);
+    transform: rotate(-1.5deg);
+}
+
+.login-carousel-viewport {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 6px;
+    background-color: $white;
+}
+
+.login-carousel-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+
+    &.is-active {
+        opacity: 1;
+    }
+}
+
+// Previous/next and indicators, pinned to the foot of the panel.
+.login-carousel-nav {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.login-carousel-arrow {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    background-color: rgba($white, 0.22);
+    color: $white;
+    cursor: pointer;
+
+    &:hover {
+        background-color: rgba($white, 0.34);
+    }
+}
+
+.login-carousel-indicators {
+    display: flex;
+    gap: 12px;
+}
+
+.login-carousel-indicator {
+    // Enlarge the hit area without changing the dot's size.
+    position: relative;
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: rgba($white, 0.45);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -6px;
+    }
+
+    &:hover {
+        background-color: rgba($white, 0.75);
+    }
+
+    &.is-active {
+        background-color: $white;
+    }
+}
+
+.login-carousel-arrow,
+.login-carousel-indicator {
+    &:focus-visible {
+        outline: 2px solid $retani-lime;
+        outline-offset: 2px;
+    }
+}
+
+@keyframes login-carousel-fade {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .login-layout-left-content .login-carousel-title,
+    .login-layout-left-content .login-carousel-body {
+        animation: none;
+    }
+
+    .login-carousel-image {
+        transition: none;
+    }
+}
+
+// Form panel: the form is centred, the copyright line sits at the foot.
 .login-layout-right {
     min-height: 100vh;
-    padding: $login-layout-panel-padding;
+    padding: 2.5rem 0 0.25rem;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
 }
 
 .login-layout-right-content {
+    flex: 1;
     width: 100%;
     max-width: $login-layout-content-width;
-    margin: auto 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2.5rem 0;
+}
+
+.login-layout-copyright {
+    margin: 0 0 4px;
+    font-size: 0.78125rem;
+    text-align: center;
+    color: var(--login-text-muted);
+}
+
+@include media-breakpoint-up(lg) {
+    .pagelayout-login #page-content {
+        display: grid;
+        grid-template-columns: minmax(0, 692fr) minmax(400px, 748fr);
+        gap: $login-layout-gap;
+        padding: $login-layout-gap;
+
+        > .login-layout-left,
+        > .login-layout-right {
+            width: auto;
+            max-width: none;
+        }
+    }
+
+    .login-layout-right {
+        min-height: calc(100vh - #{$login-layout-gap * 2});
+        padding-top: 0;
+    }
 }
 
 .login-container {
-    .login-form {
-        .login-input-wrapper {
-            position: relative;
+    color: var(--login-text);
 
-            .form-control {
-                background-color: $login-input-bg;
-                box-shadow: none;
-                padding-inline-start: 3rem;
+    a {
+        color: var(--login-text);
+        text-decoration: none;
 
-                &:hover {
-                    background-color: $login-input-bg;
-                }
+        &:hover,
+        &:focus {
+            color: var(--login-link-hover);
+        }
+    }
 
-                &:focus {
-                    background-color: $login-input-bg;
-                    border-color: $input-focus-border-color;
-                    box-shadow: $input-focus-box-shadow;
-                }
-            }
+    .login-logo {
+        margin-bottom: 2rem;
 
-            .login-input-icon {
-                position: absolute;
-                inset-inline-start: 1rem;
-                top: 50%;
-                transform: translateY(-50%);
-                color: $gray-600;
-                pointer-events: none;
-                // Exceeds Bootstrap's focused input z-index (3) to stay visible over focused fields.
-                z-index: 6;
-            }
+        img {
+            max-height: $login-logo-max-height;
+        }
+    }
+
+    .login-heading-title {
+        margin: 0;
+        font-size: 1.875rem;
+        font-weight: 500;
+        letter-spacing: -0.015em;
+        color: var(--login-text);
+    }
+
+    .login-heading-subtitle {
+        margin: 0.625rem 0 2.5rem;
+        font-size: 0.84375rem;
+        color: var(--login-text-muted);
+    }
+
+    .alert {
+        margin-bottom: 1.5rem;
+        border-radius: $login-control-radius;
+        font-size: 0.84375rem;
+    }
+
+    // Identity providers, and guest login, as a two-column grid of buttons above the form.
+    .login-identityproviders {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+
+        form {
+            margin: 0;
+        }
+    }
+
+    .login-identityprovider-btn {
+        width: 100%;
+        height: $login-control-height;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border: 1px solid var(--login-border);
+        border-radius: $login-control-radius;
+        background-color: var(--login-surface);
+        box-shadow: none;
+        font-size: 0.875rem;
+        color: var(--login-text);
+
+        img {
+            width: 20px;
+            height: 20px;
+            flex: none;
         }
 
-        .toggle-sensitive-wrapper .toggle-sensitive-btn {
-            --#{$prefix}btn-bg: #{$login-input-bg};
-            --bs-btn-border-color: #{$input-border-color};
-            --#{$prefix}btn-hover-bg: #{$login-input-bg};
-            --bs-btn-hover-border-color: #{$input-border-color};
-            --#{$prefix}btn-active-bg: #{$login-input-bg};
-            --bs-btn-active-border-color: #{$input-border-color};
-            border-inline-start: none;
-            color: var(--#{$prefix}gray-700);
+        .fa {
+            margin: 0;
+        }
 
-            &:focus,
-            &:focus-visible {
-                background-color: $login-input-bg;
-                border-color: $input-focus-border-color;
-                box-shadow: $input-focus-box-shadow;
-            }
+        &:hover,
+        &:focus {
+            border-color: var(--login-border);
+            background-color: var(--login-surface-hover);
+            color: var(--login-text);
+            text-decoration: none;
+        }
+
+        &:focus-visible {
+            border-color: var(--login-focus);
+            box-shadow: none;
+            outline: 2px solid var(--login-focus);
+            outline-offset: 2px;
         }
     }
 
@@ -141,59 +483,186 @@ $login-input-bg: var(--#{$prefix}gray-100) !default;
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        color: var(--#{$prefix}gray-600);
-        font-size: $font-size-sm;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
+        margin: 1.75rem 0 2.25rem;
+        font-size: 0.75rem;
+        color: var(--login-text-muted);
 
         &::before,
         &::after {
             content: "";
             flex: 1;
-            border-top: $border-width solid $border-color;
+            height: 1px;
+            background-color: var(--login-border);
         }
     }
 
-    .login-identityprovider-btn {
-        width: 100%;
-        background-color: var(--#{$prefix}white);
-        border-color: var(--#{$prefix}gray-400);
-        color: var(--#{$prefix}gray-600);
-
-        &:hover,
-        &:focus {
-            background-color: var(--#{$prefix}gray-100);
-            border-color: var(--#{$prefix}gray-500);
+    .login-form {
+        .form-label {
+            margin-bottom: 0.625rem;
+            font-size: 0.84375rem;
+            font-weight: 500;
+            color: var(--login-text);
         }
-    }
 
-    .login-cookiesnotice {
-        .btn-link {
-            font-size: $font-size-sm;
-            color: var(--#{$prefix}gray-600);
+        .login-form-username {
+            margin-bottom: 1.5rem;
+        }
 
-            &:hover,
+        .form-control {
+            height: $login-control-height;
+            padding: 0 15px;
+            border: 1px solid var(--login-border);
+            border-radius: $login-control-radius;
+            background-color: var(--login-surface);
+            box-shadow: none;
+            font-size: 0.875rem;
+            color: var(--login-text);
+
+            &::placeholder {
+                color: var(--login-text-muted);
+            }
+
             &:focus {
-                color: var(--#{$prefix}gray-700);
+                border-color: var(--login-focus);
+                background-color: var(--login-surface);
+                box-shadow: none;
+                outline: 0;
+            }
+        }
+
+        #password {
+            letter-spacing: 0.06em;
+
+            &::placeholder {
+                letter-spacing: normal;
+            }
+        }
+
+        // Render the show/hide password button (core/togglesensitive) as an icon inside the field.
+        .toggle-sensitive-wrapper {
+            position: relative;
+
+            .form-control {
+                width: 100%;
+                padding-inline-end: $login-control-height;
+                border-radius: $login-control-radius !important; // stylelint-disable-line declaration-no-important
+            }
+
+            .toggle-sensitive-btn {
+                position: absolute;
+                top: 50%;
+                inset-inline-end: 10px;
+                z-index: 6;
+                width: 24px;
+                height: 24px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transform: translateY(-50%);
+                border: 0;
+                border-radius: 4px;
+                background: none;
+                box-shadow: none;
+                color: var(--login-text-muted);
+
+                .icon {
+                    margin: 0;
+                }
+
+                &:hover {
+                    color: var(--login-text);
+                }
+
+                &:focus,
+                &:focus-visible {
+                    background: none;
+                    box-shadow: none;
+                    outline: 2px solid var(--login-focus);
+                    outline-offset: 1px;
+                }
+            }
+        }
+
+        .login-form-forgotpassword {
+            margin: 0.875rem 0 1.375rem;
+            text-align: end;
+            font-size: 0.8125rem;
+        }
+
+        .login-form-recaptcha {
+            margin-bottom: 1.375rem;
+        }
+
+        #loginbtn {
+            height: $login-control-height;
+            border: 1px solid var(--login-button-border);
+            border-radius: $login-control-radius;
+            background: var(--login-button-bg);
+            box-shadow: none;
+            font-size: 0.90625rem;
+            font-weight: 500;
+            color: $white;
+
+            &:hover {
+                background: var(--login-button-hover-bg);
+            }
+
+            &:focus-visible {
+                box-shadow: none;
+                outline: 2px solid var(--login-focus);
+                outline-offset: 2px;
             }
         }
     }
 
+    // "Don't have an account? Sign up" line.
+    .login-signup {
+        margin: 1.5rem 0 0;
+        text-align: center;
+        font-size: 0.8125rem;
+        color: var(--login-text);
+
+        a {
+            text-decoration: underline;
+            text-decoration-color: var(--login-accent);
+            text-underline-offset: 2px;
+        }
+    }
+
+    .login-instructions {
+        margin: 1.5rem 0 0;
+        font-size: 0.8125rem;
+        color: var(--login-text-muted);
+    }
+
     .login-languagemenu {
+        margin: 1.5rem 0 0;
+
         .dropdown-menu {
             max-height: 300px;
             overflow-y: auto;
+        }
+    }
+
+    .login-cookiesnotice {
+        margin-top: 1rem;
+
+        .btn-link {
+            font-size: 0.78125rem;
+            color: var(--login-text-muted);
+            text-decoration: none;
+
+            &:hover,
+            &:focus {
+                color: var(--login-text);
+            }
         }
     }
 }
 
 @include media-breakpoint-down(lg) {
     .login-layout-right {
-        padding: 1.5rem 1rem;
-    }
-
-    .login-layout-right-content {
-        max-width: 100%;
-        margin: 0;
+        padding: 1.5rem 1rem 0.25rem;
     }
 }

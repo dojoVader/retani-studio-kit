@@ -1,0 +1,11 @@
+import{useEffect as m,useRef as d}from"react";import{Icon as f}from"./icons";import{jsx as n,jsxs as p}from"react/jsx-runtime";/**
+ * "Current course" row and the course outline it toggles, under the category selector of the left bar.
+ *
+ * The outline is Moodle's own course index (a reactive core_courseformat component), rendered by the page in
+ * the course index drawer inside theme_retani_studio/retani/course_outline. While the bar is on screen (wide
+ * screens) that element is moved into the slot rendered here; when the screen gets too narrow for the bar it is
+ * moved back into the drawer, so the course index stays reachable there.
+ *
+ * @module     theme_retani_studio/leftbar/CourseOutline
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */const b='[data-region="retani-courseoutline"]',g="(min-width: 992px)";function N({course:a,collapsed:s,open:i,onToggle:l,strings:t,panelid:e}){const o=`${t.courseoutline}: ${a.name}`;return n("div",{className:"retani-leftbar-course",children:p("button",{type:"button",className:`retani-leftbar-coursetoggle${i?" is-open":""}`,"aria-expanded":i,"aria-controls":e,title:s?o:t.courseoutline,onClick:l,children:[s?n("span",{className:"visually-hidden",children:o}):p("span",{className:"retani-leftbar-coursetext",children:[n("span",{className:"retani-leftbar-coursecaption",children:t.currentcourse}),n("span",{className:"retani-leftbar-coursename",children:a.name})]}),n("span",{className:"retani-leftbar-coursetile","aria-hidden":"true",children:n(f,{name:"outline",size:14})})]})})}function E({visible:a,id:s,label:i}){const l=d(null);return m(()=>{const t=l.current,e=document.querySelector(b),o=e?.parentElement;if(!t||!e||!o)return;const r=document.createComment("retani-courseoutline");o.insertBefore(r,e);const u=window.matchMedia(g),c=()=>{u.matches?t.appendChild(e):r.parentNode?.insertBefore(e,r.nextSibling)};return c(),u.addEventListener("change",c),()=>{u.removeEventListener("change",c),r.parentNode?.insertBefore(e,r.nextSibling),r.remove()}},[]),n("div",{className:"retani-leftbar-outline",id:s,role:"region","aria-label":i,hidden:!a,children:n("div",{className:"retani-leftbar-outline-slot",ref:l})})}export{E as CourseOutline,N as CourseRow};

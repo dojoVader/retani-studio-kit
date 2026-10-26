@@ -1,0 +1,57 @@
+.page-header-headings h2 {
+  font-size: 19px;
+  font-weight: 200;
+}
+
+#page.drawers {
+  background: #f3f3ee;
+}
+
+:root {
+  --bs-body-bg: #f3f3ee;
+  --bs-btn-font-size: 0.75rem !important;
+  --bs-border-radius: 0.2rem;
+  --bs-body-font-size: 0.75rem;
+}
+
+.form-control{
+  font-size: 0.75rem;
+}
+
+// Carousel
+#carousel-item-main {
+  padding: 1%;
+
+  a.dropdown-item {
+    margin-bottom: 1px !important;
+  }
+}
+
+#user-notifications {
+  padding: 1.55em 0.85em 0.5em;
+}
+
+.fp-content {
+  margin-top: 1%;
+}
+
+.file-picker .fp-content-error {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+div.settingsform, body.admin div[role="main"], #region-main > div[role="main"]{
+  h2 {
+    font-size: 1.25em;
+  }
+
+}
+
+.mform:not(fieldset) {
+  background: white;
+  padding: 3% 2%;
+  border-radius: 3px;
+  box-shadow: 1px 1px 5px 0px #c5c5c5;
+}

@@ -1,0 +1,684 @@
+// Retractable left bar (theme_retani_studio/retani/left_bar), based on mockup/Retani Dashboard.dc.html.
+$retani-leftbar-width: 216px !default;
+$retani-leftbar-collapsed-width: 64px !default;
+$retani-leftbar-header-height: 56px !default;
+$retani-leftbar-transition: 0.2s ease !default;
+$retani-leftbar-font-family: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif !default;
+$retani-leftbar-font-size: 0.78125rem !default; // 12.5px, the menu size in the mockup.
+$retani-leftbar-radius: 5px !default;
+$retani-leftbar-radius-sm: 4px !default;
+
+// Retani palette.
+$retani-leftbar-canvas: #f4f3ef !default;
+$retani-leftbar-ink: #111111 !default;
+$retani-leftbar-line: #dedcd5 !default;
+$retani-leftbar-muted: #6b6a64 !default;
+$retani-leftbar-lime: #95bf47 !default;
+
+// Reserve room for the bar. The width tracks the collapsed state through a body class, which the
+// LeftBar component toggles, so the rest of the page moves with the bar without a reload.
+body.has-retani-leftbar {
+    --retani-leftbar-width: #{$retani-leftbar-width};
+
+    &.retani-leftbar-collapsed {
+        --retani-leftbar-width: #{$retani-leftbar-collapsed-width};
+    }
+}
+
+.retani-leftbar {
+    // Local palette, swapped as a whole for dark mode below.
+    --retani-leftbar-bg: #{$retani-leftbar-canvas};
+    --retani-leftbar-surface: #{$white};
+    --retani-leftbar-hover: #{$white};
+    --retani-leftbar-border: #{$retani-leftbar-line};
+    --retani-leftbar-divider: #{$retani-leftbar-line};
+    --retani-leftbar-control-border: #{$retani-leftbar-line};
+    --retani-leftbar-text: #{$retani-leftbar-ink};
+    --retani-leftbar-text-secondary: #{$retani-leftbar-muted};
+    --retani-leftbar-text-muted: #{$retani-leftbar-muted};
+    --retani-leftbar-icon: #{$retani-leftbar-muted};
+    --retani-leftbar-caret: #{$retani-leftbar-muted};
+    --retani-leftbar-tile-bg: #{$retani-leftbar-canvas};
+    --retani-leftbar-tile-border: #{$retani-leftbar-line};
+    --retani-leftbar-tile-active-bg: #{$retani-leftbar-ink};
+    --retani-leftbar-tile-active-icon: #{$white};
+    --retani-leftbar-dot: #{$retani-leftbar-line};
+    --retani-leftbar-dot-active: #{$retani-leftbar-ink};
+    --retani-leftbar-check: #{$retani-leftbar-ink};
+    --retani-leftbar-focus: #{$retani-leftbar-ink};
+    --retani-leftbar-link: #{$retani-leftbar-ink};
+    --retani-leftbar-danger: #d93a2e;
+
+    @include dark-mode {
+        --retani-leftbar-bg: var(--#{$prefix}tertiary-bg);
+        --retani-leftbar-surface: var(--#{$prefix}body-bg);
+        --retani-leftbar-hover: var(--#{$prefix}secondary-bg);
+        --retani-leftbar-border: var(--#{$prefix}border-color);
+        --retani-leftbar-divider: var(--#{$prefix}border-color);
+        --retani-leftbar-control-border: var(--#{$prefix}border-color);
+        --retani-leftbar-text: var(--#{$prefix}body-color);
+        --retani-leftbar-text-secondary: var(--#{$prefix}secondary-color);
+        --retani-leftbar-text-muted: var(--#{$prefix}secondary-color);
+        --retani-leftbar-icon: var(--#{$prefix}secondary-color);
+        --retani-leftbar-caret: var(--#{$prefix}secondary-color);
+        --retani-leftbar-tile-bg: var(--#{$prefix}secondary-bg);
+        --retani-leftbar-tile-border: var(--#{$prefix}border-color);
+        --retani-leftbar-tile-active-bg: var(--#{$prefix}body-color);
+        --retani-leftbar-tile-active-icon: var(--#{$prefix}body-bg);
+        --retani-leftbar-dot: var(--#{$prefix}border-color);
+        --retani-leftbar-dot-active: var(--#{$prefix}body-color);
+        --retani-leftbar-check: var(--#{$prefix}body-color);
+        --retani-leftbar-focus: var(--#{$prefix}body-color);
+        --retani-leftbar-link: var(--#{$prefix}body-color);
+        --retani-leftbar-danger: #f0736a;
+    }
+
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: $zindex-fixed + 1;
+    width: var(--retani-leftbar-width);
+    background-color: var(--retani-leftbar-bg);
+    border-right: 1px solid var(--retani-leftbar-border);
+    color: var(--retani-leftbar-text);
+    font-family: $retani-leftbar-font-family;
+    font-size: $retani-leftbar-font-size;
+    -webkit-font-smoothing: antialiased;
+    transition: width $retani-leftbar-transition;
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    button {
+        font: inherit;
+        color: inherit;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--retani-leftbar-focus);
+        outline-offset: 1px;
+    }
+}
+
+.retani-leftbar-mount,
+.retani-leftbar-inner {
+    height: 100%;
+}
+
+.retani-leftbar-inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+// Header: brand and collapse button.
+.retani-leftbar-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    height: $retani-leftbar-header-height;
+    padding: 12px 8px 12px 14px;
+    border-bottom: 1px solid var(--retani-leftbar-divider);
+
+    .is-collapsed & {
+        justify-content: center;
+        padding: 12px;
+    }
+}
+
+.retani-leftbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.retani-leftbar-logo {
+    display: block;
+    max-width: 100%;
+    max-height: 32px;
+    object-fit: contain;
+}
+
+// Site name as a wordmark, shown when no logo is uploaded.
+.retani-leftbar-sitename {
+    overflow: hidden;
+    padding-left: 2px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    color: var(--retani-leftbar-text);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.retani-leftbar-sitename-dot {
+    color: $retani-leftbar-lime;
+}
+
+.retani-leftbar-collapse {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: $retani-leftbar-radius;
+    background: transparent;
+    color: var(--retani-leftbar-icon) !important; // stylelint-disable-line declaration-no-important
+
+    &:hover {
+        background-color: var(--retani-leftbar-surface);
+    }
+}
+
+.retani-leftbar-caret {
+    flex: none;
+    color: var(--retani-leftbar-caret);
+    transition: transform 0.15s ease;
+
+    .is-open > & {
+        transform: rotate(180deg);
+    }
+}
+
+// Shared dropdown panel.
+.retani-leftbar-dropdown {
+    position: absolute;
+    left: 10px;
+    z-index: 60;
+    padding: 6px;
+    background-color: var(--retani-leftbar-surface);
+    border: 1px solid var(--retani-leftbar-border);
+    border-radius: $retani-leftbar-radius;
+}
+
+.retani-leftbar-dropdown-heading {
+    padding: 6px 8px 8px;
+    font-size: 0.6875rem;
+    color: var(--retani-leftbar-text-muted);
+}
+
+.retani-leftbar-dropdown-footer {
+    margin: 6px -6px 0;
+    padding: 8px 14px 4px;
+    border-top: 1px solid var(--retani-leftbar-divider);
+    font-size: 0.75rem;
+
+    a {
+        color: var(--retani-leftbar-link);
+
+        &:hover {
+            text-decoration: underline;
+            text-decoration-color: $retani-leftbar-lime;
+            text-underline-offset: 3px;
+        }
+    }
+}
+
+// Category selector.
+.retani-leftbar-category {
+    position: relative;
+    flex: none;
+    padding: 15px 10px;
+    border-bottom: 1px solid var(--retani-leftbar-divider);
+}
+
+.retani-leftbar-cattoggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 46px;
+    padding: 0 10px 0 7px;
+    text-align: start;
+    background-color: var(--retani-leftbar-surface);
+    border: 1px solid var(--retani-leftbar-control-border);
+    border-radius: $retani-leftbar-radius;
+    cursor: pointer;
+
+    .is-collapsed & {
+        justify-content: center;
+        padding: 0;
+    }
+}
+
+.retani-leftbar-cattile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: $retani-leftbar-radius;
+    color: $white;
+
+    &.is-small {
+        width: 28px;
+        height: 28px;
+        border-radius: $retani-leftbar-radius-sm;
+    }
+}
+
+.retani-leftbar-cattext {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.25;
+}
+
+.retani-leftbar-catname {
+    overflow: hidden;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.retani-leftbar-catmeta {
+    overflow: hidden;
+    font-size: 0.625rem;
+    color: var(--retani-leftbar-text-muted);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.retani-leftbar-catmenu {
+    top: 66px;
+    width: 236px;
+}
+
+.retani-leftbar-catlist {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.retani-leftbar-catoption {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 8px 0 5px;
+    border-radius: $retani-leftbar-radius-sm;
+
+    &:hover,
+    &.is-selected {
+        background-color: var(--retani-leftbar-bg);
+    }
+}
+
+.retani-leftbar-catcheck {
+    flex: none;
+    color: transparent;
+
+    .is-selected & {
+        color: var(--retani-leftbar-check);
+    }
+}
+
+// Navigation menu.
+.retani-leftbar-nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 14px 10px;
+}
+
+.retani-leftbar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.retani-leftbar-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 34px;
+    padding: 0 10px 0 6px;
+    text-align: start;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: $retani-leftbar-radius;
+    color: var(--retani-leftbar-text-secondary);
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--retani-leftbar-hover);
+        color: var(--retani-leftbar-text);
+    }
+
+    // A link to the current page, or (when collapsed) a group containing it, gets the raised box.
+    &.is-active:is(a),
+    .is-collapsed &.is-active {
+        background-color: var(--retani-leftbar-surface);
+        border-color: var(--retani-leftbar-control-border);
+        color: var(--retani-leftbar-text);
+        font-weight: 500;
+    }
+
+    // The active item, or a group containing it, has a dark label as in the mockup.
+    &.is-active {
+        color: var(--retani-leftbar-text);
+        font-weight: 500;
+    }
+
+    .is-collapsed & {
+        justify-content: center;
+        padding: 0;
+    }
+}
+
+.retani-leftbar-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 21px;
+    height: 21px;
+    background-color: var(--retani-leftbar-tile-bg);
+    border: 1px solid var(--retani-leftbar-tile-border);
+    border-radius: $retani-leftbar-radius-sm;
+    color: var(--retani-leftbar-icon);
+
+    .is-active > & {
+        background-color: var(--retani-leftbar-tile-active-bg);
+        border-color: var(--retani-leftbar-tile-active-bg);
+        color: var(--retani-leftbar-tile-active-icon);
+    }
+}
+
+.retani-leftbar-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.retani-leftbar-children {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 4px 0 4px 16px;
+    padding-left: 9px;
+    border-left: 1px solid var(--retani-leftbar-control-border);
+
+    &[hidden] {
+        display: none;
+    }
+}
+
+.retani-leftbar-child {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid transparent;
+    border-radius: $retani-leftbar-radius;
+    font-size: 0.75rem;
+    color: var(--retani-leftbar-text-muted);
+
+    &:hover {
+        background-color: var(--retani-leftbar-hover);
+        color: var(--retani-leftbar-text);
+    }
+
+    &.is-active {
+        background-color: var(--retani-leftbar-surface);
+        border-color: var(--retani-leftbar-control-border);
+        color: var(--retani-leftbar-text);
+        font-weight: 500;
+    }
+}
+
+.retani-leftbar-dot {
+    flex: none;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: var(--retani-leftbar-dot);
+
+    .is-active > & {
+        background-color: var(--retani-leftbar-dot-active);
+    }
+}
+
+// Pinned links above the user menu.
+.retani-leftbar-footer {
+    flex: none;
+    padding: 10px 10px 14px;
+    border-top: 1px solid var(--retani-leftbar-divider);
+
+    .retani-leftbar-menu {
+        gap: 6px;
+    }
+
+    .retani-leftbar-children {
+        max-height: 236px;
+        overflow-y: auto;
+    }
+}
+
+// User menu.
+.retani-leftbar-user {
+    position: relative;
+    flex: none;
+    border-top: 1px solid var(--retani-leftbar-divider);
+}
+
+.retani-leftbar-usertoggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 14px 12px 10px;
+    text-align: start;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--retani-leftbar-surface);
+    }
+
+    .is-collapsed & {
+        justify-content: center;
+        padding: 10px 0 12px;
+    }
+}
+
+.retani-leftbar-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    border-radius: $retani-leftbar-radius;
+    background-color: $retani-leftbar-ink;
+    color: $white;
+    font-size: 0.6875rem;
+    font-weight: 700;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.retani-leftbar-usertext,
+.retani-leftbar-userdetails {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.3;
+}
+
+.retani-leftbar-username {
+    overflow: hidden;
+    font-weight: 500;
+    color: var(--retani-leftbar-text);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.retani-leftbar-userrole,
+.retani-leftbar-useremail {
+    overflow: hidden;
+    font-size: 0.625rem;
+    color: var(--retani-leftbar-text-muted);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.retani-leftbar-usermenu {
+    bottom: 62px;
+    width: 220px;
+
+    .retani-leftbar-userdetails {
+        margin-bottom: 4px;
+        border-bottom: 1px solid var(--retani-leftbar-divider);
+    }
+
+    .retani-leftbar-useremail {
+        font-size: 0.6875rem;
+    }
+}
+
+.retani-leftbar-userlist {
+    .has-divider {
+        margin-top: 4px;
+        padding-top: 4px;
+        border-top: 1px solid var(--retani-leftbar-divider);
+    }
+}
+
+.retani-leftbar-useroption {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding: 0 8px;
+    border-radius: $retani-leftbar-radius-sm;
+    color: var(--retani-leftbar-text);
+
+    &:hover {
+        background-color: var(--retani-leftbar-bg);
+        color: var(--retani-leftbar-text);
+    }
+
+    &.is-danger,
+    &.is-danger:hover {
+        color: var(--retani-leftbar-danger);
+    }
+}
+
+// The bar inside the mobile primary drawer: it fills the drawer body instead of sitting fixed beside the page.
+.retani-leftbar.retani-leftbar-mobile {
+    display: block;
+    position: static;
+    width: auto;
+    height: 100%;
+    background-color: transparent;
+    border: 0;
+    transition: none;
+}
+
+// The bar is a desktop layout; smaller screens keep the standard navbar and drawers.
+@include media-breakpoint-up(lg) {
+    .has-retani-leftbar {
+        .retani-leftbar {
+            display: block;
+        }
+
+        #page-wrapper {
+            padding-left: var(--retani-leftbar-width);
+            transition: padding-left $retani-leftbar-transition;
+        }
+
+        // Fixed elements ignore the wrapper padding, so move them across explicitly.
+        .navbar.fixed-top {
+            left: var(--retani-leftbar-width);
+            transition: left $retani-leftbar-transition;
+        }
+
+        .drawer.drawer-left.show {
+            left: var(--retani-leftbar-width);
+        }
+
+        #page.drawers .drawer-toggles .drawer-left-toggle {
+            left: var(--retani-leftbar-width);
+        }
+    }
+
+    .dir-rtl.has-retani-leftbar {
+        .retani-leftbar {
+            right: 0;
+            left: auto;
+            border-right: 0;
+            border-left: 1px solid var(--retani-leftbar-border);
+        }
+
+        #page-wrapper {
+            padding-right: var(--retani-leftbar-width);
+            padding-left: 0;
+        }
+
+        .navbar.fixed-top {
+            right: var(--retani-leftbar-width);
+            left: 0;
+        }
+
+        .drawer.drawer-left.show {
+            right: var(--retani-leftbar-width);
+            left: auto;
+        }
+
+        #page.drawers .drawer-toggles .drawer-left-toggle {
+            right: var(--retani-leftbar-width);
+            left: auto;
+        }
+
+        .retani-leftbar-dropdown {
+            right: 10px;
+            left: auto;
+        }
+
+        .retani-leftbar-children {
+            margin: 4px 16px 4px 0;
+            padding-right: 9px;
+            padding-left: 0;
+            border-right: 1px solid var(--retani-leftbar-control-border);
+            border-left: 0;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .retani-leftbar,
+    .retani-leftbar-caret,
+    .has-retani-leftbar #page-wrapper,
+    .has-retani-leftbar .navbar.fixed-top {
+        transition: none !important; // stylelint-disable-line declaration-no-important
+    }
+}

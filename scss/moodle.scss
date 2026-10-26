@@ -53,5 +53,19 @@
 @import "moodle/dropdown";
 @import "moodle/deprecated";
 @import "moodle/task-indicator";
+// Retractable left bar.
+@import "retani_leftbar";
+@import "retani_navbar";
+@import "retani_courseoverview";
+@import "retani_course";
+@import "retani_alert";
+@import "retani_adminsettings";
+@import "retani_forms";
+@import "retani_modal";
+@import "retani_tables";
+@import "retani_blocksidebar";
+@import "retani_calendar";
+@import "retani_quiz";
+@import "retani_question";
 // Must stay last so that the dark colour mode can override anything above it.
 @import "moodle/dark";

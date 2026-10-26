@@ -27,9 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/behat/lib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
-// Add block button in editing mode.
-$addblockbutton = $OUTPUT->addblockbutton();
-
 if (isloggedin()) {
     $courseindexopen = (get_user_preferences('drawer-open-index', true) == true);
     $blockdraweropen = (get_user_preferences('drawer-open-block') == true);
@@ -47,8 +44,8 @@ if ($courseindexopen) {
     $extraclasses[] = 'drawer-open-index';
 }
 
-$blockshtml = $OUTPUT->blocks('side-pre');
-$hasblocks = (strpos($blockshtml, 'data-block=') !== false || !empty($addblockbutton));
+$blockshtml = $OUTPUT->blocks(\theme_retani_studio\output\block_sidebar::REGION);
+$hasblocks = \theme_retani_studio\output\block_sidebar::has_content($PAGE, $blockshtml);
 if (!$hasblocks) {
     $blockdraweropen = false;
 }
@@ -57,15 +54,45 @@ if (!$courseindex) {
     $courseindexopen = false;
 }
 
-$bodyattributes = $OUTPUT->body_attributes($extraclasses);
+// Retractable left bar, for users who are signed in to an account of their own.
+$leftbar = false;
+if (isloggedin() && !isguestuser()) {
+    $hascourseoutline = !empty($courseindex);
+    $leftbar = (new \theme_retani_studio\output\left_bar($PAGE, $hascourseoutline))->export_for_template($OUTPUT);
+    $extraclasses[] = 'has-retani-leftbar';
+    if ($leftbar['collapsed']) {
+        $extraclasses[] = 'retani-leftbar-collapsed';
+    }
+    if ($hascourseoutline) {
+        // On wide screens the course index lives in the left bar's course outline (the LeftBar component moves it
+        // there), so its drawer never opens; on small screens, where the bar is hidden, the drawer is used as usual.
+        $extraclasses[] = 'has-retani-courseoutline';
+        $courseindexopen = false;
+        $extraclasses = array_diff($extraclasses, ['drawer-open-index']);
+    }
+}
+
+
 $forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 
-$secondarynavigation = false;
+// Right-hand block bar (in place of the Boost block drawer). It opens with the page when the user left it open,
+// and when the page shows its first-visit blocks.
+$blocksidebar = false;
+if ($hasblocks) {
+    $blocksidebaropen = $blockdraweropen || $forceblockdraweropen;
+    $blocksidebar = (new \theme_retani_studio\output\block_sidebar($PAGE, $blockshtml, $blocksidebaropen))
+        ->export_for_template($OUTPUT);
+    $extraclasses[] = 'has-retani-blocksidebar';
+    if ($blocksidebaropen) {
+        $extraclasses[] = 'retani-blocksidebar-open';
+    }
+}
+
+$bodyattributes = $OUTPUT->body_attributes($extraclasses);
+
 $overflow = '';
 if ($PAGE->has_secondary_navigation()) {
-    $tablistnav = $PAGE->has_tablist_secondary_navigation();
-    $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);
-    $secondarynavigation = $moremenu->export_for_template($OUTPUT);
+    // The secondary navigation itself is drawn by core_renderer::full_header() as the header tab bar.
     $overflowdata = $PAGE->secondarynav->get_overflow_menu_data();
     if (!is_null($overflowdata)) {
         $selectmenu = new \core\output\select_menu(
@@ -107,7 +134,6 @@ $templatecontext = [
     'blockdraweropen' => $blockdraweropen,
     'courseindex' => $courseindex,
     'primarymoremenu' => $primarymenu['moremenu'],
-    'secondarymoremenu' => $secondarynavigation ?: false,
     'mobileprimarynav' => $primarymenu['mobileprimarynav'],
     'usermenu' => $primarymenu['user'],
     'langmenu' => $primarymenu['lang'],
@@ -116,7 +142,9 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
-    'addblockbutton' => $addblockbutton
+    'leftbar' => $leftbar,
+    'blocksidebar' => $blocksidebar,
+
 ];
 
 echo $OUTPUT->render_from_template('theme_retani_studio/drawers', $templatecontext);

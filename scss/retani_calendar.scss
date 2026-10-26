@@ -1,0 +1,786 @@
+// Calendar (/calendar/view.php), in the look of the rest of the theme:
+// - the toolbar: a segmented Month / Day / Upcoming control, the course filter and the dark "New event" button;
+// - the month as a card: the month name with square arrow buttons, small weekday labels, a grid of light lines,
+//   today's date in an ink circle, and events as small chips with a colour bar for their type;
+// - the day and upcoming views as event cards with the same colour bar;
+// - the footer links ("Full calendar", "Import or export calendars").
+// Templates: core_calendar/view_selector, month_navigation and day_navigation are overridden; the rest is CSS.
+// Uses $retani-admin-font-family and $retani-admin-mono-family from retani_adminsettings.scss.
+$retani-calendar-radius: 8px !default;
+
+.maincalendar,
+.calendar_filters,
+.block_calendar_month,
+.block_calendar_upcoming {
+    --retani-cal-surface: #{$white};
+    --retani-cal-canvas: #f4f3ef;
+    --retani-cal-line: #dedcd5;
+    --retani-cal-row-line: #eceae4;
+    --retani-cal-ink: #111;
+    --retani-cal-on-ink: #{$white};
+    --retani-cal-muted: #6b6a64;
+    --retani-cal-lime: #95bf47;
+
+    // Event types: a strong colour for the bar and a light tint for the chip.
+    --retani-cal-site: #95bf47;
+    --retani-cal-site-tint: rgba(149, 191, 71, 0.16);
+    --retani-cal-course: #111;
+    --retani-cal-course-tint: rgba(17, 17, 17, 0.07);
+    --retani-cal-category: #8a5a9e;
+    --retani-cal-category-tint: rgba(138, 90, 158, 0.12);
+    --retani-cal-group: #d08a1d;
+    --retani-cal-group-tint: rgba(208, 138, 29, 0.14);
+    --retani-cal-user: #4e7c91;
+    --retani-cal-user-tint: rgba(78, 124, 145, 0.13);
+    --retani-cal-other: #8f8d85;
+    --retani-cal-other-tint: rgba(143, 141, 133, 0.14);
+
+    @include dark-mode {
+        --retani-cal-surface: var(--#{$prefix}body-bg);
+        --retani-cal-canvas: var(--#{$prefix}tertiary-bg);
+        --retani-cal-line: var(--#{$prefix}border-color);
+        --retani-cal-row-line: var(--#{$prefix}border-color-translucent);
+        --retani-cal-ink: var(--#{$prefix}body-color);
+        --retani-cal-on-ink: var(--#{$prefix}body-bg);
+        --retani-cal-muted: var(--#{$prefix}secondary-color);
+        --retani-cal-course: var(--#{$prefix}body-color);
+        --retani-cal-course-tint: rgba(255, 255, 255, 0.08);
+    }
+}
+
+// Event type colours, used by the chips, dots and event cards.
+@mixin retani-calendar-type-vars {
+    &.calendar_event_site,
+    &[data-event-eventtype="site"] {
+        --retani-cal-type: var(--retani-cal-site);
+        --retani-cal-type-tint: var(--retani-cal-site-tint);
+    }
+
+    &.calendar_event_course {
+        --retani-cal-type: var(--retani-cal-course);
+        --retani-cal-type-tint: var(--retani-cal-course-tint);
+    }
+
+    &.calendar_event_category {
+        --retani-cal-type: var(--retani-cal-category);
+        --retani-cal-type-tint: var(--retani-cal-category-tint);
+    }
+
+    &.calendar_event_group {
+        --retani-cal-type: var(--retani-cal-group);
+        --retani-cal-type-tint: var(--retani-cal-group-tint);
+    }
+
+    &.calendar_event_user {
+        --retani-cal-type: var(--retani-cal-user);
+        --retani-cal-type-tint: var(--retani-cal-user-tint);
+    }
+
+    &.calendar_event_other {
+        --retani-cal-type: var(--retani-cal-other);
+        --retani-cal-type-tint: var(--retani-cal-other-tint);
+    }
+}
+
+.maincalendar {
+    font-family: $retani-admin-font-family;
+    color: var(--retani-cal-ink);
+
+    // Toolbar: views, course filter, then "New event" on the right.
+    div.header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding: 0 !important; // stylelint-disable-line declaration-no-important
+
+        > * {
+            float: none !important; // stylelint-disable-line declaration-no-important
+            margin: 0 !important; // stylelint-disable-line declaration-no-important
+        }
+
+        .form-select,
+        .cal_courses_flt {
+            width: auto;
+            min-width: 180px;
+            height: 36px;
+            padding: 0 32px 0 12px;
+            background-color: var(--retani-cal-surface);
+            border: 1px solid var(--retani-cal-line);
+            border-radius: 6px;
+            box-shadow: none;
+            font-size: 0.8125rem;
+            color: var(--retani-cal-ink);
+
+            &:focus {
+                border-color: var(--retani-cal-ink);
+                box-shadow: none;
+            }
+        }
+
+        [data-action="new-event-button"] {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 36px;
+            margin-left: auto !important; // stylelint-disable-line declaration-no-important
+            padding: 0 16px;
+            background-color: var(--retani-cal-ink);
+            border: 1px solid var(--retani-cal-ink);
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--retani-cal-on-ink);
+
+            &::before {
+                content: "";
+                width: 12px;
+                height: 12px;
+                background-color: currentColor;
+                mask: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'%3e%3cpath d='M12 5v14M5 12h14'/%3e%3c/svg%3e") center / contain no-repeat; // stylelint-disable-line function-url-scheme-disallowed-list
+            }
+
+            &:hover {
+                opacity: 0.88;
+            }
+        }
+    }
+
+    .heightcontainer {
+        height: auto;
+    }
+
+    // The month, day and upcoming views sit in one card.
+    .calendarwrapper {
+        position: relative;
+        overflow: hidden;
+        background-color: var(--retani-cal-surface);
+        border: 1px solid var(--retani-cal-line);
+        border-radius: $retani-calendar-radius;
+    }
+
+    // Footer links.
+    .bottom {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 18px;
+        width: auto;
+        margin: 14px 0 0;
+        font-size: 0.8125rem;
+
+        span.footer-link::after {
+            content: none;
+        }
+
+        a {
+            color: var(--retani-cal-muted);
+            text-decoration: none;
+
+            &:hover {
+                color: var(--retani-cal-ink);
+                text-decoration: underline;
+                text-decoration-color: var(--retani-cal-lime);
+                text-underline-offset: 3px;
+            }
+        }
+    }
+}
+
+// View switcher: a segmented control.
+.retani-calendar-segments {
+    display: inline-flex;
+    gap: 2px;
+    margin: 0;
+    padding: 2px;
+    list-style: none;
+    background-color: var(--retani-cal-canvas);
+    border: 1px solid var(--retani-cal-line);
+    border-radius: 6px;
+}
+
+.retani-calendar-segment {
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--retani-cal-muted);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+        color: var(--retani-cal-ink);
+        text-decoration: none;
+    }
+
+    &.active {
+        background-color: var(--retani-cal-surface);
+        box-shadow: 0 0 0 1px var(--retani-cal-line);
+        color: var(--retani-cal-ink);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--retani-cal-ink);
+        outline-offset: 1px;
+    }
+}
+
+// Navigation: the period as the title, arrows on the right.
+.maincalendar .retani-calendar-nav {
+    width: auto;
+    margin: 0 !important; // stylelint-disable-line declaration-no-important
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--retani-cal-line);
+
+    .calendar-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .current {
+        flex: 1;
+        margin: 0;
+        font-family: $retani-admin-font-family;
+        font-size: 1.375rem;
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: -0.03em;
+        text-align: left;
+        color: var(--retani-cal-ink);
+    }
+}
+
+.retani-calendar-arrows {
+    display: inline-flex;
+    gap: 6px;
+
+    .arrow_link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        background-color: var(--retani-cal-surface);
+        border: 1px solid var(--retani-cal-line);
+        border-radius: 6px;
+        color: var(--retani-cal-ink);
+        text-decoration: none;
+
+        &:hover {
+            border-color: var(--retani-cal-ink);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--retani-cal-ink);
+            outline-offset: 1px;
+        }
+
+        // Months dragged onto an arrow move to the next / previous month.
+        &.drop-target {
+            border-style: dashed;
+            border-color: var(--retani-cal-ink);
+        }
+
+        .arrow_text {
+            @include visually-hidden;
+        }
+    }
+}
+
+// Month grid.
+.maincalendar .calendarmonth {
+    width: 100%;
+    margin: 0;
+    table-layout: fixed;
+    border-collapse: collapse;
+
+    th {
+        height: 34px;
+        padding: 0 10px;
+        background-color: var(--retani-cal-canvas);
+        border-bottom: 1px solid var(--retani-cal-line);
+        font-size: 0.71875rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-align: left;
+        text-transform: uppercase;
+        color: var(--retani-cal-muted);
+    }
+
+    td {
+        height: 118px;
+        padding: 6px 6px 4px;
+        vertical-align: top;
+        background-color: var(--retani-cal-surface);
+        border: 0;
+        border-right: 1px solid var(--retani-cal-row-line);
+        border-bottom: 1px solid var(--retani-cal-row-line);
+        box-shadow: none;
+        transition: background-color 0.12s ease;
+
+        &:last-child {
+            border-right: 0;
+        }
+
+        > div {
+            height: auto !important; // stylelint-disable-line declaration-no-important
+            text-align: left;
+        }
+
+        &.weekend {
+            background-color: #fbfaf7;
+
+            @include dark-mode {
+                background-color: var(--retani-cal-surface);
+            }
+        }
+
+        &.dayblank {
+            background-color: var(--retani-cal-canvas);
+            background-image:
+                repeating-linear-gradient(
+                    -45deg,
+                    transparent 0,
+                    transparent 6px,
+                    var(--retani-cal-row-line) 6px,
+                    var(--retani-cal-row-line) 7px
+                );
+        }
+
+        // Days where a new event can be added: a soft hover and a "+" in the corner.
+        &.clickable {
+            position: relative;
+            cursor: pointer;
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: 12px;
+                height: 12px;
+                background-color: var(--retani-cal-muted);
+                opacity: 0;
+                mask: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3e%3cpath d='M12 5v14M5 12h14'/%3e%3c/svg%3e") center / contain no-repeat; // stylelint-disable-line function-url-scheme-disallowed-list
+                transition: opacity 0.12s ease;
+            }
+
+            &:hover {
+                background-color: var(--retani-cal-canvas);
+
+                &::after {
+                    opacity: 1;
+                }
+            }
+        }
+
+        // Drop target while an event is dragged to another day.
+        &.drop-target {
+            background-color: rgba(149, 191, 71, 0.14);
+            box-shadow: inset 0 0 0 1.5px var(--retani-cal-lime);
+        }
+    }
+
+    tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    // Day numbers.
+    .day-number-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 26px;
+        height: 26px;
+        margin: 0 0 4px;
+        padding: 0 4px;
+        border-radius: 13px;
+        background: none;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        line-height: 1;
+        color: var(--retani-cal-ink);
+    }
+
+    a.day {
+        text-decoration: none;
+
+        &:hover .day-number-circle {
+            background-color: var(--retani-cal-surface);
+            box-shadow: inset 0 0 0 1px var(--retani-cal-line);
+        }
+    }
+
+    td.today .day-number-circle,
+    td.today a.day:hover .day-number-circle {
+        background-color: var(--retani-cal-ink);
+        box-shadow: none;
+        color: var(--retani-cal-on-ink);
+    }
+
+    // Events: chips with a colour bar for their type.
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        margin: 0;
+        padding: 0;
+
+        li {
+            line-height: 1.25;
+
+            > a {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                width: 100%;
+                max-width: 100%;
+                padding: 3px 6px 3px 0;
+                background-color: var(--retani-cal-type-tint, var(--retani-cal-other-tint));
+                border-radius: 4px;
+                box-shadow: inset 3px 0 0 var(--retani-cal-type, var(--retani-cal-other));
+                font-size: 0.71875rem;
+                font-weight: 500;
+                color: var(--retani-cal-ink);
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: none;
+                    filter: brightness(0.96);
+
+                    .eventname {
+                        text-decoration: none;
+                    }
+                }
+            }
+
+            // The type dot inside the chip is replaced by the bar.
+            .calendar-circle {
+                display: none !important; // stylelint-disable-line declaration-no-important
+            }
+
+            > a {
+                padding-left: 9px;
+            }
+
+            .eventname {
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            // Chips are coloured from their event type (data-eventtype-<type> on the item).
+            @each $type in (site, course, category, group, user, other) {
+                &[data-eventtype-#{$type}] {
+                    --retani-cal-type: var(--retani-cal-#{$type});
+                    --retani-cal-type-tint: var(--retani-cal-#{$type}-tint);
+                }
+            }
+
+            &.events-underway {
+                padding: 2px 6px;
+                font-size: 0.6875rem;
+                color: var(--retani-cal-muted);
+            }
+
+            // "N more" link.
+            &[data-action="view-more-events"] a {
+                padding: 2px 0;
+                background: none;
+                box-shadow: none;
+                font-size: 0.6875rem;
+                color: var(--retani-cal-muted);
+
+                &:hover {
+                    color: var(--retani-cal-ink);
+                }
+            }
+        }
+    }
+}
+
+// Day and upcoming views: event cards.
+.maincalendar .calendarwrapper {
+    > .current,
+    > h2.current {
+        margin: 0;
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--retani-cal-line);
+        font-size: 1.375rem;
+        font-weight: 600;
+        letter-spacing: -0.03em;
+        text-align: left !important; // stylelint-disable-line declaration-no-important
+    }
+
+    .eventlist {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 0 !important; // stylelint-disable-line declaration-no-important
+        padding: 16px 18px 18px;
+    }
+
+    .calendar-no-results {
+        display: block;
+        padding: 36px 0;
+        font-size: 0.8125rem;
+        text-align: center;
+        color: var(--retani-cal-muted);
+    }
+
+    .event {
+        margin: 0 !important; // stylelint-disable-line declaration-no-important
+
+        @include retani-calendar-type-vars;
+
+        > .card {
+            overflow: hidden;
+            background-color: var(--retani-cal-surface);
+            border: 1px solid var(--retani-cal-line);
+            border-radius: $retani-calendar-radius;
+            box-shadow: inset 3px 0 0 var(--retani-cal-type, var(--retani-cal-other));
+        }
+
+        // The header loses its tinted background: the bar on the left carries the type.
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px 6px 18px;
+            background: transparent !important; // stylelint-disable-line declaration-no-important
+            border: 0;
+
+            @include retani-calendar-type-vars;
+
+            > .d-inline-block {
+                margin: 0 !important; // stylelint-disable-line declaration-no-important
+            }
+
+            .commands {
+                order: 3;
+                display: inline-flex;
+                gap: 2px;
+                margin-left: auto;
+
+                a {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 5px;
+                    color: var(--retani-cal-ink);
+
+                    &:hover {
+                        background-color: var(--retani-cal-canvas);
+                    }
+
+                    .icon {
+                        margin: 0;
+                        color: inherit;
+                    }
+                }
+            }
+
+            .icon {
+                width: 28px;
+                height: 28px;
+                margin: 0;
+                padding: 6px;
+                background-color: var(--retani-cal-canvas);
+                border: 1px solid var(--retani-cal-line);
+                border-radius: 6px;
+            }
+
+            .name {
+                margin: 0;
+                font-family: $retani-admin-font-family;
+                font-size: 0.9375rem;
+                font-weight: 600;
+                letter-spacing: -0.01em;
+                color: var(--retani-cal-ink);
+            }
+        }
+
+        .card-body {
+            padding: 8px 16px 14px 18px;
+            font-size: 0.8125rem;
+
+            .row {
+                margin: 0;
+                padding: 4px 0;
+            }
+
+            .col-1 {
+                width: 26px;
+                flex: none;
+                padding: 0;
+                color: var(--retani-cal-muted);
+            }
+
+            .col-11 {
+                flex: 1;
+                padding: 0;
+            }
+
+            .icon {
+                color: var(--retani-cal-muted);
+            }
+
+            a:not(.btn) {
+                color: var(--retani-cal-ink);
+                text-decoration-color: var(--retani-cal-lime);
+                text-underline-offset: 3px;
+            }
+        }
+
+        .card-footer {
+            padding: 10px 16px 12px 18px;
+            background: transparent;
+            border-top: 1px solid var(--retani-cal-row-line);
+
+            .card-link,
+            a {
+                font-size: 0.8125rem;
+                font-weight: 500;
+                color: var(--retani-cal-ink);
+            }
+        }
+    }
+}
+
+// Small screens: the month is a compact grid of day numbers with dots.
+@include media-breakpoint-down(md) {
+    .maincalendar {
+        div.header [data-action="new-event-button"] {
+            margin-left: 0 !important; // stylelint-disable-line declaration-no-important
+        }
+
+        .calendarmonth {
+            th {
+                padding: 0;
+                text-align: center;
+            }
+
+            td {
+                height: 54px;
+                padding: 4px 2px;
+
+                > div {
+                    text-align: center;
+                }
+            }
+        }
+
+        .retani-calendar-nav .current {
+            font-size: 1.125rem;
+        }
+    }
+}
+
+// Calendar block (side bar): the month name between the arrows, a compact grid.
+.block_calendar_month .retani-calendar-nav.is-block {
+    margin-bottom: 8px;
+
+    .calendar-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .current {
+        flex: 1;
+        order: 0;
+        margin: 0;
+        font-family: $retani-admin-font-family;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-align: left;
+        color: var(--retani-cal-ink);
+    }
+
+    .retani-calendar-arrows .arrow_link {
+        width: 26px;
+        height: 26px;
+        border-radius: 5px;
+
+        svg {
+            width: 12px;
+            height: 12px;
+        }
+    }
+}
+
+// Events key (show / hide event types): rows with a tinted square in the type colour.
+.calendar_filters {
+    font-family: $retani-admin-font-family;
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    li {
+        margin: 0;
+    }
+
+    a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 6px;
+        border-radius: 5px;
+        font-size: 0.78125rem;
+        color: var(--retani-cal-ink);
+        text-decoration: none;
+
+        &:hover {
+            background-color: var(--retani-cal-canvas);
+            text-decoration: none;
+        }
+
+        // The spacer between the icon and the label.
+        > span:nth-child(2) {
+            display: none;
+        }
+
+        &[data-eventtype-hidden="true"] {
+            color: var(--retani-cal-muted);
+
+            .eventname {
+                text-decoration: line-through;
+            }
+        }
+    }
+
+    span[class^="calendar_event_"] {
+        @include retani-calendar-type-vars;
+        display: inline-flex;
+        flex: none;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        background-color: var(--retani-cal-type-tint) !important; // stylelint-disable-line declaration-no-important
+        border-radius: 5px;
+        color: var(--retani-cal-type);
+
+        .icon {
+            width: 12px;
+            height: 12px;
+            margin: 0;
+            font-size: 12px;
+            color: inherit;
+        }
+    }
+}

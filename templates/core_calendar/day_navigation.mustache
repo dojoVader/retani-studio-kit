@@ -1,0 +1,64 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_calendar/day_navigation
+
+    Retani: the day as the title on the left, previous / next day as square arrow buttons on the right.
+    core_calendar/view_manager handles clicks on .arrow_link (reading data-year / data-month / data-day).
+
+    Example context (json):
+    {
+        "periodname": "Monday, 19 October 2026",
+        "previousperiodname": "Sunday",
+        "nextperiodname": "Tuesday",
+        "previousperiodlink": "#",
+        "nextperiodlink": "#",
+        "previousperiod": {"year": 2026, "mon": 10, "mday": 18},
+        "nextperiod": {"year": 2026, "mon": 10, "mday": 20}
+    }
+}}
+<div id="day-navigation-{{uniqid}}" class="controls retani-calendar-nav">
+    <div class="calendar-controls">
+        <h2 class="current">{{periodname}}</h2>
+        <div class="retani-calendar-arrows">
+            <a{{!
+                }} href="{{previousperiodlink}}"{{!
+                }} class="arrow_link previous"{{!
+                }} title="{{#str}}dayprev, calendar{{/str}}"{{!
+                }} aria-label="{{#str}}dayprev, calendar{{/str}}"{{!
+                }} data-year="{{previousperiod.year}}"{{!
+                }} data-month="{{previousperiod.mon}}"{{!
+                }} data-day="{{previousperiod.mday}}"{{!
+            }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+                <span class="arrow_text">{{previousperiodname}}</span>
+            </a>
+            <a{{!
+                }} href="{{nextperiodlink}}"{{!
+                }} class="arrow_link next"{{!
+                }} title="{{#str}}daynext, calendar{{/str}}"{{!
+                }} aria-label="{{#str}}daynext, calendar{{/str}}"{{!
+                }} data-year="{{nextperiod.year}}"{{!
+                }} data-month="{{nextperiod.mon}}"{{!
+                }} data-day="{{nextperiod.mday}}"{{!
+            }}>
+                <span class="arrow_text">{{nextperiodname}}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </div>
+</div>

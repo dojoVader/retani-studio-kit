@@ -1,0 +1,49 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/placeholders
+
+    Loading placeholders for the Retani course overview, shown until the CourseOverview component has its first
+    page: skeleton cards in card view, skeleton table rows otherwise, matching what the component draws itself.
+
+    Context variables required for this template:
+    * iscardview - Whether the user's view is the card grid.
+
+    Example context (json):
+    {
+        "iscardview": true
+    }
+}}
+<div data-region="loading-placeholder-content" aria-hidden="true">
+    {{#iscardview}}
+    <div class="retani-courseoverview-cards">
+        <div class="retani-courseoverview-card is-skeleton"><span class="retani-courseoverview-cardimage"></span><span class="retani-courseoverview-cardbody"><span></span><span></span><span></span></span></div>
+        <div class="retani-courseoverview-card is-skeleton"><span class="retani-courseoverview-cardimage"></span><span class="retani-courseoverview-cardbody"><span></span><span></span><span></span></span></div>
+        <div class="retani-courseoverview-card is-skeleton"><span class="retani-courseoverview-cardimage"></span><span class="retani-courseoverview-cardbody"><span></span><span></span><span></span></span></div>
+        <div class="retani-courseoverview-card is-skeleton"><span class="retani-courseoverview-cardimage"></span><span class="retani-courseoverview-cardbody"><span></span><span></span><span></span></span></div>
+    </div>
+    {{/iscardview}}
+    {{^iscardview}}
+    <div class="retani-courseoverview-table">
+        <div class="retani-courseoverview-row is-head"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="retani-courseoverview-row is-skeleton"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="retani-courseoverview-row is-skeleton"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="retani-courseoverview-row is-skeleton"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="retani-courseoverview-row is-skeleton"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
+    {{/iscardview}}
+</div>

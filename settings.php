@@ -22,6 +22,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * @var $ADMIN admin_root
+ */
+
 if ($ADMIN->fulltree) {
     $settings = new theme_retani_studio_admin_settingspage_tabs('themesettingretani_studio', get_string('configtitle', 'theme_retani_studio'));
     $page = new admin_settingpage('theme_retani_studio_general', get_string('generalsettings', 'theme_retani_studio'));
@@ -50,6 +54,7 @@ if ($ADMIN->fulltree) {
     // These are the built in presets.
     $choices['default.scss'] = 'default.scss';
     $choices['plain.scss'] = 'plain.scss';
+    $choices['preset-retani.scss'] = 'preset-retani.scss';
 
     $setting = new admin_setting_configthemepreset($name, $title, $description, $default, $choices, 'retani_studio');
     $setting->set_updatedcallback('theme_reset_all_caches');
@@ -77,6 +82,15 @@ if ($ADMIN->fulltree) {
     $title = get_string('loginbackgroundimage', 'theme_retani_studio');
     $description = get_string('loginbackgroundimage_desc', 'theme_retani_studio');
     $setting = new admin_setting_configstoredfile($name, $title, $description, 'loginbackgroundimage');
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
+    // Logo shown on the login page.
+    $name = 'theme_retani_studio/logo';
+    $title = get_string('logo', 'theme_retani_studio');
+    $description = get_string('logo_desc', 'theme_retani_studio');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'logo', 0,
+        ['maxfiles' => 1, 'accepted_types' => ['web_image']]);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 

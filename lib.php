@@ -44,6 +44,8 @@ function theme_retani_studio_css_tree_post_processor($tree, $theme) {
  * @return string
  */
 function theme_retani_studio_get_extra_scss($theme) {
+    global $CFG;
+
     $content = '';
     $imageurl = $theme->setting_file_url('backgroundimage', 'backgroundimage');
 
@@ -55,35 +57,22 @@ function theme_retani_studio_get_extra_scss($theme) {
         $content .= ' } }';
     }
 
-    // Sets the login background image.
+    // Sets the login panel background image. The Retani login panel is a solid dark surface by default,
+    // so only an image uploaded in the theme settings is applied; it is darkened in scss/moodle/login.scss.
     $loginbackgroundimageurl = $theme->setting_file_url('loginbackgroundimage', 'loginbackgroundimage');
-    $isdefaultloginimage = empty($loginbackgroundimageurl);
-    if ($isdefaultloginimage) {
-        // Use the default login background image.
-        $loginbackgroundimageurl = $theme->image_url(
-            'login_background',
-            'theme',
-        );
-    }
-    $content .= 'body.pagelayout-login #page .login-layout-left { ';
-    $content .= "background-image: url('$loginbackgroundimageurl'); ";
-    // Center the login background image so cropping is symmetrical, for both the default and any custom image.
-    $content .= 'background-size: cover; background-position: center;';
-    $content .= ' }';
-
-    // Add a watermark to indicate the image is AI generated, but only for the default image.
-    if ($isdefaultloginimage) {
-        $content .= 'body.pagelayout-login #page .login-layout-left::after {';
-        // Escape the label for use in a CSS string value: collapse newlines (which would break the CSS string)
-        // and escape single quotes and backslashes via addcslashes.
-        $ailabel = preg_replace('/[\r\n]+/', ' ', get_string('aigeneratedimage', 'theme_retani_studio'));
-        $content .= " content: '" . addcslashes($ailabel, "'\\") . "';";
-        $content .= ' position: absolute; bottom: 1rem; right: 1rem;';
-        $content .= ' color: $white;';
-        $content .= ' font-size: 0.8rem;';
-        $content .= ' text-shadow: 0 1px 2px $black;';
-        $content .= ' pointer-events: none;';
+    if (!empty($loginbackgroundimageurl)) {
+        $content .= 'body.pagelayout-login #page .login-layout-left { ';
+        $content .= "background-image: url('$loginbackgroundimageurl'); ";
+        $content .= 'background-size: cover; background-position: center;';
         $content .= ' }';
+        $content .= 'body.pagelayout-login #page .login-layout-left::before { content: ""; }';
+    }
+
+    // Get the extra css from the parent theme, if it exists.
+    $extraCss = $CFG->dirroot . '/theme/retani_studio/scss/post.scss';
+
+    if(file_exists($extraCss)) {
+        $content .= file_get_contents($extraCss);
     }
 
     // Always return the background image with the scss when we have it.
@@ -135,6 +124,18 @@ function theme_retani_studio_user_preferences(): array {
             'default' => true,
             'permissioncallback' => [core_user::class, 'is_current_user'],
         ],
+        \theme_retani_studio\output\left_bar::PREFERENCE => [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ],
+        \theme_retani_studio\output\left_bar::OUTLINE_PREFERENCE => [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => true,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ],
         \theme_retani_studio\colour_mode::PREFERENCE => [
             'type' => PARAM_ALPHA,
             'null' => NULL_NOT_ALLOWED,
@@ -165,9 +166,14 @@ function theme_retani_studio_get_main_scss_content($theme) {
         $scss .= file_get_contents($CFG->dirroot . '/theme/retani_studio/scss/preset/default.scss');
     } else if ($filename == 'plain.scss') {
         $scss .= file_get_contents($CFG->dirroot . '/theme/retani_studio/scss/preset/plain.scss');
-    } else if ($filename && ($presetfile = $fs->get_file($context->id, 'theme_retani_studio', 'preset', 0, '/', $filename))) {
+    } else if ($filename == 'preset-retani.scss') {
+        $scss .= file_get_contents($CFG->dirroot . '/theme/retani_studio/scss/preset/preset-retani.scss');
+    }
+    else if ($filename && ($presetfile = $fs->get_file($context->id, 'theme_retani_studio', 'preset', 0, '/', $filename))) {
         $scss .= $presetfile->get_content();
-    } else {
+    }
+
+    else {
         // Safety fallback - maybe new installs etc.
         $scss .= file_get_contents($CFG->dirroot . '/theme/retani_studio/scss/preset/default.scss');
     }
@@ -219,6 +225,12 @@ function theme_retani_studio_get_pre_scss($theme) {
     // Prepend pre-scss.
     if (!empty($theme->settings->scsspre)) {
         $scss .= $theme->settings->scsspre;
+    }
+
+    // Also read from the pre.scss file in the theme's scss folder.
+    $preScssFile = $CFG->dirroot . '/theme/retani_studio/scss/pre.scss';
+    if (file_exists($preScssFile)) {
+        $scss.= file_get_contents($preScssFile);
     }
 
     return $scss;

@@ -1,0 +1,744 @@
+// Admin settings pages (/admin/settings.php), from mockup/admin-settings.png:
+// - the page header: category path, page name and description (core/full_header "adminheader");
+// - the secondary navigation as underlined tabs;
+// - the settings form (core_admin/settings) as collapsible cards with a save footer.
+$retani-admin-font-family: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif !default;
+$retani-admin-mono-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !default;
+$retani-admin-radius: 6px !default;
+$retani-admin-gutter: 28px !default;
+
+.retani-adminheader,
+.retani-settings,
+.retani-adminindex,
+.retani-adminsearch {
+    --retani-admin-surface: #{$white};
+    --retani-admin-line: #dedcd5;
+    --retani-admin-ink: #111111;
+    --retani-admin-on-ink: #{$white};
+    --retani-admin-muted: #6b6a64;
+    --retani-admin-dot: #c9c8c2;
+    --retani-admin-dirty: #d08a1d;
+    --retani-admin-lime: #95bf47;
+
+    @include dark-mode {
+        --retani-admin-surface: var(--#{$prefix}body-bg);
+        --retani-admin-line: var(--#{$prefix}border-color);
+        --retani-admin-ink: var(--#{$prefix}body-color);
+        --retani-admin-on-ink: var(--#{$prefix}body-bg);
+        --retani-admin-muted: var(--#{$prefix}secondary-color);
+        --retani-admin-dot: var(--#{$prefix}secondary-color);
+    }
+
+    font-family: $retani-admin-font-family;
+    -webkit-font-smoothing: antialiased;
+}
+
+// Header.
+.retani-adminheader {
+    margin-top: 0.75rem;
+    color: var(--retani-admin-ink);
+}
+
+.retani-adminheader-path {
+    margin: 0 0 0.5rem;
+    font-family: $retani-admin-mono-family;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--retani-admin-muted);
+
+    span + span::before {
+        content: "\00b7";
+        margin: 0 0.6em;
+    }
+}
+
+.retani-adminheader-title {
+    margin: 0;
+    font-family: inherit;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--retani-admin-ink);
+}
+
+.retani-adminheader-description {
+    margin: 0.75rem 0 0;
+    font-size: 0.9375rem;
+    color: var(--retani-admin-muted);
+}
+
+// Underlined tabs. Doubled class selectors beat the segmented tab bar in retani_course.scss.
+.retani-header-tabs.retani-header-tabs--underline {
+    margin-top: 1.75rem;
+    border-bottom: 1px solid var(--retani-course-line);
+
+    .more-nav,
+    .secondary-navigation .navigation.secondarynav-tabbar .more-nav {
+        gap: 1.6rem;
+        padding: 0;
+        background-color: transparent;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .mds-nav-pill,
+    .mds-nav-pill:visited,
+    .nav-link,
+    .secondary-navigation .navigation.secondarynav-tabbar .mds-nav-pill:visited {
+        height: 38px;
+        margin-bottom: -1px;
+        padding: 0;
+        background-color: transparent;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+        font-size: 0.9375rem;
+        font-weight: 400;
+        color: var(--retani-course-muted);
+    }
+
+    .mds-nav-pill--selected,
+    .mds-nav-pill--selected:visited,
+    .secondarynav-tabbar .mds-nav-pill--selected:visited,
+    .secondarynav-tabbar .mds-nav-pill.active,
+    .mds-nav-pill.active,
+    .nav-link.active,
+    .secondary-navigation .navigation.secondarynav-tabbar .mds-nav-pill--selected:visited,
+    .secondary-navigation .navigation.secondarynav-tabbar .mds-nav-pill.active:visited {
+        background-color: transparent;
+        border-bottom-color: var(--retani-course-ink);
+        font-weight: 600;
+        color: var(--retani-course-ink);
+
+        &:hover {
+            color: var(--retani-course-ink);
+        }
+    }
+
+    // Core marks the active tab with a dot; the underline does that job here.
+    .mds-nav-pill.active::before,
+    .secondary-navigation .navigation.secondarynav-tabbar .mds-nav-pill.active::before {
+        display: none;
+    }
+}
+
+// Settings form.
+.retani-settings {
+    margin-top: 0.5rem;
+    color: var(--retani-admin-ink);
+
+    > .settingsform {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+.retani-settings-card {
+    background-color: var(--retani-admin-surface);
+    border: 1px solid var(--retani-admin-line);
+    border-radius: $retani-admin-radius;
+}
+
+.retani-settings-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem $retani-admin-gutter 1.1rem calc(#{$retani-admin-gutter} - 4px);
+}
+
+.retani-settings-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: inherit;
+    text-align: start;
+
+    &:focus-visible {
+        outline: 2px solid var(--retani-admin-ink);
+        outline-offset: 4px;
+        border-radius: 2px;
+    }
+}
+
+.retani-settings-chevron {
+    display: inline-flex;
+    transition: transform 0.15s ease;
+
+    .icon {
+        width: 12px;
+        height: 12px;
+        margin: 0;
+        font-size: 12px;
+        color: var(--retani-admin-ink);
+    }
+}
+
+.retani-settings-toggle[aria-expanded="true"] .retani-settings-chevron {
+    transform: rotate(90deg);
+}
+
+.retani-settings-title {
+    font-size: 1.1875rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.retani-settings-count {
+    margin-left: auto;
+    font-family: $retani-admin-mono-family;
+    font-size: 0.75rem;
+    color: var(--retani-admin-muted);
+    white-space: nowrap;
+}
+
+.retani-settings-card-body {
+    padding: 0.5rem $retani-admin-gutter 1rem;
+    border-top: 1px solid var(--retani-admin-line);
+
+    > fieldset {
+        margin: 0;
+    }
+
+    // Core setting rows (core_admin/setting): hairline between rows.
+    .form-item {
+        margin: 0;
+        padding: 1.1rem 0;
+
+        + .form-item {
+            border-top: 1px solid var(--retani-admin-line);
+        }
+    }
+
+    .form-label label {
+        font-weight: 500;
+    }
+
+    .form-shortname {
+        font-family: $retani-admin-mono-family;
+    }
+
+    .form-description {
+        color: var(--retani-admin-muted);
+    }
+}
+
+// A card that is only a raw settings dump (pages with their own layout) has no header line.
+.retani-settings-card > .retani-settings-card-body:first-child {
+    border-top: 0;
+}
+
+.retani-settings-description {
+    padding: 0.75rem 0 0.25rem;
+    color: var(--retani-admin-muted);
+
+    > :last-child {
+        margin-bottom: 0;
+    }
+}
+
+// Footer: joined to the last card, and kept in view while scrolling a long page.
+.retani-settings-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    padding: 1rem $retani-admin-gutter;
+    background-color: var(--retani-admin-surface);
+    border: 1px solid var(--retani-admin-line);
+    border-radius: $retani-admin-radius;
+}
+
+.retani-settings-card:has(+ .retani-settings-footer) {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+
+    + .retani-settings-footer {
+        margin-top: -1rem;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+}
+
+.retani-settings-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.875rem;
+    color: var(--retani-admin-muted);
+
+    &[data-state="unsaved"] {
+        color: var(--retani-admin-ink);
+
+        .retani-settings-status-dot {
+            background-color: var(--retani-admin-dirty);
+        }
+    }
+}
+
+.retani-settings-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--retani-admin-dot);
+}
+
+.retani-settings-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-left: auto;
+
+    .btn {
+        height: 40px;
+        padding: 0 1.25rem;
+        border-radius: 5px;
+        font-family: inherit;
+        font-size: 0.9375rem;
+        font-weight: 500;
+    }
+
+    .btn-outline-secondary {
+        --#{$prefix}btn-bg: var(--retani-admin-surface);
+        --#{$prefix}btn-color: var(--retani-admin-ink);
+        --#{$prefix}btn-border-color: var(--retani-admin-line);
+        --#{$prefix}btn-hover-bg: var(--retani-admin-surface);
+        --#{$prefix}btn-hover-color: var(--retani-admin-ink);
+        --#{$prefix}btn-hover-border-color: var(--retani-admin-ink);
+        --#{$prefix}btn-active-bg: var(--retani-admin-surface);
+        --#{$prefix}btn-active-color: var(--retani-admin-ink);
+        --#{$prefix}btn-active-border-color: var(--retani-admin-ink);
+    }
+
+    .btn-primary {
+        --#{$prefix}btn-bg: var(--retani-admin-ink);
+        --#{$prefix}btn-color: var(--retani-admin-on-ink);
+        --#{$prefix}btn-border-color: var(--retani-admin-ink);
+        --#{$prefix}btn-hover-bg: var(--retani-admin-ink);
+        --#{$prefix}btn-hover-color: var(--retani-admin-on-ink);
+        --#{$prefix}btn-hover-border-color: var(--retani-admin-ink);
+        --#{$prefix}btn-active-bg: var(--retani-admin-ink);
+        --#{$prefix}btn-active-color: var(--retani-admin-on-ink);
+        --#{$prefix}btn-active-border-color: var(--retani-admin-ink);
+
+        &:hover {
+            opacity: 0.88;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .retani-adminheader-title {
+        font-size: 1.5rem;
+    }
+
+    .retani-settings-card-header,
+    .retani-settings-card-body,
+    .retani-settings-footer {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+
+    .retani-settings-actions {
+        width: 100%;
+
+        .btn {
+            flex: 1 1 0;
+        }
+    }
+}
+
+// Site administration index (core/settings_link_page): one card per tab, a row per group.
+.retani-adminindex {
+    margin-top: 1rem;
+    color: var(--retani-admin-ink);
+
+    > .tab-pane:not(.active) {
+        display: none;
+    }
+}
+
+.retani-adminindex-card {
+    background-color: var(--retani-admin-surface);
+    border: 1px solid var(--retani-admin-line);
+    border-radius: $retani-admin-radius;
+}
+
+.retani-adminindex-group {
+    display: grid;
+    grid-template-columns: minmax(200px, 18%) 1fr;
+    gap: 1rem 2.5rem;
+    padding: 1.6rem $retani-admin-gutter;
+
+    + .retani-adminindex-group {
+        border-top: 1px solid var(--retani-admin-line);
+    }
+}
+
+.retani-adminindex-grouptitle {
+    margin: 0;
+    font-family: inherit;
+    font-size: 1.1875rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+
+    a {
+        color: inherit;
+    }
+}
+
+.retani-adminindex-count {
+    display: block;
+    margin-top: 0.4rem;
+    font-family: $retani-admin-mono-family;
+    font-size: 0.75rem;
+    color: var(--retani-admin-muted);
+}
+
+.retani-adminindex-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.25rem 3.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.retani-adminindex-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.55rem 0;
+    font-size: 0.9375rem;
+    color: var(--retani-admin-ink);
+
+    &:hover,
+    &:focus {
+        color: var(--retani-admin-ink);
+        text-decoration: none;
+
+        .retani-adminindex-linktext {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .retani-adminindex-linkicon {
+            color: var(--retani-admin-ink);
+        }
+    }
+
+    // Settings forms: a dot hanging in the gutter before the name.
+    &.is-settings::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: -15px;
+        width: 6px;
+        height: 6px;
+        margin-top: -3px;
+        border-radius: 50%;
+        background-color: var(--retani-admin-lime);
+    }
+}
+
+.retani-adminindex-linktext {
+    min-width: 0;
+}
+
+.retani-adminindex-linkicon {
+    flex-shrink: 0;
+    color: var(--retani-admin-muted);
+}
+
+@include media-breakpoint-down(xl) {
+    .retani-adminindex-links {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .retani-adminindex-group {
+        grid-template-columns: 1fr;
+        padding: 1.25rem 1rem 1.25rem 1.5rem;
+    }
+
+    .retani-adminindex-links {
+        grid-template-columns: 1fr;
+    }
+}
+
+// Admin search field in the page header (core_admin/header_search_input).
+.retani-adminsearch {
+    font-family: $retani-admin-font-family;
+
+    form {
+        position: relative;
+        width: 330px;
+        max-width: 100%;
+    }
+
+    .retani-adminsearch-icon {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        display: inline-flex;
+        transform: translateY(-50%);
+        pointer-events: none;
+
+        .icon {
+            width: 14px;
+            height: 14px;
+            margin: 0;
+            font-size: 14px;
+            color: var(--retani-admin-muted);
+        }
+    }
+
+    // "form" outranks the .mform field rules in retani_forms.scss (this form carries the mform class too).
+    form .retani-adminsearch-input {
+        height: 42px;
+        padding-left: 38px;
+        background-color: var(--retani-admin-surface);
+        border: 1px solid var(--retani-admin-line);
+        border-radius: $retani-admin-radius;
+        font-size: 0.875rem;
+        color: var(--retani-admin-ink);
+
+        &::placeholder {
+            color: var(--retani-admin-muted);
+        }
+
+        &:focus {
+            border-color: var(--retani-admin-ink);
+            box-shadow: none;
+        }
+    }
+}
+
+// Admin category pages (/admin/category.php): the settings of every page in the category, in the look of
+// the settings cards above. The page prints plain HTML, so the cards are drawn with CSS:
+// each page's h3 link is a card header and the fieldset.adminsettings after it is the card body;
+// h3 links without settings (external pages, subcategories) are link rows; Save is a sticky footer.
+// The page name is the h1 of the page header (core_renderer::full_header()), so its "Category: ..." h2 is hidden.
+[role="main"] > h2:has(+ #adminsettings > fieldset > fieldset.adminsettings) {
+    display: none;
+}
+
+#adminsettings:has(> fieldset > fieldset.adminsettings) {
+    --retani-admin-surface: #{$white};
+    --retani-admin-canvas: #f4f3ef;
+    --retani-admin-line: #dedcd5;
+    --retani-admin-row-line: #eceae4;
+    --retani-admin-ink: #111;
+    --retani-admin-on-ink: #{$white};
+    --retani-admin-muted: #6b6a64;
+    --retani-admin-lime: #95bf47;
+
+    @include dark-mode {
+        --retani-admin-surface: var(--#{$prefix}body-bg);
+        --retani-admin-canvas: var(--#{$prefix}tertiary-bg);
+        --retani-admin-line: var(--#{$prefix}border-color);
+        --retani-admin-row-line: var(--#{$prefix}border-color-translucent);
+        --retani-admin-ink: var(--#{$prefix}body-color);
+        --retani-admin-on-ink: var(--#{$prefix}body-bg);
+        --retani-admin-muted: var(--#{$prefix}secondary-color);
+    }
+
+    font-family: $retani-admin-font-family;
+    color: var(--retani-admin-ink);
+
+    > fieldset {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+
+        > .clearer {
+            display: none;
+        }
+
+        // Card header: the page name, linking to its own settings page, with an arrow on the right.
+        > h3 {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0 0 1rem;
+            padding: 1.1rem $retani-admin-gutter;
+            background-color: var(--retani-admin-surface);
+            border: 1px solid var(--retani-admin-line);
+            border-radius: $retani-admin-radius;
+            font-size: 1.1875rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+
+            a {
+                flex: 1;
+                min-width: 0;
+                color: var(--retani-admin-ink);
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                    text-decoration-color: var(--retani-admin-lime);
+                    text-underline-offset: 4px;
+                }
+            }
+
+            &::after {
+                content: "";
+                flex: none;
+                width: 14px;
+                height: 14px;
+                background-color: var(--retani-admin-muted);
+                mask: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M5 12h14M13 6l6 6-6 6'/%3e%3c/svg%3e") center / contain no-repeat; // stylelint-disable-line function-url-scheme-disallowed-list
+            }
+
+            &:hover::after {
+                background-color: var(--retani-admin-ink);
+            }
+        }
+
+        // A header with settings below joins the settings into one card.
+        > h3:has(+ fieldset.adminsettings) {
+            margin-bottom: 0;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        // Link rows (pages without settings) next to each other join into one list card.
+        > h3:not(:has(+ fieldset.adminsettings)):has(+ h3:not(:has(+ fieldset.adminsettings))) {
+            margin-bottom: 0;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+
+            + h3 {
+                margin-top: -1px;
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+            }
+        }
+
+        > h3:not(:has(+ fieldset.adminsettings)) {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            letter-spacing: 0;
+            padding-top: 0.85rem;
+            padding-bottom: 0.85rem;
+        }
+    }
+
+    // Card body: the settings rows, as on /admin/settings.php.
+    fieldset.adminsettings {
+        margin: 0 0 1rem;
+        padding: 0.5rem $retani-admin-gutter 1rem;
+        background-color: var(--retani-admin-surface);
+        border: 1px solid var(--retani-admin-line);
+        border-top: 0;
+        border-radius: 0 0 $retani-admin-radius $retani-admin-radius;
+
+        > .clearer {
+            display: none;
+        }
+
+        .form-item {
+            margin: 0;
+            padding: 1.1rem 0;
+            border-top: 1px solid var(--retani-admin-line);
+        }
+
+        > .form-item:first-of-type,
+        > .clearer:first-child + .form-item {
+            border-top: 0;
+        }
+
+        .form-label label {
+            font-weight: 500;
+        }
+
+        .form-shortname {
+            font-family: $retani-admin-mono-family;
+        }
+
+        .form-description {
+            color: var(--retani-admin-muted);
+        }
+
+        // Heading settings inside a page: a small subheading across the card.
+        h3.main {
+            margin: 1.25rem 0 0;
+            padding: 1rem 0 0.25rem;
+            border-top: 1px solid var(--retani-admin-line);
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .formsettingheading {
+            padding: 0 0 0.5rem;
+            background: none;
+            border: 0;
+            color: var(--retani-admin-muted);
+        }
+    }
+
+    // Save: a sticky footer card with the dark button on the right.
+    .form-buttons {
+        position: sticky;
+        bottom: 0;
+        z-index: 2;
+        display: flex;
+        justify-content: flex-end;
+        margin: 0;
+        padding: 1rem $retani-admin-gutter;
+        background-color: var(--retani-admin-surface);
+        border: 1px solid var(--retani-admin-line);
+        border-radius: $retani-admin-radius;
+
+        .btn {
+            height: 40px;
+            margin: 0;
+            padding: 0 1.25rem;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            --#{$prefix}btn-bg: var(--retani-admin-ink);
+            --#{$prefix}btn-color: var(--retani-admin-on-ink);
+            --#{$prefix}btn-border-color: var(--retani-admin-ink);
+            --#{$prefix}btn-hover-bg: var(--retani-admin-ink);
+            --#{$prefix}btn-hover-color: var(--retani-admin-on-ink);
+            --#{$prefix}btn-hover-border-color: var(--retani-admin-ink);
+            --#{$prefix}btn-active-bg: var(--retani-admin-ink);
+            --#{$prefix}btn-active-color: var(--retani-admin-on-ink);
+            --#{$prefix}btn-active-border-color: var(--retani-admin-ink);
+
+            &:hover {
+                opacity: 0.88;
+            }
+        }
+    }
+
+    // The last settings card joins the footer.
+    fieldset.adminsettings:has(+ .form-buttons) {
+        margin-bottom: 0;
+        border-radius: 0;
+
+        + .form-buttons {
+            margin-top: -1px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    }
+}

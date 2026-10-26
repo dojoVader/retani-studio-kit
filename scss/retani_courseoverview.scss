@@ -1,0 +1,721 @@
+// Course overview block as the Retani course table (theme_retani_studio/courseoverview/CourseOverview),
+// based on the "Top Performance Courses" card in mockup/Retani Dashboard.dc.html.
+$retani-courseoverview-font-family: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif !default;
+$retani-courseoverview-radius: 8px !default;
+$retani-courseoverview-radius-sm: 6px !default;
+$retani-courseoverview-control-size: 28px !default;
+$retani-courseoverview-row-height: 32px !default;
+
+// Retani palette.
+$retani-courseoverview-canvas: #f4f3ef !default;
+$retani-courseoverview-ink: #111 !default;
+$retani-courseoverview-line: #dedcd5 !default;
+$retani-courseoverview-muted: #6b6a64 !default;
+$retani-courseoverview-lime: #95bf47 !default;
+
+// The component draws its own card, title included, so drop the block's card chrome and visible title.
+// The block header itself stays, so the block actions menu still shows in edit mode.
+.block_myoverview:has(.retani-courseoverview-block) {
+    background: transparent;
+    border: 0;
+
+    > .card-body {
+        padding: 0 !important; // stylelint-disable-line declaration-no-important -- Overrides the .p-3 utility.
+
+        > .block-header .card-title {
+            @include visually-hidden;
+        }
+    }
+
+    .content {
+        min-height: 0;
+        margin-top: 0 !important; // stylelint-disable-line declaration-no-important -- Overrides the .mt-3 utility.
+    }
+}
+
+.retani-courseoverview {
+    // Local palette, swapped as a whole for dark mode below.
+    --retani-courseoverview-bg: #{$white};
+    --retani-courseoverview-subtle: #{$retani-courseoverview-canvas};
+    --retani-courseoverview-border: #{$retani-courseoverview-line};
+    --retani-courseoverview-text: #{$retani-courseoverview-ink};
+    --retani-courseoverview-muted: #{$retani-courseoverview-muted};
+    --retani-courseoverview-accent: #{$retani-courseoverview-lime};
+    --retani-courseoverview-avatar-bg: #{$retani-courseoverview-ink};
+    --retani-courseoverview-avatar-fg: #{$white};
+    --retani-courseoverview-skeleton: #{$retani-courseoverview-canvas};
+
+    @include dark-mode {
+        --retani-courseoverview-bg: var(--#{$prefix}body-bg);
+        --retani-courseoverview-subtle: var(--#{$prefix}tertiary-bg);
+        --retani-courseoverview-border: var(--#{$prefix}border-color);
+        --retani-courseoverview-text: var(--#{$prefix}body-color);
+        --retani-courseoverview-muted: var(--#{$prefix}secondary-color);
+        --retani-courseoverview-avatar-bg: var(--#{$prefix}body-color);
+        --retani-courseoverview-avatar-fg: var(--#{$prefix}body-bg);
+        --retani-courseoverview-skeleton: var(--#{$prefix}secondary-bg);
+    }
+
+    padding: 14px;
+    font-family: $retani-courseoverview-font-family;
+    color: var(--retani-courseoverview-text);
+    background: var(--retani-courseoverview-bg);
+    border: 1px solid var(--retani-courseoverview-border);
+    border-radius: $retani-courseoverview-radius;
+
+    button {
+        font-family: inherit;
+    }
+}
+
+// Header: tile, title, search, filter and actions.
+.retani-courseoverview-header {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-height: 32px;
+}
+
+.retani-courseoverview-tile {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    color: var(--retani-courseoverview-muted);
+    background: var(--retani-courseoverview-subtle);
+    border: 1px solid var(--retani-courseoverview-border);
+    border-radius: $retani-courseoverview-radius-sm;
+}
+
+.retani-courseoverview-title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+%retani-courseoverview-control {
+    display: flex;
+    flex: none;
+    align-items: center;
+    height: $retani-courseoverview-control-size;
+    padding: 0;
+    color: var(--retani-courseoverview-muted);
+    cursor: pointer;
+    background: var(--retani-courseoverview-subtle);
+    border: 1px solid var(--retani-courseoverview-border);
+    border-radius: $retani-courseoverview-radius-sm;
+
+    &:hover {
+        color: var(--retani-courseoverview-text);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--retani-courseoverview-text);
+        outline-offset: 1px;
+    }
+
+    &:disabled {
+        cursor: default;
+        opacity: .45;
+    }
+}
+
+.retani-courseoverview-iconbtn {
+    @extend %retani-courseoverview-control;
+    justify-content: center;
+    width: $retani-courseoverview-control-size;
+}
+
+.retani-courseoverview-pillbtn {
+    @extend %retani-courseoverview-control;
+    gap: 6px;
+    padding: 0 8px;
+    font-size: 12px;
+}
+
+.retani-courseoverview-morebtn {
+    @extend %retani-courseoverview-control;
+    justify-content: center;
+    width: $retani-courseoverview-control-size;
+    margin-left: 4px;
+    color: var(--retani-courseoverview-text);
+    background: transparent;
+    border-color: transparent;
+
+    &:hover {
+        background: var(--retani-courseoverview-subtle);
+    }
+}
+
+.retani-courseoverview-caret {
+    margin-left: 8px;
+    transition: transform .15s;
+
+    .is-open > button > & {
+        transform: rotate(180deg);
+    }
+}
+
+.retani-courseoverview-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 220px;
+    height: $retani-courseoverview-control-size;
+    padding: 0 4px 0 9px;
+    color: var(--retani-courseoverview-muted);
+    background: var(--retani-courseoverview-bg);
+    border: 1px solid var(--retani-courseoverview-border);
+    border-radius: $retani-courseoverview-radius-sm;
+
+    &:focus-within {
+        border-color: var(--retani-courseoverview-text);
+    }
+
+    input {
+        flex: 1;
+        min-width: 0;
+        padding: 0;
+        font: inherit;
+        font-size: 12.5px;
+        color: var(--retani-courseoverview-text);
+        background: transparent;
+        border: 0;
+        outline: 0;
+
+        &::-webkit-search-cancel-button {
+            display: none;
+        }
+    }
+}
+
+.retani-courseoverview-searchclear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    color: var(--retani-courseoverview-muted);
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    border-radius: 4px;
+
+    &:hover {
+        color: var(--retani-courseoverview-text);
+        background: var(--retani-courseoverview-subtle);
+    }
+}
+
+// Dropdown menus (filter, actions).
+.retani-courseoverview-menu {
+    position: relative;
+}
+
+.retani-courseoverview-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 30;
+    min-width: 200px;
+    padding: 6px;
+    background: var(--retani-courseoverview-bg);
+    border: 1px solid var(--retani-courseoverview-border);
+    border-radius: $retani-courseoverview-radius-sm;
+}
+
+.retani-courseoverview-options {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.retani-courseoverview-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 30px;
+    padding: 0 8px;
+    font-size: 12.5px;
+    color: var(--retani-courseoverview-text);
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    border-radius: $retani-courseoverview-radius-sm;
+
+    > span {
+        flex: 1;
+    }
+
+    > svg {
+        visibility: hidden;
+    }
+
+    &.is-selected > svg {
+        visibility: visible;
+    }
+
+    &:hover,
+    &:focus-visible {
+        color: var(--retani-courseoverview-text);
+        background: var(--retani-courseoverview-subtle);
+        outline: 0;
+    }
+}
+
+// Table.
+.retani-courseoverview-table {
+    margin-top: 12px;
+    overflow: hidden;
+    font-size: 12px;
+    border: 1px solid var(--retani-courseoverview-border);
+    border-radius: $retani-courseoverview-radius-sm;
+    transition: opacity .15s;
+
+    // Keep the previous page on screen, faded, while the next one loads.
+    &.is-loading .retani-courseoverview-row:not(.is-head):not(.is-skeleton) {
+        opacity: .55;
+    }
+}
+
+.retani-courseoverview-row {
+    display: grid;
+    // The component sets the real template inline, from the columns on screen; this matches the mockup's six.
+    grid-template-columns: 72fr 216fr 118fr 144fr 80fr 122fr;
+    height: $retani-courseoverview-row-height;
+    background: var(--retani-courseoverview-bg);
+    border-bottom: 1px solid var(--retani-courseoverview-border);
+
+    &:last-child {
+        border-bottom: 0;
+    }
+
+    &.is-head {
+        height: 31px;
+        font-weight: 500;
+        background: var(--retani-courseoverview-subtle);
+    }
+
+    &.is-dimmed {
+        color: var(--retani-courseoverview-muted);
+    }
+
+    // Loading placeholders: a pale bar in each cell.
+    &.is-skeleton > span,
+    [data-region="loading-placeholder-content"] & > span {
+        align-self: center;
+        height: 8px;
+        margin: 0 10px;
+        background: var(--retani-courseoverview-skeleton);
+        border-radius: 4px;
+    }
+}
+
+.retani-courseoverview-cell {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: 0 10px;
+    white-space: nowrap;
+    border-right: 1px solid var(--retani-courseoverview-border);
+
+    &:last-child {
+        border-right: 0;
+    }
+
+    &.is-numeric {
+        justify-content: flex-end;
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+.retani-courseoverview-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+
+    &:focus-visible {
+        outline: 2px solid var(--retani-courseoverview-text);
+        outline-offset: 2px;
+    }
+}
+
+.retani-courseoverview-sortarrows {
+    color: var(--retani-courseoverview-muted);
+
+    .is-asc & .is-down,
+    .is-desc & .is-up {
+        opacity: .3;
+    }
+
+    .is-asc &,
+    .is-desc & {
+        color: var(--retani-courseoverview-text);
+    }
+}
+
+.retani-courseoverview-name {
+    min-width: 0;
+    overflow: hidden;
+    color: inherit;
+    text-overflow: ellipsis;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+        color: inherit;
+        text-decoration: underline;
+        text-decoration-color: var(--retani-courseoverview-accent);
+        text-underline-offset: 3px;
+    }
+}
+
+.retani-courseoverview-hidden {
+    flex: none;
+    margin-left: 6px;
+    font-size: 10.5px;
+    color: var(--retani-courseoverview-muted);
+}
+
+.retani-courseoverview-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 100%;
+    height: 17px;
+    padding: 0 6px;
+    overflow: hidden;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--retani-courseoverview-text);
+    text-overflow: ellipsis;
+    background: var(--retani-courseoverview-subtle);
+    border-radius: 5px;
+
+    &.is-accent {
+        color: var(--retani-courseoverview-accent);
+    }
+}
+
+.retani-courseoverview-pilldot {
+    flex: none;
+    width: 3px;
+    height: 3px;
+    background: currentColor;
+    border-radius: 50%;
+}
+
+.retani-courseoverview-teacher {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+}
+
+.retani-courseoverview-avatar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    font-size: 7px;
+    font-weight: 700;
+    color: var(--retani-courseoverview-avatar-fg);
+    background: var(--retani-courseoverview-avatar-bg);
+    border-radius: 50%;
+}
+
+.retani-courseoverview-teachername {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.retani-courseoverview-more {
+    flex: none;
+    font-size: 10.5px;
+    color: var(--retani-courseoverview-muted);
+}
+
+.retani-courseoverview-empty {
+    padding: 22px 10px;
+    font-size: 12.5px;
+    color: var(--retani-courseoverview-muted);
+    text-align: center;
+}
+
+// Card / List view switch.
+.retani-courseoverview-viewswitch {
+    display: flex;
+    flex: none;
+    gap: 2px;
+    height: $retani-courseoverview-control-size;
+    padding: 2px;
+    background: var(--retani-courseoverview-subtle);
+    border-radius: $retani-courseoverview-radius-sm;
+
+    button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        padding: 0;
+        color: var(--retani-courseoverview-muted);
+        cursor: pointer;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: $retani-courseoverview-radius-sm;
+
+        &:hover {
+            color: var(--retani-courseoverview-text);
+        }
+
+        &.is-active {
+            color: var(--retani-courseoverview-text);
+            background: var(--retani-courseoverview-bg);
+            border-color: var(--retani-courseoverview-border);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--retani-courseoverview-text);
+            outline-offset: 1px;
+        }
+    }
+}
+
+// Card grid.
+.retani-courseoverview-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 15px;
+    margin-top: 14px;
+    transition: opacity .15s;
+
+    &.is-loading {
+        opacity: .55;
+    }
+}
+
+.retani-courseoverview-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--retani-courseoverview-bg);
+    border: 1px solid var(--retani-courseoverview-border);
+    border-radius: $retani-courseoverview-radius;
+
+    &.is-dimmed .retani-courseoverview-cardimage {
+        opacity: .6;
+    }
+
+    // Loading placeholder: a blank image and three pale bars.
+    &.is-skeleton {
+        .retani-courseoverview-cardbody > span {
+            display: block;
+            height: 8px;
+            background: var(--retani-courseoverview-skeleton);
+            border-radius: 4px;
+
+            &:nth-child(1) {
+                width: 70%;
+                height: 11px;
+            }
+
+            &:nth-child(2) {
+                width: 50%;
+            }
+
+            &:nth-child(3) {
+                margin-top: 34px;
+            }
+        }
+    }
+}
+
+.retani-courseoverview-cardimage {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    background-color: var(--retani-courseoverview-subtle);
+    background-position: center;
+    background-size: cover;
+    border-bottom: 1px solid var(--retani-courseoverview-border);
+}
+
+.retani-courseoverview-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    display: flex;
+    align-items: center;
+    max-width: calc(100% - 16px);
+    height: 20px;
+    padding: 0 7px;
+    overflow: hidden;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: $retani-courseoverview-ink;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: rgba($white, .92);
+    border: 1px solid $retani-courseoverview-line;
+    border-radius: $retani-courseoverview-radius-sm;
+}
+
+.retani-courseoverview-cardbody {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+}
+
+.retani-courseoverview-cardtitle {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.3;
+
+    a {
+        color: inherit;
+        text-decoration: none;
+
+        &:hover,
+        &:focus-visible {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-color: var(--retani-courseoverview-accent);
+            text-underline-offset: 3px;
+        }
+    }
+}
+
+.retani-courseoverview-cardmeta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    font-size: 11px;
+    color: var(--retani-courseoverview-muted);
+
+    > span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    > svg {
+        flex: none;
+    }
+}
+
+.retani-courseoverview-card .retani-courseoverview-hidden {
+    margin-left: 0;
+}
+
+.retani-courseoverview-cardprogress {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 8px;
+    margin-top: auto;
+    font-size: 11px;
+    color: var(--retani-courseoverview-muted);
+}
+
+.retani-courseoverview-segments {
+    display: flex;
+    gap: 2px;
+    height: 8px;
+
+    span {
+        flex: 1;
+        background: var(--retani-courseoverview-border);
+        border-radius: 2px;
+
+        &.is-filled {
+            background: var(--retani-courseoverview-accent);
+        }
+    }
+}
+
+.retani-courseoverview-enter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--retani-courseoverview-avatar-fg);
+    text-decoration: none;
+    background: var(--retani-courseoverview-avatar-bg);
+    border: 1px solid var(--retani-courseoverview-avatar-bg);
+    border-radius: $retani-courseoverview-radius-sm;
+
+    &:hover,
+    &:focus-visible {
+        color: var(--retani-courseoverview-avatar-fg);
+        text-decoration: none;
+        opacity: .88;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--retani-courseoverview-accent);
+        outline-offset: 2px;
+    }
+}
+
+.retani-courseoverview-empty.is-standalone {
+    margin-top: 14px;
+    border: 1px solid var(--retani-courseoverview-border);
+    border-radius: $retani-courseoverview-radius-sm;
+}
+
+// Pager.
+.retani-courseoverview-pager {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.retani-courseoverview-pagestatus {
+    margin-right: 4px;
+    font-size: 11.5px;
+    color: var(--retani-courseoverview-muted);
+}
+
+// On narrow screens let the table scroll sideways rather than squeezing the columns.
+@include media-breakpoint-down(md) {
+    .retani-courseoverview-table {
+        overflow-x: auto;
+    }
+
+    .retani-courseoverview-row {
+        min-width: 640px;
+    }
+
+    .retani-courseoverview-search {
+        width: 160px;
+    }
+}
