@@ -18,7 +18,8 @@
  * Language file.
  *
  * @package   theme_retani_studio
- * @copyright 2016 Frédéric Massart
+ * @copyright 2016 Frédéric Massart (Boost)
+ * @copyright 2026 Okeowo Aderemi
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -36,7 +37,7 @@ $string['carousellabel'] = 'Highlights';
 $string['carouselnext'] = 'Next slide';
 $string['carouselprevious'] = 'Previous slide';
 $string['carouselslide'] = 'Go to slide {$a}';
-$string['choosereadme'] = 'Retani Studio is a customisable theme forked from Boost.';
+$string['choosereadme'] = 'Retani Studio is a modern theme for Moodle with a retractable left navigation bar, a collapsible block sidebar, a redesigned login page with an image carousel, a refreshed dashboard course overview and restyled quizzes. It is based on Boost and keeps the core markup that Moodle and other plugins rely on.';
 $string['colourmode:auto'] = 'System';
 $string['colourmode:dark'] = 'Dark';
 $string['colourmode:light'] = 'Light';

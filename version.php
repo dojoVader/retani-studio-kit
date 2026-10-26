@@ -15,10 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Retani Studio.
+ * Version details for the Retani Studio theme.
  *
  * @package    theme_retani_studio
- * @copyright  2016 Frédéric Massart
+ * @copyright  2016 Frédéric Massart (Boost)
+ * @copyright  2026 Okeowo Aderemi
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,3 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->version   = 2026102604;
 $plugin->requires  = 2026100200;
 $plugin->component = 'theme_retani_studio';
+$plugin->release   = '1.0.0';
+$plugin->maturity  = MATURITY_BETA;
+$plugin->supported = [503, 503];
