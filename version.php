@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026102604;
+$plugin->version   = 2026102607;
 $plugin->requires  = 2026100200;
 $plugin->component = 'theme_retani_studio';
 $plugin->release   = '1.0.0';
