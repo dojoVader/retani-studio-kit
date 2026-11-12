@@ -1,4 +1,4 @@
-@tool @tool_usertours @theme_retani_studio
+@tool @tool_usertours @theme @theme_retani_studio
 Feature: Apply tour filters to a tour for Boost
   In order to give more directed tours
   As an administrator

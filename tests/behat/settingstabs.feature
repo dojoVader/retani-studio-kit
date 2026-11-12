@@ -1,4 +1,4 @@
-@javascript @theme_retani_studio
+@javascript @theme @theme_retani_studio
 Feature: Administration nav tabs
 
   Scenario: See last opened tab in site admin when returning to the page

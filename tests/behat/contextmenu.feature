@@ -1,4 +1,4 @@
-@javascript @theme_retani_studio
+@javascript @theme @theme_retani_studio
 Feature: Context settings menu
   To navigate in boost theme I need to use the context settings menu
 

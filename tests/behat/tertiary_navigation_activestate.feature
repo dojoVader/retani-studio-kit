@@ -1,4 +1,4 @@
-@core @javascript @theme_retani_studio
+@core @javascript @theme @theme_retani_studio
 Feature: Menu navigation accurately updates checkmarks in tertiary navigation
 In order to correctly navigate the menu items
 As a teacher

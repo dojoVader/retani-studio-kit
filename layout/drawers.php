@@ -122,13 +122,21 @@ $coursefullname = ($PAGE->course?->fullname) ? format_string(
 ) : '';
 $courseurl = $PAGE->course ? new \core\url('/course/view.php', ['id' => $PAGE->course->id]) : null;
 
+$leftregionblocks = $OUTPUT->blocks('left-region');
+$rightregionblocks = $OUTPUT->blocks('right-region');
+
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'coursefullname' => $coursefullname,
     'courseurl' => $courseurl ? $courseurl->out(false) : null,
     'output' => $OUTPUT,
+    'edit_mode' => $PAGE->user_is_editing(),
     'sidepreblocks' => $blockshtml,
     'hasblocks' => $hasblocks,
+    'left_region' => $leftregionblocks,
+    'right_region' => $rightregionblocks,
+    'has_left_region' => str_contains($leftregionblocks, 'block-region'),
+    'has_right_region' => str_contains($rightregionblocks, 'block-region'),
     'bodyattributes' => $bodyattributes,
     'courseindexopen' => $courseindexopen,
     'blockdraweropen' => $blockdraweropen,
@@ -143,8 +151,7 @@ $templatecontext = [
     'overflow' => $overflow,
     'headercontent' => $headercontent,
     'leftbar' => $leftbar,
-    'blocksidebar' => $blocksidebar,
-
+    'blocksidebar' => $blocksidebar
 ];
 
 echo $OUTPUT->render_from_template('theme_retani_studio/drawers', $templatecontext);

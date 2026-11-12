@@ -1,4 +1,4 @@
-@javascript @theme_retani_studio
+@javascript @theme @theme_retani_studio
 Feature: Language selector menu
   To be able to set the preferred language for the site
   As a user

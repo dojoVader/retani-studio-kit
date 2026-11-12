@@ -232,7 +232,7 @@ $retani-calendar-radius: 8px !default;
 .maincalendar .retani-calendar-nav {
     width: auto;
     margin: 0 !important; // stylelint-disable-line declaration-no-important
-    padding: 16px 18px;
+    padding: 16px 8px;
     border-bottom: 1px solid var(--retani-cal-line);
 
     .calendar-controls {
@@ -262,7 +262,7 @@ $retani-calendar-radius: 8px !default;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 34px;
+        width: auto;
         height: 34px;
         padding: 0;
         background-color: var(--retani-cal-surface);
@@ -405,6 +405,7 @@ $retani-calendar-radius: 8px !default;
         font-weight: 500;
         line-height: 1;
         color: var(--retani-cal-ink);
+
     }
 
     a.day {

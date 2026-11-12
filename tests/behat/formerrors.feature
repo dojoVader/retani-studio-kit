@@ -1,4 +1,4 @@
-@javascript @theme_retani_studio
+@javascript @theme @theme_retani_studio
 Feature: Form errors only display after submit or change in Boost theme
   In order to have a more accessible way to display form errors
   As anyone

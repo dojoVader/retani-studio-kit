@@ -1,4 +1,4 @@
-@tool @tool_usertours @theme_retani_studio
+@tool @tool_usertours @theme @theme_retani_studio
 Feature: Reset a tour for Boost
   In order to test a tour
   As an administrator

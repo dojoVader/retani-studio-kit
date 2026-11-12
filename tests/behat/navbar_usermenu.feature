@@ -1,4 +1,4 @@
-@javascript @theme_retani_studio
+@javascript @theme @theme_retani_studio
 Feature: Navbar user menu
   To keep the header layout consistent
   As a logged-in user
