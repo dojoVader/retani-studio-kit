@@ -1,4 +1,4 @@
-@theme_retani_studio @accessibility
+@theme @theme_retani_studio @accessibility
 Feature: Colour mode accessibility
   In order to use the site in either colour mode
   As a user

@@ -1,4 +1,4 @@
-@javascript @theme_retani_studio
+@javascript @theme @theme_retani_studio
 Feature: Course reuse navigation
   As a teacher
   I can navigate to course reuse pages

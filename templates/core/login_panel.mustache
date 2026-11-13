@@ -20,18 +20,27 @@
     Content for the dark left panel of the split-screen login layout, based on mockup/Retani Login.dc.html.
 
     When leftinstructions is provided (i.e. the site has custom auth instructions configured),
-    it replaces the carousel.
+    it replaces the carousel. The slides are set in the "Login page" tab of the theme settings
+    (see theme_retani_studio\output\login_carousel).
 
     Context variables:
     * logourl - URL of the logo uploaded in the theme settings, if any.
     * sitename - Name of the site, shown as a wordmark when there is no logo.
     * leftinstructions - Custom auth instructions, if configured.
+    * carousel - False when there are no slides, otherwise:
+      * propsjson - The LoginCarousel component props, as JSON.
+      * first - The first slide (title, body, image, alt), drawn until the component loads.
 
     Example context (json):
     {
         "logourl": "",
         "sitename": "retani",
-        "leftinstructions": ""
+        "leftinstructions": "",
+        "carousel": {
+            "propsjson": "{\"interval\": 6000, \"slides\": []}",
+            "first": {"title": "Teach better with clearer data", "body": "See how every course is performing.",
+                "image": "https://example.com/slide1.jpg", "alt": "Students working together around a laptop"}
+        }
     }
 }}
 <div class="login-layout-brand">
@@ -44,58 +53,29 @@
 </div>
 <div class="login-layout-left-content">
     {{^leftinstructions}}
-        {{! Placeholder slides until real content is configurable: images from Unsplash, copy from the mockup. }}
+        {{#carousel}}
         {{#react}}
         {
             "component": "@moodle/lms/theme_retani_studio/LoginCarousel",
             "class": "login-carousel-mount",
-            "props": {
-                "interval": 6000,
-                "label": {{#quote}}{{#str}}carousellabel, theme_retani_studio{{/str}}{{/quote}},
-                "previouslabel": {{#quote}}{{#str}}carouselprevious, theme_retani_studio{{/str}}{{/quote}},
-                "nextlabel": {{#quote}}{{#str}}carouselnext, theme_retani_studio{{/str}}{{/quote}},
-                "slidelabel": {{#quote}}{{#str}}carouselslide, theme_retani_studio, {$a}{{/str}}{{/quote}},
-                "slides": [
-                    {
-                        "title": "Teach better with clearer data",
-                        "body": "See how every course, lesson and learner is performing — in one place, updated in real time.",
-                        "image": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
-                        "alt": "Students working together around a laptop"
-                    },
-                    {
-                        "title": "Helping you easily track learning progress",
-                        "body": "An intuitive system to monitor courses and students efficiently, giving you real-time insights to boost engagement.",
-                        "image": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80",
-                        "alt": "A group of students studying at a table"
-                    },
-                    {
-                        "title": "Spot struggling courses early",
-                        "body": "Smart alerts flag drops in engagement so you can update materials before students fall behind.",
-                        "image": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80",
-                        "alt": "A lecturer presenting to a classroom"
-                    },
-                    {
-                        "title": "Celebrate every completion",
-                        "body": "Track certificates, skill graphs and completion rates across your entire academy.",
-                        "image": "https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=1200&q=80",
-                        "alt": "A student writing notes next to a laptop"
-                    }
-                ]
-            }
+            "props": {{{propsjson}}}
         }
+        {{#first}}
         <div class="login-carousel">
             <div class="login-carousel-copy">
-                <h2 class="login-carousel-title">“Teach better with clearer data”</h2>
-                <p class="login-carousel-body">See how every course, lesson and learner is performing — in one place, updated in real time.</p>
+                <h2 class="login-carousel-title">“{{title}}”</h2>
+                <p class="login-carousel-body">{{body}}</p>
             </div>
             <div class="login-carousel-frame">
                 <div class="login-carousel-backdrop" aria-hidden="true"></div>
                 <div class="login-carousel-viewport">
-                    <img class="login-carousel-image is-active" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80" alt="Students working together around a laptop">
+                    <img class="login-carousel-image is-active" src="{{image}}" alt="{{alt}}">
                 </div>
             </div>
         </div>
+        {{/first}}
         {{/react}}
+        {{/carousel}}
     {{/leftinstructions}}
     {{#leftinstructions}}
         <div class="login-layout-instructions mx-auto text-start">

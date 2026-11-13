@@ -42,13 +42,13 @@ export interface LoginCarouselProps {
     /** Milliseconds between automatic advances; 0 turns autoplay off. */
     interval?: number;
     /** Accessible name for the carousel region. */
-    label?: string;
+    label: string;
     /** Accessible name for the previous button. */
-    previouslabel?: string;
+    previouslabel: string;
     /** Accessible name for the next button. */
-    nextlabel?: string;
+    nextlabel: string;
     /** Accessible name for an indicator, with {$a} replaced by the slide number. */
-    slidelabel?: string;
+    slidelabel: string;
 }
 
 /**
@@ -89,10 +89,10 @@ function Chevron({direction}: {direction: 'previous' | 'next'}) {
 export default function LoginCarousel({
     slides,
     interval = 6000,
-    label = 'Highlights',
-    previouslabel = 'Previous slide',
-    nextlabel = 'Next slide',
-    slidelabel = 'Go to slide {$a}',
+    label,
+    previouslabel,
+    nextlabel,
+    slidelabel,
 }: LoginCarouselProps) {
     const count = slides?.length ?? 0;
     const [active, setActive] = useState(0);

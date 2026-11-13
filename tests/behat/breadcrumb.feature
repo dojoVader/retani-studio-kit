@@ -1,4 +1,4 @@
-@javascript @theme_retani_studio
+@javascript @theme @theme_retani_studio
 Feature: Breadcrumbs navigation
   To navigate in boost theme
   As an admin user
