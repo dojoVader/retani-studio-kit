@@ -74,6 +74,7 @@ $templatecontext = [
     'headercontent' => $headercontent,
     'overflow' => $overflow,
     'addblockbutton' => $addblockbutton,
+    'pagetitle' => $PAGE->heading,
 ];
 
 echo $OUTPUT->render_from_template('theme_retani_studio/columns2', $templatecontext);

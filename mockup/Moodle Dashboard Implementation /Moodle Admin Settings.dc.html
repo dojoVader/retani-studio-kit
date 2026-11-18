@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap">
+<style>
+html,body{margin:0;background:#F4F3EF;font-family:'Geist',system-ui,sans-serif;color:#111111;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#111111;text-decoration-color:#95BF47;text-underline-offset:3px}a:hover{color:#6B6A64}
+button{font-family:inherit}
+</style>
+<script src="./image-slot.js"></script>
+</helmet>
+<div style="display:grid;grid-template-columns:{{ gridCols }};transition:grid-template-columns .25s ease;gap:15px;padding:{{ rootPad }};min-height:100vh;min-width:{{ rootMinW }}px;background:#F4F3EF">
+
+  <aside style="position:{{ asidePos }};top:{{ asideTop }};left:0;width:{{ asideWidth }};transform:{{ asideTf }};transition:transform .25s ease;z-index:{{ asideZ }};height:{{ asideH }};min-height:{{ asideMinH }};display:flex;flex-direction:column;background:#F4F3EF;border:{{ asideBorder }};border-right:1px solid #DEDCD5;border-radius:{{ asideRadius }};box-shadow:{{ asideShadow }}">
+    <div style="display:flex;align-items:center;gap:8px;padding:{{ hdrPad }};height:56px;border-bottom:1px solid #DEDCD5;justify-content:{{ justify }}">
+      <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+        <span style="flex:1;font-size:20px;font-weight:600;letter-spacing:-.05em;line-height:1;color:#111111;padding-left:2px">retani<span style="color:#95BF47">.</span></span>
+      </sc-if>
+      <button onClick="{{ toggleSide }}" title="{{ toggleTitle }}" style="width:28px;height:28px;flex:none;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg></button>
+    </div>
+    <div data-dd="course" style="position:relative;padding:15px 10px;border-bottom:1px solid #DEDCD5">
+      <div onClick="{{ toggleCourse }}" title="Switch category" style="display:flex;align-items:center;justify-content:{{ justify }};gap:8px;height:46px;padding:{{ csPad }};background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none;cursor:pointer">
+        <div style="width:32px;height:32px;flex:none;border-radius:5px;background:{{ cat.bg }};display:flex;align-items:center;justify-content:center">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="{{ cat.d }}"></path></svg>
+        </div>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;display:flex;flex-direction:column;line-height:1.25;min-width:0">
+            <span style="font-size:12.5px;font-weight:500">{{ cat.name }}</span>
+            <span style="font-size:10px;color:#6B6A64">{{ cat.code }}</span>
+          </div>
+          <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ courseRot }}deg);transition:transform .15s"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg>
+        </sc-if>
+      </div>
+      <sc-if value="{{ courseOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:10px;top:66px;width:236px;z-index:60;padding:6px;background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none">
+          <div style="padding:6px 8px 8px;font-size:11px;color:#6B6A64">Course categories</div>
+          <sc-for list="{{ cats }}" as="c">
+            <div onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:8px;height:40px;padding:0 8px 0 5px;border-radius:5px;cursor:pointer;background:{{ c.rowBg }}" style-hover="background:#F4F3EF">
+              <div style="width:28px;height:28px;flex:none;border-radius:6px;background:{{ c.bg }};display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="{{ c.d }}"></path></svg></div>
+              <div style="flex:1;display:flex;flex-direction:column;line-height:1.25"><span style="font-size:12.5px;font-weight:500">{{ c.name }}</span><span style="font-size:10px;color:#6B6A64">{{ c.code }} · {{ c.count }} courses</span></div>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ c.check }}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>
+            </div>
+          </sc-for>
+          <div style="margin:6px -6px 0;padding:8px 14px 4px;border-top:1px solid #DEDCD5;font-size:12px"><a href="#" style="color:#111111;text-decoration:none">Manage courses and categories</a></div>
+        </div>
+      </sc-if>
+    </div>
+    <nav style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:4px;padding:14px 10px">
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="9">
+        <div style="display:flex;flex-direction:column">
+          <div onClick="{{ item.onClick }}" title="{{ item.label }}" style="display:flex;align-items:center;justify-content:{{ item.justify }};gap:8px;height:34px;flex:none;padding:{{ item.pad }};border-radius:6px;border:1px solid {{ item.border }};background:{{ item.bg }};box-shadow:{{ item.shadow }};cursor:pointer" style-hover="background:#fff">
+            <div style="width:21px;height:21px;flex:none;border-radius:5px;display:flex;align-items:center;justify-content:center;background:{{ item.tileBg }};border:1px solid {{ item.tileBorder }}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ item.iconColor }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ item.d }}"></path></svg>
+            </div>
+            <sc-if value="{{ item.expanded }}" hint-placeholder-val="{{ true }}">
+              <span style="flex:1;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ item.color }};font-weight:{{ item.weight }}">{{ item.label }}</span>
+              <sc-if value="{{ item.hasChildren }}" hint-placeholder-val="{{ false }}"><svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ item.rot }}deg);transition:transform .15s"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg></sc-if>
+            </sc-if>
+          </div>
+          <sc-if value="{{ item.showChildren }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:2px;margin:4px 0 4px 16px;padding-left:9px;border-left:1px solid #DEDCD5">
+              <sc-for list="{{ item.children }}" as="c">
+                <div onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:7px;height:28px;flex:none;padding:0 8px;border-radius:6px;border:1px solid {{ c.border }};background:{{ c.bg }};cursor:pointer;font-size:12px;color:{{ c.color }};font-weight:{{ c.weight }}" style-hover="background:#fff;color:#111111">
+                  <span style="width:5px;height:5px;flex:none;border-radius:50%;background:{{ c.dot }}"></span>
+                  <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </nav>
+    <div style="display:flex;flex-direction:column;gap:6px;padding:10px 10px 14px;border-top:1px solid #DEDCD5">
+      <sc-for list="{{ adminNav }}" as="item" hint-placeholder-count="1">
+        <div style="display:flex;flex-direction:column">
+          <div onClick="{{ item.onClick }}" title="{{ item.label }}" style="display:flex;align-items:center;justify-content:{{ item.justify }};gap:8px;height:34px;flex:none;padding:{{ item.pad }};border-radius:6px;border:1px solid {{ item.border }};background:{{ item.bg }};box-shadow:{{ item.shadow }};cursor:pointer" style-hover="background:#fff">
+            <div style="width:21px;height:21px;flex:none;border-radius:5px;display:flex;align-items:center;justify-content:center;background:{{ item.tileBg }};border:1px solid {{ item.tileBorder }}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ item.iconColor }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ item.d }}"></path></svg>
+            </div>
+            <sc-if value="{{ item.expanded }}" hint-placeholder-val="{{ true }}">
+              <span style="flex:1;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ item.color }};font-weight:{{ item.weight }}">{{ item.label }}</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ item.rot }}deg);transition:transform .15s"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg>
+            </sc-if>
+          </div>
+          <sc-if value="{{ item.showChildren }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:2px;max-height:236px;overflow-y:auto;margin:4px 0 4px 16px;padding-left:9px;border-left:1px solid #DEDCD5">
+              <sc-for list="{{ item.children }}" as="c">
+                <div onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:7px;height:28px;flex:none;padding:0 8px;border-radius:6px;border:1px solid {{ c.border }};background:{{ c.bg }};cursor:pointer;font-size:12px;color:{{ c.color }};font-weight:{{ c.weight }}" style-hover="background:#fff;color:#111111">
+                  <span style="width:5px;height:5px;flex:none;border-radius:50%;background:{{ c.dot }}"></span>
+                  <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <div title="Help &amp; Support" style="display:flex;align-items:center;justify-content:{{ justify }};gap:8px;height:34px;padding:{{ rowPad }};border-radius:6px;cursor:pointer" style-hover="background:#fff">
+        <div style="width:21px;height:21px;flex:none;border-radius:5px;display:flex;align-items:center;justify-content:center;background:#F4F3EF;border:1px solid #DEDCD5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.2" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg></div>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}"><span style="font-size:12.5px;color:#6B6A64;white-space:nowrap">Help &amp; Support</span></sc-if>
+      </div>
+    </div>
+    <div data-dd="user" style="position:relative;border-top:1px solid #DEDCD5">
+      <div onClick="{{ toggleUser }}" style="display:flex;align-items:center;justify-content:{{ justify }};gap:8px;padding:{{ userPad }};cursor:pointer;border-radius:{{ userRadius }}" style-hover="background:#F4F3EF">
+        <div style="width:32px;height:32px;flex:none;border-radius:5px;background:#111111;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">TB</div>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;display:flex;flex-direction:column;line-height:1.3">
+            <span style="font-size:12.5px;font-weight:500">Tran Ngoc Bao</span>
+            <span style="font-size:10px;color:#6B6A64">Admin</span>
+          </div>
+          <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ userRot }}deg);transition:transform .15s"><path d="M2 6.5h6L5 3z" fill="#6B6A64"></path></svg>
+        </sc-if>
+      </div>
+      <sc-if value="{{ userOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:10px;bottom:62px;width:220px;z-index:60;padding:6px;background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none">
+          <div style="padding:6px 8px 8px;border-bottom:1px solid #DEDCD5;margin-bottom:4px;display:flex;flex-direction:column;line-height:1.35"><span style="font-size:12.5px;font-weight:500">Tran Ngoc Bao</span><span style="font-size:11px;color:#6B6A64">bao.tran@retaniconsults.com</span></div>
+          <sc-for list="{{ userMenu }}" as="u">
+            <sc-if value="{{ u.divider }}" hint-placeholder-val="{{ false }}"><div style="height:1px;background:#DEDCD5;margin:4px 0"></div></sc-if>
+            <div onClick="{{ closeMenus }}" style="display:flex;align-items:center;height:30px;padding:0 8px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ u.color }}" style-hover="background:#F4F3EF">{{ u.label }}</div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </aside>
+
+  <sc-if value="{{ scrimOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closePanels }}" style="position:fixed;inset:0;z-index:90;background:rgba(20,20,30,.28)"></div>
+  </sc-if>
+  <main style="display:flex;flex-direction:column;gap:15px;min-width:0;padding:{{ mainPad }}">
+    <header style="position:relative;z-index:30;display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;min-height:28px">
+      <sc-if value="{{ compact }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ openNav }}" title="Open menu" style="width:28px;height:28px;flex:none;margin-right:10px;border-radius:6px;border:1px solid #DEDCD5;background:#F4F3EF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+      </sc-if>
+      <h1 style="flex:1;white-space:nowrap;margin:0;font-size:19px;font-weight:500;letter-spacing:-.01em">{{ pageTitle }}</h1>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+        <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ openBlocks }}" style="height:28px;padding:0 10px 0 8px;border-radius:6px;border:1px solid #DEDCD5;background:#F4F3EF;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#111111;font-weight:500;white-space:nowrap;flex:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Add a block</button>
+        </sc-if>
+        <button onClick="{{ toggleEdit }}" role="switch" aria-checked="{{ editing }}" style="height:28px;padding:0 8px 0 10px;border-radius:6px;border:1px solid {{ bEdit.border }};background:{{ bEdit.bg }};box-shadow:none;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:#6B6A64;white-space:nowrap;flex:none">
+          <span style="white-space:nowrap">Edit mode</span>
+          <span style="position:relative;width:26px;height:15px;border-radius:6px;background:{{ editTrack }};transition:background .15s;flex:none">
+            <span style="position:absolute;top:2px;left:{{ editKnob }}px;width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:none;transition:left .15s"></span>
+          </span>
+        </button>
+        <span style="width:1px;height:18px;background:#DEDCD5;margin:0 2px"></span>
+        <div data-dd="search" style="position:relative">
+          <button onClick="{{ toggleSearch }}" title="Search" style="width:28px;height:28px;border-radius:6px;border:1px solid {{ bSearch.border }};background:{{ bSearch.bg }};box-shadow:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg></button>
+          <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:{{ ddPos }};top:{{ ddTop }};left:{{ ddLeft }};right:{{ ddRight }};width:{{ ddW1 }};padding:8px;background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none">
+              <div style="display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid #DEDCD5;border-radius:6px;background:#fff;box-shadow:none">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" style="flex:none"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+                <input ref="{{ searchRef }}" value="{{ query }}" onChange="{{ onQuery }}" placeholder="Search pages, courses, settings" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:12.5px;color:#111111">
+              </div>
+              <div style="padding:10px 8px 4px;font-size:11px;color:#6B6A64">{{ searchHeading }}</div>
+              <sc-for list="{{ results }}" as="r">
+                <div onClick="{{ r.onClick }}" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 8px;border-radius:6px;cursor:pointer;font-size:12.5px" style-hover="background:#F4F3EF">
+                  <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.label }}</span>
+                  <span style="font-size:10.5px;color:#6B6A64;white-space:nowrap">{{ r.type }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}"><div style="padding:6px 8px 8px;font-size:12px;color:#6B6A64">No results for “{{ query }}”</div></sc-if>
+            </div>
+          </sc-if>
+        </div>
+        <div data-dd="notif" style="position:relative">
+          <button onClick="{{ toggleNotif }}" title="Notifications" style="position:relative;width:28px;height:28px;border-radius:6px;border:1px solid {{ bNotif.border }};background:{{ bNotif.bg }};box-shadow:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9zM10 20a2 2 0 0 0 4 0"></path></svg><sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:#95BF47;border:1px solid #fff"></span></sc-if></button>
+          <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:{{ ddPos }};top:{{ ddTop }};left:{{ ddLeft }};right:{{ ddRight }};width:{{ ddW2 }};background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none;overflow:hidden">
+              <div style="display:flex;align-items:center;padding:12px 14px 10px;border-bottom:1px solid #DEDCD5">
+                <span style="flex:1;font-size:13px;font-weight:500">Notifications</span>
+                <button onClick="{{ markAll }}" style="border:0;background:none;padding:0;cursor:pointer;font-size:11.5px;color:#111111">Mark all as read</button>
+              </div>
+              <sc-for list="{{ notifs }}" as="n">
+                <div onClick="{{ n.onClick }}" style="display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid #DEDCD5;cursor:pointer;background:{{ n.bg }}" style-hover="background:#F4F3EF">
+                  <div style="width:28px;height:28px;flex:none;border-radius:5px;background:#F4F3EF;border:1px solid #DEDCD5;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg></div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+                    <span style="font-size:12px;line-height:1.35;font-weight:{{ n.weight }};text-wrap:pretty">{{ n.title }}</span>
+                    <span style="font-size:10.5px;color:#6B6A64">{{ n.meta }}</span>
+                  </div>
+                  <span style="width:7px;height:7px;flex:none;margin-top:5px;border-radius:50%;background:{{ n.dot }}"></span>
+                </div>
+              </sc-for>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;font-size:12px"><a href="#" style="text-decoration:none">See all</a><a href="#" style="color:#6B6A64;text-decoration:none">Notification preferences</a></div>
+            </div>
+          </sc-if>
+        </div>
+        <button onClick="{{ toggleMsg }}" title="Messages" style="position:relative;width:28px;height:28px;border-radius:6px;border:1px solid {{ bMsg.border }};background:{{ bMsg.bg }};box-shadow:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path></svg><sc-if value="{{ msgUnread }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:-5px;right:-5px;min-width:15px;height:15px;padding:0 4px;border-radius:6px;background:#111111;border:1.5px solid #fff;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center">1</span></sc-if></button>
+        <button onClick="{{ toggleTheme }}" title="Toggle dark mode" style="width:28px;height:28px;border-radius:6px;border:1px solid {{ bTheme.border }};background:{{ bTheme.bg }};box-shadow:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="{{ themeIcon }}"></path></svg></button>
+        <div data-dd="lang" style="position:relative">
+          <button onClick="{{ toggleLang }}" style="height:28px;padding:0 9px 0 7px;border-radius:6px;border:1px solid {{ bLang.border }};background:{{ bLang.bg }};box-shadow:none;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#6B6A64"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"></path></svg><span>{{ langShort }}</span><svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;margin-left:6px;transform:rotate({{ langRot }}deg);transition:transform .15s"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg></button>
+          <sc-if value="{{ langOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:36px;right:0;width:190px;padding:6px;background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none">
+              <div style="padding:6px 8px 6px;font-size:11px;color:#6B6A64">Language</div>
+              <sc-for list="{{ langs }}" as="l">
+                <div onClick="{{ l.onClick }}" style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:6px;cursor:pointer;font-size:12.5px;background:{{ l.bg }}" style-hover="background:#F4F3EF">
+                  <span style="flex:1">{{ l.name }}</span><span style="font-size:10.5px;color:#6B6A64">{{ l.code }}</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{ l.check }}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </header>
+
+    <div style="display:flex;flex-direction:column;gap:6px;padding-top:6px">
+      <nav aria-label="Breadcrumb" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:12.5px;color:#6B6A64">
+        <sc-for list="{{ crumbs }}" as="c" hint-placeholder-count="4">
+          <sc-if value="{{ c.sep }}" hint-placeholder-val="{{ false }}"><span style="color:#B9B7AE">/</span></sc-if>
+          <sc-if value="{{ c.link }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ c.onClick }}" style="color:#6B6A64;text-decoration:none" style-hover="color:#111111;text-decoration:underline">{{ c.label }}</a></sc-if>
+          <sc-if value="{{ c.current }}" hint-placeholder-val="{{ false }}"><span style="color:#111111;font-weight:500">{{ c.label }}</span></sc-if>
+        </sc-for>
+      </nav>
+      <span style="margin-top:14px;font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6B6A64">{{ eyebrow }}</span>
+      <h2 style="margin:0;font-size:{{ h1Size }}px;font-weight:600;letter-spacing:-.035em;line-height:1.12;color:#111111;text-wrap:pretty">{{ pTitle }}</h2>
+      <p style="margin:4px 0 0;max-width:680px;font-size:14px;line-height:1.5;color:#6B6A64;text-wrap:pretty">{{ pDesc }}</p>
+    </div>
+
+    <div role="tablist" aria-label="Settings categories" style="display:flex;gap:24px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border-bottom:1px solid #DEDCD5;margin-top:2px">
+      <sc-for list="{{ sTabs }}" as="t" hint-placeholder-count="9">
+        <button role="tab" aria-selected="{{ t.on }}" onClick="{{ t.onClick }}" style="flex:none;height:41px;padding:0;border:0;border-bottom:2px solid {{ t.line }};background:none;cursor:pointer;font:inherit;font-size:13.5px;font-weight:{{ t.weight }};color:{{ t.color }};white-space:nowrap" style-hover="color:#111111">{{ t.label }}</button>
+      </sc-for>
+    </div>
+
+    <div style="display:grid;grid-template-columns:{{ setCols }};gap:15px;align-items:start">
+      <div style="position:{{ subPos }};top:15px;display:flex;flex-direction:column;gap:14px;padding:12px;background:#FFFFFF;border:1px solid #DEDCD5;border-radius:8px;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid #DEDCD5;border-radius:6px;background:#F4F3EF">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" style="flex:none"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+          <input value="{{ sQuery }}" onChange="{{ onSQuery }}" placeholder="Search settings" aria-label="Search settings" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:12.5px;color:#111111">
+        </div>
+        <sc-if value="{{ showGroups }}" hint-placeholder-val="{{ true }}">
+          <sc-for list="{{ sGroups }}" as="g" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <span style="padding:0 8px 6px;font-family:'Geist Mono',ui-monospace,monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6B6A64">{{ g.name }}</span>
+              <sc-for list="{{ g.pages }}" as="p">
+                <button onClick="{{ p.onClick }}" style="display:flex;align-items:center;gap:8px;min-height:32px;padding:6px 8px;border-radius:5px;border:1px solid {{ p.border }};background:{{ p.bg }};cursor:pointer;text-align:left;font:inherit;font-size:13px;font-weight:{{ p.weight }};color:{{ p.color }}" style-hover="background:#F4F3EF;color:#111111">
+                  <span style="width:5px;height:5px;flex:none;border-radius:50%;background:{{ p.dot }}"></span><span style="flex:1;min-width:0">{{ p.title }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ showPageSelect }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative">
+            <select value="{{ page }}" onChange="{{ onPageSelect }}" aria-label="Settings page" style="appearance:none;-webkit-appearance:none;width:100%;height:36px;padding:0 32px 0 12px;border:1px solid #DEDCD5;border-radius:6px;background:#FFFFFF;font:inherit;font-size:13.5px;color:#111111;outline:0;cursor:pointer">
+              <sc-for list="{{ tabPages }}" as="o"><option value="{{ o.id }}">{{ o.label }}</option></sc-for>
+            </select>
+            <svg width="10" height="10" viewBox="0 0 10 10" style="position:absolute;right:12px;top:50%;margin-top:-5px;pointer-events:none"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showResults }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <span style="padding:0 8px 6px;font-family:'Geist Mono',ui-monospace,monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6B6A64">{{ resCount }}</span>
+            <sc-for list="{{ sResults }}" as="r">
+              <button onClick="{{ r.onClick }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:7px 8px;border-radius:5px;border:0;background:transparent;cursor:pointer;text-align:left;font:inherit" style-hover="background:#F4F3EF">
+                <span style="font-size:13px;font-weight:500;color:#111111">{{ r.title }}</span>
+                <span style="font-size:11.5px;color:#6B6A64">{{ r.sub }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="min-width:0;background:#FFFFFF;border:1px solid #DEDCD5;border-radius:8px">
+        <sc-for list="{{ sSections }}" as="s" hint-placeholder-count="1">
+          <div style="border-top:{{ s.topBorder }}">
+            <button onClick="{{ s.toggle }}" aria-expanded="{{ s.open }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:18px {{ padX }}px;border:0;background:none;cursor:pointer;text-align:left;font:inherit">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:rotate({{ s.rot }}deg);transition:transform .15s"><path d="M9 5l7 7-7 7"></path></svg>
+              <span style="flex:1;font-size:18px;font-weight:600;letter-spacing:-.025em;color:#111111">{{ s.title }}</span>
+              <span style="flex:none;white-space:nowrap;font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;color:#6B6A64">{{ s.count }}</span>
+            </button>
+            <sc-if value="{{ s.open }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:0 {{ padX }}px 8px">
+                <sc-for list="{{ s.fields }}" as="f" hint-placeholder-count="4">
+                  <div style="display:grid;grid-template-columns:{{ formCols }};gap:10px 32px;padding:18px 0;border-top:1px solid #ECEAE4">
+                    <div style="display:flex;flex-direction:column;gap:4px;min-width:0;padding-top:{{ labelPad }}px">
+                      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px">
+                        <label for="{{ f.id }}" style="font-size:13.5px;line-height:1.35;font-weight:500;color:#111111">{{ f.label }}</label>
+                        <sc-if value="{{ f.req }}" hint-placeholder-val="{{ false }}"><span style="padding:2px 6px;border-radius:4px;background:#F4F3EF;font-family:'Geist Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#6B6A64">Required</span></sc-if>
+                        <sc-if value="{{ f.hasHelp }}" hint-placeholder-val="{{ false }}"><button onClick="{{ f.toggleHelp }}" title="Help with {{ f.label }}" aria-expanded="{{ f.helpOpen }}" style="width:18px;height:18px;flex:none;border-radius:50%;border:1px solid {{ f.helpBorder }};background:{{ f.helpBg }};color:{{ f.helpColor }};font:inherit;font-size:10.5px;font-weight:600;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center">?</button></sc-if>
+                      </div>
+                      <sc-if value="{{ f.hasKey }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;color:#6B6A64;word-break:break-all">{{ f.key }}</span></sc-if>
+                      <sc-if value="{{ f.locked }}" hint-placeholder-val="{{ false }}"><span title="This setting is forced in config.php" style="align-self:flex-start;display:flex;align-items:center;gap:5px;margin-top:4px;height:22px;padding:0 8px;border-radius:5px;border:1px solid #DEDCD5;background:#F4F3EF;font-size:11px;font-weight:500;color:#111111;white-space:nowrap"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Defined in config.php</span></sc-if>
+                      <sc-if value="{{ f.helpOpen }}" hint-placeholder-val="{{ false }}"><div style="margin-top:6px;padding:10px 12px;border-radius:6px;background:#F4F3EF;font-size:12.5px;line-height:1.45;color:#111111;text-wrap:pretty">{{ f.help }}</div></sc-if>
+                    </div>
+                    <fieldset disabled="{{ f.locked }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0;margin:0;padding:0;border:0">
+                      <sc-if value="{{ f.isText }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;gap:8px;width:100%;max-width:420px">
+                          <sc-if value="{{ f.swatch }}" hint-placeholder-val="{{ false }}"><span style="width:36px;height:36px;flex:none;border-radius:6px;border:1px solid #DEDCD5;background:{{ f.value }}"></span></sc-if>
+                          <input id="{{ f.id }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" style="flex:1;min-width:0;height:36px;padding:0 12px;border:1px solid {{ f.border }};border-radius:6px;background:#FFFFFF;font:inherit;font-size:13.5px;color:#111111;outline:0" style-focus="border-color:#111111">
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ f.isNumber }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;gap:8px">
+                          <input id="{{ f.id }}" type="number" value="{{ f.value }}" onChange="{{ f.onChange }}" style="width:120px;height:36px;padding:0 12px;border:1px solid {{ f.border }};border-radius:6px;background:#FFFFFF;font:inherit;font-size:13.5px;color:#111111;outline:0" style-focus="border-color:#111111">
+                          <span style="font-size:13px;color:#6B6A64">{{ f.unit }}</span>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ f.isTextarea }}" hint-placeholder-val="{{ false }}">
+                        <textarea id="{{ f.id }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" rows="6" spellcheck="false" style="width:100%;padding:10px 12px;border:1px solid #DEDCD5;border-radius:6px;background:#FFFFFF;font-family:'Geist Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.6;color:#111111;outline:0;resize:vertical" style-focus="border-color:#111111"></textarea>
+                      </sc-if>
+                      <sc-if value="{{ f.isSelect }}" hint-placeholder-val="{{ false }}">
+                        <div style="position:relative;min-width:160px;max-width:100%">
+                          <select id="{{ f.id }}" value="{{ f.value }}" onChange="{{ f.onChange }}" style="background-color:{{ f.ctrlBg }};appearance:none;-webkit-appearance:none;width:100%;height:36px;padding:0 32px 0 12px;border:1px solid {{ f.border }};border-radius:6px;background:#FFFFFF;font:inherit;font-size:13.5px;color:#111111;outline:0;cursor:pointer" style-focus="border-color:#111111">
+                            <sc-for list="{{ f.opts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for>
+                          </select>
+                          <svg width="10" height="10" viewBox="0 0 10 10" style="position:absolute;right:12px;top:50%;margin-top:-5px;pointer-events:none"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ f.isToggle }}" hint-placeholder-val="{{ false }}">
+                        <button id="{{ f.id }}" role="switch" aria-checked="{{ f.on }}" onClick="{{ f.onToggle }}" style="display:flex;align-items:center;gap:10px;height:36px;padding:0;border:0;background:none;cursor:{{ f.cursor }};font:inherit;font-size:13px;color:#111111">
+                          <span style="position:relative;width:34px;height:20px;flex:none;border-radius:10px;background:{{ f.track }};transition:background .15s"><span style="position:absolute;top:3px;left:{{ f.knob }}px;width:14px;height:14px;border-radius:50%;background:#FFFFFF;transition:left .15s"></span></span>
+                          <span>{{ f.onLabel }}</span>
+                        </button>
+                      </sc-if>
+                      <sc-if value="{{ f.isDate }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px">
+                          <label style="display:flex;align-items:center;gap:7px;height:36px;padding-right:6px;font-size:13.5px;cursor:pointer"><input type="checkbox" checked="{{ f.dEn }}" readOnly="{{ false }}" onChange="{{ f.onDEn }}" style="width:16px;height:16px;margin:0;accent-color:#111111;cursor:pointer">Enable</label>
+                          <sc-for list="{{ f.dParts }}" as="d">
+                            <div style="position:relative;opacity:{{ f.dOpacity }}">
+                              <select value="{{ d.value }}" onChange="{{ d.onChange }}" disabled="{{ f.dOff }}" aria-label="{{ d.label }}" style="appearance:none;-webkit-appearance:none;width:{{ d.w }}px;height:36px;padding:0 30px 0 12px;border:1px solid #DEDCD5;border-radius:6px;background:#FFFFFF;font:inherit;font-size:13.5px;color:#111111;outline:0;cursor:pointer" style-focus="border-color:#111111">
+                                <sc-for list="{{ d.opts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for>
+                              </select>
+                              <svg width="10" height="10" viewBox="0 0 10 10" style="position:absolute;right:12px;top:50%;margin-top:-5px;pointer-events:none"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg>
+                            </div>
+                          </sc-for>
+                          <span style="width:36px;height:36px;border-radius:6px;border:1px solid #DEDCD5;display:flex;align-items:center;justify-content:center;opacity:{{ f.dOpacity }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="1.9"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ f.isStatic }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:flex;align-items:center;height:36px;font-size:13.5px;color:#111111">{{ f.value }}</span>
+                      </sc-if>
+                      <sc-if value="{{ f.isEditor }}" hint-placeholder-val="{{ false }}">
+                        <div style="width:100%;border:1px solid {{ edBorder }};border-radius:6px;background:#FFFFFF;overflow:hidden">
+                          <div role="toolbar" aria-label="Formatting" style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;padding:5px 6px;border-bottom:1px solid #DEDCD5;background:#F4F3EF">
+                            <sc-for list="{{ edGroups }}" as="g">
+                              <div style="display:flex;gap:1px;padding-right:8px;border-right:{{ g.border }}">
+                                <sc-for list="{{ g.tools }}" as="t">
+                                  <button title="{{ t.title }}" aria-label="{{ t.title }}" onMouseDown="{{ t.run }}" style="width:28px;height:28px;border:0;border-radius:4px;background:{{ t.bg }};display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#111111" style-hover="background:#FFFFFF">
+                                    <sc-if value="{{ t.isB }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;font-weight:700;line-height:1">B</span></sc-if>
+                                    <sc-if value="{{ t.isI }}" hint-placeholder-val="{{ false }}"><span style="font-size:15px;font-style:italic;font-family:Georgia,serif;line-height:1">I</span></sc-if>
+                                    <sc-if value="{{ t.isIcon }}" hint-placeholder-val="{{ true }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.d }}"></path></svg></sc-if>
+                                  </button>
+                                </sc-for>
+                              </div>
+                            </sc-for>
+                          </div>
+                          <div style="position:relative">
+                            <sc-if value="{{ edEmpty }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:12px;left:14px;font-size:13.5px;color:#6B6A64;pointer-events:none">Write something…</span></sc-if>
+                            <div ref="{{ edRef }}" suppressContentEditableWarning="{{ true }}" id="{{ f.id }}" role="textbox" aria-multiline="true" aria-label="{{ f.label }}" onInput="{{ onEdInput }}" onFocus="{{ onEdFocus }}" onBlur="{{ onEdBlur }}" style="min-height:{{ edH }}px;padding:12px 14px;font-size:13.5px;line-height:1.55;color:#111111;outline:0;overflow-wrap:anywhere"></div>
+                          </div>
+                          <div style="display:flex;justify-content:flex-end;padding:6px 12px;border-top:1px solid #DEDCD5;font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;color:#6B6A64">{{ edWords }} words</div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ f.err }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;color:#111111"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5h.01"></path></svg>You must supply a value here.</span>
+                      </sc-if>
+                      <sc-if value="{{ f.hasDesc }}" hint-placeholder-val="{{ false }}"><span style="max-width:560px;font-size:12.5px;line-height:1.45;color:#6B6A64;text-wrap:pretty">{{ f.desc }}</span></sc-if>
+                      <sc-if value="{{ f.hasDef }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;line-height:1.4;color:#6B6A64">Default: {{ f.def }}</span></sc-if>
+                    </fieldset>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+        <div style="position:sticky;bottom:0;display:flex;align-items:center;flex-wrap:wrap;gap:10px 12px;padding:14px {{ padX }}px;border-top:1px solid #DEDCD5;background:#FFFFFF;border-radius:0 0 8px 8px">
+          <span style="flex:1;min-width:180px;display:flex;align-items:center;gap:8px;font-size:12.5px;color:#6B6A64"><span style="width:7px;height:7px;flex:none;border-radius:50%;background:{{ statusDot }}"></span>{{ statusText }}</span>
+          <button onClick="{{ sCancel }}" style="height:36px;padding:0 16px;border-radius:6px;border:1px solid #DEDCD5;background:#FFFFFF;font:inherit;font-size:13px;font-weight:500;color:#111111;cursor:pointer" style-hover="border-color:#111111">Cancel</button>
+          <button onClick="{{ sSave }}" style="height:36px;padding:0 18px;border-radius:6px;border:1px solid #111111;background:#111111;font:inherit;font-size:13px;font-weight:500;color:#FFFFFF;cursor:pointer" style-hover="background:#33322E">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside style="position:{{ asidePos }};top:{{ asideTop }};right:0;width:{{ dOuterW }};transform:{{ drawerTf }};transition:transform .25s ease;height:{{ asideH }};min-height:{{ asideMinH }};min-width:0;overflow:hidden;z-index:{{ asideZ }}">
+    <div style="width:300px;max-width:100%;height:100%;display:flex;flex-direction:column;background:#F4F3EF;border:{{ dBorder }};border-left:1px solid #DEDCD5;border-radius:{{ dRadius }}">
+      <div style="display:flex;align-items:center;gap:8px;height:56px;flex:none;padding:0 12px 0 15px;border-bottom:1px solid #DEDCD5">
+        <span style="flex:1;font-size:15px;font-weight:500">Blocks</span>
+        <span title="Learning streak" style="white-space:nowrap;flex:none;display:flex;align-items:center;gap:5px;height:26px;padding:0 9px 0 7px;border-radius:6px;background:#fff;border:1px solid #DEDCD5;font-size:12px;font-weight:500"><svg width="13" height="13" viewBox="0 0 24 24" fill="#6B6A64"><path d="M12 2c1 3.5 5 6 5 11a5 5 0 0 1-10 0c0-2.2 1-3.6 2-4.5.2 1.6 1 2.6 2 3C10.5 8.5 11 5 12 2z"></path></svg>3 days</span>
+        <button onClick="{{ closeDrawer }}" title="Collapse blocks drawer" style="width:28px;height:28px;flex:none;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg></button>
+      </div>
+      <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:15px">
+        <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ openBlocks }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 16px;border:1.5px dashed #DEDCD5;border-radius:8px;cursor:pointer;text-align:center" style-hover="background:#fff;border-color:#DEDCD5">
+            <div style="width:34px;height:34px;border-radius:50%;background:#fff;border:1px solid #DEDCD5;box-shadow:none;display:flex;align-items:center;justify-content:center;margin-bottom:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+            <span style="font-size:14px;font-weight:500;white-space:nowrap;line-height:1.3">Add a block</span>
+            <span style="font-size:11.5px;color:#6B6A64;text-wrap:pretty">Timeline, calendar, badges and more</span>
+          </div>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:12px;padding:14px;background:#fff;border:1px solid {{ blockBorder }};border-radius:8px;box-shadow:none">
+          <div style="display:flex;align-items:center;gap:8px">
+            <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}"><svg width="10" height="14" viewBox="0 0 10 14" style="flex:none;cursor:grab"><g fill="#6B6A64"><circle cx="2.5" cy="2.5" r="1.3"></circle><circle cx="7.5" cy="2.5" r="1.3"></circle><circle cx="2.5" cy="7" r="1.3"></circle><circle cx="7.5" cy="7" r="1.3"></circle><circle cx="2.5" cy="11.5" r="1.3"></circle><circle cx="7.5" cy="11.5" r="1.3"></circle></g></svg></sc-if>
+            <span style="flex:1;font-size:14px;font-weight:500">You earned 200 XP today</span>
+            <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}"><span title="Block actions" style="font-size:14px;color:#111111;letter-spacing:1px;cursor:pointer">···</span></sc-if>
+          </div>
+          <div style="display:flex;gap:12px;font-size:11px;color:#111111">
+            <span style="display:flex;align-items:center;gap:5px;white-space:nowrap"><span style="width:8px;height:8px;border-radius:2px;background:#111111"></span>UI Design</span>
+            <span style="display:flex;align-items:center;gap:5px;white-space:nowrap"><span style="width:8px;height:8px;border-radius:2px;background:#95BF47"></span>Figma Bootcamp</span>
+          </div>
+          <div style="display:grid;grid-template-columns:18px minmax(0,1fr);gap:6px">
+            <div style="display:flex;flex-direction:column;justify-content:space-between;height:112px;margin-top:-5px;font-size:10px;color:#6B6A64;text-align:right"><span>60</span><span>40</span><span>20</span><span>0</span></div>
+            <div style="position:relative;height:105px;display:flex;align-items:flex-end;gap:1px;border-bottom:1px solid #DEDCD5;padding-bottom:2px">
+              <div style="position:absolute;left:0;right:0;top:0;border-top:1px dashed #DEDCD5"></div>
+              <div style="position:absolute;left:0;right:0;top:35px;border-top:1px dashed #DEDCD5"></div>
+              <div style="position:absolute;left:0;right:0;top:70px;border-top:1px dashed #DEDCD5"></div>
+              <sc-for list="{{ xpCols }}" as="col" hint-placeholder-count="47">
+                <div title="{{ col.tip }}" style="position:relative;flex:1;display:flex;flex-direction:column-reverse;gap:3px">
+                  <sc-for list="{{ col.dots }}" as="d"><span style="display:block;width:100%;aspect-ratio:1;border-radius:50%;background:{{ d }}"></span></sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <span></span>
+            <div style="display:flex;justify-content:space-between;padding:0 6px;font-size:10px;color:#6B6A64"><span>100</span><span>200</span><span>300</span><span>400</span><span>500</span><span>600</span></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;padding:14px;background:#fff;border:1px solid {{ blockBorder }};border-radius:8px;box-shadow:none">
+          <div style="display:flex;align-items:center;gap:8px">
+            <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}"><svg width="10" height="14" viewBox="0 0 10 14" style="flex:none;cursor:grab"><g fill="#6B6A64"><circle cx="2.5" cy="2.5" r="1.3"></circle><circle cx="7.5" cy="2.5" r="1.3"></circle><circle cx="2.5" cy="7" r="1.3"></circle><circle cx="7.5" cy="7" r="1.3"></circle><circle cx="2.5" cy="11.5" r="1.3"></circle><circle cx="7.5" cy="11.5" r="1.3"></circle></g></svg></sc-if>
+            <span style="flex:1;font-size:14px;font-weight:500">This month</span>
+            <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}"><span title="Block actions" style="font-size:14px;color:#111111;letter-spacing:1px;cursor:pointer">···</span></sc-if>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))">
+            <sc-for list="{{ monthStats }}" as="m" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;border-left:{{ m.border }}">
+                <span style="font-size:11px;color:#6B6A64">{{ m.label }}</span>
+                <span style="font-size:18px;font-weight:500">{{ m.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <a href="#" style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;text-decoration:none;padding-top:10px;border-top:1px solid #DEDCD5"><svg width="13" height="13" viewBox="0 0 24 24" fill="#111111"><path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2zM19 15l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"></path></svg>2 insights available</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <sc-if value="{{ drawerClosed }}" hint-placeholder-val="{{ true }}">
+    <button onClick="{{ openDrawer }}" title="Open blocks drawer" style="position:fixed;right:0;top:96px;z-index:25;width:30px;padding:12px 0 14px;display:flex;flex-direction:column;align-items:center;gap:10px;border:1px solid #DEDCD5;border-right:0;border-radius:6px 0 0 6px;background:#fff;box-shadow:none;cursor:pointer" style-hover="background:#F4F3EF;width:34px">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+      <span style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:11.5px;font-weight:500;color:#111111;letter-spacing:.02em">Blocks</span>
+      <span style="width:6px;height:6px;border-radius:50%;background:#111111"></span>
+    </button>
+  </sc-if>
+<sc-if value="{{ msgOpen }}" hint-placeholder-val="{{ false }}">
+    <div role="dialog" aria-label="Messages" style="position:fixed;top:0;right:0;bottom:0;width:min(320px,100vw);z-index:98;display:flex;flex-direction:column;background:#F4F3EF;border-left:1px solid #DEDCD5;box-shadow:none">
+      <div style="display:flex;align-items:center;gap:8px;height:56px;flex:none;padding:0 10px 0 15px;border-bottom:1px solid #DEDCD5">
+        <sc-if value="{{ inConv }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ backMsg }}" title="Back" style="width:28px;height:28px;flex:none;margin-left:-6px;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+        </sc-if>
+        <span style="flex:1;font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ msgTitle }}</span>
+        <button onClick="{{ closeMsg }}" title="Close" style="width:28px;height:28px;flex:none;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+      </div>
+      <sc-if value="{{ inList }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 10px 8px 15px">
+          <div style="flex:1;display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid #DEDCD5;border-radius:6px;background:#fff">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" style="flex:none"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+            <input value="{{ msgQuery }}" onChange="{{ onMsgQuery }}" placeholder="Search" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:12.5px;color:#111111">
+          </div>
+          <button title="Message preferences" style="width:28px;height:28px;flex:none;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></button>
+        </div>
+        <div style="display:flex;justify-content:flex-end;padding:0 15px 10px">
+          <a href="#" style="display:flex;align-items:center;gap:5px;font-size:12px;text-decoration:none;color:#111111"><svg width="12" height="12" viewBox="0 0 24 24" fill="#6B6A64"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"></path></svg>Contacts</a>
+        </div>
+        <div style="flex:1;min-height:0;overflow-y:auto;border-top:1px solid #DEDCD5">
+          <div style="border-bottom:1px solid #DEDCD5">
+            <div onClick="{{ msgSec.starred.toggle }}" style="display:flex;align-items:center;gap:8px;height:44px;padding:0 15px;cursor:pointer" style-hover="background:#F4F3EF">
+              <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ msgSec.starred.rot }}deg);transition:transform .15s"><path d="M3.5 2v6L7 5z" fill="#111111"></path></svg>
+              <span style="font-size:13px;font-weight:500">Starred</span><span style="font-size:11.5px;color:#6B6A64">({{ msgSec.starred.count }})</span>
+            </div>
+            <sc-if value="{{ msgSec.starred.open }}" hint-placeholder-val="{{ false }}">
+              <sc-for list="{{ msgSec.starred.items }}" as="m">
+                <div onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:10px;padding:10px 15px;background:#fff;border-top:1px solid #DEDCD5;cursor:pointer" style-hover="background:#F4F3EF">
+                  <div style="position:relative;width:34px;height:34px;flex:none;border-radius:6px;background:{{ m.av }};color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ m.initials }}<span style="position:absolute;right:-3px;bottom:-3px;width:11px;height:11px;border-radius:50%;background:{{ m.status }};border:2px solid #fff"></span></div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:12.5px;font-weight:500">{{ m.name }}</span>
+                    <span style="font-size:11px;color:#6B6A64;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.preview }}</span>
+                  </div>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+                </div>
+              </sc-for>
+              <sc-if value="{{ msgSec.starred.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:4px 15px 14px 33px;font-size:11.5px;color:#6B6A64">No conversations</div></sc-if>
+            </sc-if>
+          </div>
+          <div style="border-bottom:1px solid #DEDCD5">
+            <div onClick="{{ msgSec.group.toggle }}" style="display:flex;align-items:center;gap:8px;height:44px;padding:0 15px;cursor:pointer" style-hover="background:#F4F3EF">
+              <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ msgSec.group.rot }}deg);transition:transform .15s"><path d="M3.5 2v6L7 5z" fill="#111111"></path></svg>
+              <span style="font-size:13px;font-weight:500">Group</span><span style="font-size:11.5px;color:#6B6A64">({{ msgSec.group.count }})</span>
+            </div>
+            <sc-if value="{{ msgSec.group.open }}" hint-placeholder-val="{{ false }}">
+              <sc-for list="{{ msgSec.group.items }}" as="m">
+                <div onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:10px;padding:10px 15px;background:#fff;border-top:1px solid #DEDCD5;cursor:pointer" style-hover="background:#F4F3EF">
+                  <div style="position:relative;width:34px;height:34px;flex:none;border-radius:6px;background:{{ m.av }};color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ m.initials }}<span style="position:absolute;right:-3px;bottom:-3px;width:11px;height:11px;border-radius:50%;background:{{ m.status }};border:2px solid #fff"></span></div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:12.5px;font-weight:500">{{ m.name }}</span>
+                    <span style="font-size:11px;color:#6B6A64;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.preview }}</span>
+                  </div>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+                </div>
+              </sc-for>
+              <sc-if value="{{ msgSec.group.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:4px 15px 14px 33px;font-size:11.5px;color:#6B6A64">No conversations</div></sc-if>
+            </sc-if>
+          </div>
+          <div style="border-bottom:1px solid #DEDCD5">
+            <div onClick="{{ msgSec.private.toggle }}" style="display:flex;align-items:center;gap:8px;height:44px;padding:0 15px;cursor:pointer" style-hover="background:#F4F3EF">
+              <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ msgSec.private.rot }}deg);transition:transform .15s"><path d="M3.5 2v6L7 5z" fill="#111111"></path></svg>
+              <span style="font-size:13px;font-weight:500">Private</span><span style="font-size:11.5px;color:#6B6A64">({{ msgSec.private.count }})</span>
+            </div>
+            <sc-if value="{{ msgSec.private.open }}" hint-placeholder-val="{{ false }}">
+              <sc-for list="{{ msgSec.private.items }}" as="m">
+                <div onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:10px;padding:10px 15px;background:#fff;border-top:1px solid #DEDCD5;cursor:pointer" style-hover="background:#F4F3EF">
+                  <div style="position:relative;width:34px;height:34px;flex:none;border-radius:6px;background:{{ m.av }};color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ m.initials }}<span style="position:absolute;right:-3px;bottom:-3px;width:11px;height:11px;border-radius:50%;background:{{ m.status }};border:2px solid #fff"></span></div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:12.5px;font-weight:500">{{ m.name }}</span>
+                    <span style="font-size:11px;color:#6B6A64;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.preview }}</span>
+                  </div>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+                </div>
+              </sc-for>
+              <sc-if value="{{ msgSec.private.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:4px 15px 14px 33px;font-size:11.5px;color:#6B6A64">No conversations</div></sc-if>
+            </sc-if>
+          </div>
+        </div>
+        <div style="flex:none;padding:12px;text-align:center;border-top:1px solid #DEDCD5"><a href="#" style="font-size:12.5px;font-weight:500;text-decoration:none">See all</a></div>
+      </sc-if>
+      <sc-if value="{{ inConv }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:15px">
+          <div style="align-self:center;font-size:10.5px;color:#6B6A64;padding-bottom:4px">Today</div>
+          <sc-for list="{{ convMsgs }}" as="m">
+            <div style="align-self:{{ m.align }};max-width:82%;padding:8px 11px;border-radius:6px;background:{{ m.bg }};color:{{ m.color }};border:1px solid {{ m.border }};font-size:12.5px;line-height:1.4;text-wrap:pretty">{{ m.text }}<div style="margin-top:3px;font-size:10px;opacity:.7;text-align:right">{{ m.time }}</div></div>
+          </sc-for>
+        </div>
+        <div style="flex:none;display:flex;gap:8px;padding:10px;border-top:1px solid #DEDCD5;background:#fff">
+          <input value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}" placeholder="Write a message…" style="flex:1;min-width:0;height:34px;padding:0 10px;border:1px solid #DEDCD5;border-radius:6px;outline:0;font:inherit;font-size:12.5px;color:#111111">
+          <button onClick="{{ sendMsg }}" title="Send" style="width:34px;height:34px;flex:none;border-radius:6px;border:1px solid #111111;background:#111111;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"><path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"></path></svg></button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+<sc-if value="{{ blocksOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeBlocks }}" style="position:fixed;inset:0;z-index:100;background:rgba(20,20,30,.28);display:flex;align-items:center;justify-content:center;padding:24px">
+      <div onClick="{{ stop }}" role="dialog" aria-label="Add a block" style="width:520px;max-width:100%;max-height:calc(100vh - 48px);display:flex;flex-direction:column;background:#fff;border:1px solid #DEDCD5;border-radius:8px;box-shadow:none;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:11px;padding:14px 14px 12px">
+          <div style="width:32px;height:32px;flex:none;border-radius:6px;background:#F4F3EF;border:1px solid #DEDCD5;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+          <span style="flex:1;font-size:15px;font-weight:500">Add a block</span>
+          <button onClick="{{ closeBlocks }}" title="Close" style="width:28px;height:28px;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+        </div>
+        <div style="padding:0 14px 10px">
+          <div style="display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid #DEDCD5;border-radius:6px;background:#FFFFFF">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" style="flex:none"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+            <input value="{{ blockQuery }}" onChange="{{ onBlockQuery }}" placeholder="Search blocks" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:12.5px;color:#111111">
+          </div>
+        </div>
+        <div style="flex:1;min-height:0;overflow-y:auto;border-top:1px solid #DEDCD5;padding:6px">
+          <sc-for list="{{ blockList }}" as="b">
+            <div onClick="{{ b.onClick }}" style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;cursor:pointer" style-hover="background:#F4F3EF">
+              <div style="width:28px;height:28px;flex:none;border-radius:5px;background:#F4F3EF;border:1px solid #DEDCD5;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="{{ b.d }}"></path></svg></div>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:12.5px;font-weight:500">{{ b.name }}</span>
+                <span style="font-size:11px;color:#6B6A64;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.desc }}</span>
+              </div>
+              <span style="font-size:11.5px;color:#111111;font-weight:500">Add</span>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noBlocks }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 8px;font-size:12px;color:#6B6A64">No blocks match “{{ blockQuery }}”</div></sc-if>
+        </div>
+        <div style="display:flex;justify-content:flex-end;padding:10px 14px;border-top:1px solid #DEDCD5">
+          <button onClick="{{ closeBlocks }}" style="height:30px;padding:0 14px;border-radius:6px;border:1px solid #DEDCD5;background:#F4F3EF;cursor:pointer;font-size:12px;color:#111111">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:110;display:flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:6px;background:#111111;color:#fff;font-size:12px;box-shadow:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#95BF47" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;sidebarStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;docked&quot;,&quot;floating&quot;],&quot;default&quot;:&quot;docked&quot;,&quot;tsType&quot;:&quot;'docked' | 'floating'&quot;}}">
+class Component extends DCLogic {
+  state = { page: 'debugging', vals: {}, saved: {}, errs: {}, help: null, secClosed: {}, edWords: 0, edEmpty: true, edFocus: false, edFull: false, sQuery: '', msgOpen: false, msgSecs: { starred: true, group: false, private: false }, conv: null, msgQuery: '', draft: '', msgRead: false, sent: [], vw: typeof window !== 'undefined' ? window.innerWidth : 1440, navOpen: false, drawerOpen: false, hFilter: 0, hSort: 0, hView: 'card', hQuery: '', blocksOpen: false, blockQuery: '', toast: null, editing: false, active: '9:19', open: { 9: true }, collapsed: false, menu: null, query: '', lang: 0, cat: 0, dark: false, read: {}, banner: true, mode: 'day', hover: null, sort: null, filter: 0 };
+  plotRef = React.createRef();
+  searchRef = React.createRef();
+  navData = [
+    ['Dashboard', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', null],
+    ['Calendar', 'M3 5h18v16H3zM3 10h18M8 3v4M16 3v4', null],
+    ['My courses', 'M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z', ['UI Design Fundamentals', 'Figma Mastery Bootcamp', 'Visual Branding Essentials', 'Advanced UX Research']],
+    ['Course management', 'M4 5h16v11H4zM8 20h8M12 16v4', ['Manage courses and categories', 'Add a new course', 'Course requests', 'Restore course', 'Download courses']],
+    ['Users', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21c0-4 3-6 7-6s7 2 7 6M16 3a4 4 0 0 1 0 8M22 21c0-3-2-5-4-5.5', ['Browse list of users', 'Add a new user', 'Bulk user actions', 'Upload users', 'Cohorts', 'Define roles']],
+    ['Grades', 'M5 3h14v18H5zM9 11l2 2 4-4M9 17h6', ['Grader report', 'Gradebook setup', 'Outcomes', 'Scales', 'Letters']],
+    ['Reports', 'M5 20v-8M10 20V6M15 20v-9M20 20V9', ['Course Statistics', 'Logs', 'Live logs', 'Activity completion', 'Course participation', 'Event monitoring rules']],
+    ['Badges', 'M12 2l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z', ['Manage badges', 'Add a new badge', 'Badge settings']],
+    ['Competencies', 'M12 3a9 9 0 1 0 9 9h-9zM15 3.5A9 9 0 0 1 20.5 9H15z', ['Competency frameworks', 'Learning plan templates', 'Migrate frameworks']],
+    ['Site administration', 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1', ['Notifications', 'Registration', 'Advanced features', 'Users', 'Courses', 'Grades', 'Analytics', 'Competencies', 'Badges', 'H5P', 'Location', 'Language', 'Messaging', 'Plugins', 'Security', 'Appearance', 'Front page', 'Server', 'Reports', 'Development']],
+  ];
+  catData = [
+    ['Design', 'CORE#DES1', 24, '#111111', 'M12 3L2.5 20h19zM7 20l7.5-9'],
+    ['Development', 'CORE#DEV1', 31, '#111111', 'M8 7l-5 5 5 5M16 7l5 5-5 5'],
+    ['Marketing', 'CORE#MKT1', 18, '#95BF47', 'M3 10v4l12 5V5zM15 9a3 3 0 0 1 0 6'],
+    ['Business', 'CORE#BUS1', 15, '#111111', 'M4 8h16v11H4zM9 8V5h6v3'],
+  ];
+  langData = [['English', 'en', 'Eng'], ['Tiếng Việt', 'vi', 'Vie'], ['Español', 'es', 'Esp'], ['Français', 'fr', 'Fra'], ['Deutsch', 'de', 'Deu'], ['日本語', 'ja', 'Jpn']];
+  notifData = [
+    ['Assignment due tomorrow: Wireframe critique', 'UI Design Fundamentals · 2h ago', 'M5 3h14v18H5zM9 11l2 2 4-4M9 17h6'],
+    ['Linh Vo replied in “Auto layout tips”', 'Figma Mastery Bootcamp · 5h ago', 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z'],
+    ['12 new enrolments in Design System & Components', 'DES106 · Yesterday', 'M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5'],
+    ['Scheduled course backup completed', 'Site administration · 2 days ago', 'M3 7l9-4 9 4-9 4zM3 12l9 4 9-4M3 17l9 4 9-4'],
+  ];
+  componentDidMount() {
+    this.onDoc = e => { const m = this.state.menu; if (!m) return; const el = e.target.closest && e.target.closest('[data-dd]'); if (!el || el.getAttribute('data-dd') !== m) this.setState({ menu: null }); };
+    this.onKey = e => { if (e.key === 'Escape') this.setState({ menu: null, blocksOpen: false, navOpen: false, msgOpen: false }); };
+    document.addEventListener('mousedown', this.onDoc); document.addEventListener('keydown', this.onKey);
+    this.onResize = () => this.setState({ vw: window.innerWidth }); window.addEventListener('resize', this.onResize); this.onResize(); setTimeout(() => this.syncEditor(), 0);
+  }
+  homeData = [
+    ['DES101', 'UI Design Fundamentals', 'UI Design', 'Alice Nguyen', 71, 24, 3],
+    ['DES102', 'Figma Mastery Bootcamp', 'UI Design', 'Linh Vo', 50, 18, 1],
+    ['DES103', 'Visual Branding Essentials', 'Branding', 'David Le', 25, 16, 5],
+    ['DES104', 'Advanced UX Research', 'Research', 'Michael Tran', null, 20, 2],
+    ['DES105', 'Product Design Workflow', 'Product', 'Nhi Dang', 100, 14, 4],
+    ['DES106', 'Design System & Components', 'UI Design', 'Quynh Ha', 0, 22, 0],
+  ];
+  blockData = [
+    ['Activities', 'Lists activity types used in the course', 'M4 6h16M4 12h16M4 18h10'],
+    ['Calendar', 'Shows upcoming events and deadlines', 'M3 5h18v16H3zM3 10h18M8 3v4M16 3v4'],
+    ['Comments', 'Lets users leave comments on the page', 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z'],
+    ['Course completion status', 'Progress against completion criteria', 'M5 3h14v18H5zM9 11l2 2 4-4M9 17h6'],
+    ['Latest announcements', 'Recent posts from the announcements forum', 'M3 10v4l12 5V5zM15 9a3 3 0 0 1 0 6'],
+    ['Latest badges', 'Badges recently earned by the user', 'M12 2l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z'],
+    ['Learning plans', 'Active learning plans and competencies', 'M12 3a9 9 0 1 0 9 9h-9z'],
+    ['Online users', 'Users active in the last 5 minutes', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21c0-4 3-6 7-6s7 2 7 6'],
+    ['Private files', 'Quick access to the user’s files', 'M4 4h10l6 6v10H4zM14 4v6h6'],
+    ['Recently accessed courses', 'Courses the user opened recently', 'M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z'],
+    ['Text', 'Custom HTML content and media', 'M4 6h16M9 6v14M15 6v14'],
+    ['Timeline', 'Upcoming activity deadlines by date', 'M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z'],
+  ];
+  drawerVals(docked) {
+    const open = this.state.drawerOpen;
+    const s1 = [5,6,7,8,9,9,10,11,12,12,13,14,13,14,15,14,13,12,13,12,11,12,10,9,7,6,5,4,4,3,3];
+    const s2 = [3,5,7,8,9,10,11,12,12,11,10,8,6,4,3,2];
+    const cols = [...s1.map(h => [h, '#111111', 'UI Design']), ...s2.map(h => [h, '#95BF47', 'Figma Bootcamp'])];
+    return {
+      drawerW: open ? 300 : 0, rootMinW: this.state.vw < 1200 ? 0 : open ? 1500 : 1200, drawerClosed: !open,
+      openDrawer: () => this.setState({ drawerOpen: true }), closeDrawer: () => this.setState({ drawerOpen: false }),
+      dBorder: docked ? '0' : '1px solid #DEDCD5', dRadius: docked ? '0' : '14px',
+      blockBorder: this.state.editing ? '#DEDCD5' : '#DEDCD5',
+      xpCols: cols.map(([h, c, n]) => ({ tip: n + ': ' + h * 4 + ' XP', dots: Array.from({ length: h }, () => c) })),
+      monthStats: [['Days', 22], ['Lessons', 36], ['Quizzes', 18], ['Minutes', 231]].map(([label, value], i) => ({ label, value, border: i ? '1px solid #DEDCD5' : '0' })),
+    };
+  }
+  convData = {
+    starred: [['Admin User', 'AU', '#111111', '#95BF47', [['in', 'Reminder: site maintenance is scheduled for Saturday 22:00.', '09:12'], ['out', 'Thanks — I’ll let the teachers know.', '09:20'], ['in', 'Can you also check the DES106 enrolments?', '10:04']]]],
+    group: [], private: [],
+  };
+  msgVals(btn) {
+    const { msgOpen, msgSecs, conv, msgQuery, draft, msgRead, sent } = this.state;
+    const q = msgQuery.trim().toLowerCase();
+    const msgSec = {};
+    for (const k of ['starred', 'group', 'private']) {
+      const items = this.convData[k].filter(c => !q || c[0].toLowerCase().includes(q));
+      msgSec[k] = { open: msgSecs[k], rot: msgSecs[k] ? 90 : 0, count: items.length, empty: !items.length,
+        toggle: () => this.setState(st => ({ msgSecs: { ...st.msgSecs, [k]: !st.msgSecs[k] } })),
+        items: items.map(c => ({ name: c[0], initials: c[1], av: c[2], status: c[3], preview: c[4][c[4].length - 1][1], onClick: () => this.setState({ conv: c[0], msgRead: true }) })) };
+    }
+    const c = conv && this.convData.starred.find(x => x[0] === conv);
+    const send = () => { const t = this.state.draft.trim(); if (!t) return; const d = new Date(); this.setState(st => ({ draft: '', sent: [...st.sent, [t, String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0')]] })); };
+    return {
+      msgOpen, msgSec, msgQuery, inConv: !!c, inList: !c, msgTitle: c ? c[0] : 'Messages', msgUnread: !msgRead, bMsg: btn(msgOpen),
+      toggleMsg: () => this.setState(st => ({ msgOpen: !st.msgOpen, menu: null })), closeMsg: () => this.setState({ msgOpen: false }),
+      backMsg: () => this.setState({ conv: null }), onMsgQuery: e => this.setState({ msgQuery: e.target.value }),
+      draft, onDraft: e => this.setState({ draft: e.target.value }), onDraftKey: e => { if (e.key === 'Enter') send(); }, sendMsg: send,
+      convMsgs: c ? [...c[4], ...sent.map(([t, time]) => ['out', t, time])].map(([dir, text, time]) => ({ text, time, align: dir === 'out' ? 'flex-end' : 'flex-start', bg: dir === 'out' ? '#111111' : '#fff', color: dir === 'out' ? '#fff' : '#111111', border: dir === 'out' ? '#111111' : '#DEDCD5' })) : [],
+    };
+  }
+  edRef = React.createRef();
+  childMap = { 'Advanced features': 'adv-features', 'Users': 'auth', 'Courses': 'course-defaults', 'Grades': 'grade-general', 'Competencies': 'lpt-add', 'Plugins': 'assign', 'Appearance': 'theme', 'Front page': 'site-info', 'Server': 'session', 'Reports': 'logstore', 'Development': 'debugging' };
+  sTabList = ['General', 'Users', 'Courses', 'Grades', 'Plugins', 'Appearance', 'Server', 'Reports', 'Development'];
+  sPages = [
+    { id: 'site-info', tab: 'General', group: 'Site', title: 'Site home settings', desc: 'Name your site and choose what people see on the site home page.', sections: [['Site', [
+      { t: 'text', label: 'Full site name', key: 'fullname', req: 1, val: 'Retani Learning' },
+      { t: 'text', label: 'Short name for site', key: 'shortname', req: 1, val: 'Retani', desc: 'Used in the navigation bar and in email subject lines.' },
+      { t: 'editor', label: 'Site home summary', key: 'summary', help: 'Shown on the site home page and used as the description for search engines.' },
+      { t: 'select', label: 'Site home items when logged in', key: 'frontpageloggedin', opts: ['Enrolled courses', 'List of courses', 'Announcements', 'Course search box', 'None'] }]]] },
+    { id: 'adv-features', tab: 'General', group: 'Site', title: 'Advanced features', desc: 'Turn site-wide features on or off. Disabled features are hidden everywhere.', sections: [['Features', [
+      { t: 'toggle', label: 'Enable completion tracking', key: 'enablecompletion', val: 1, desc: 'Lets teachers set completion conditions for activities and courses.' },
+      { t: 'toggle', label: 'Enable outcomes', key: 'enableoutcomes', val: 0 },
+      { t: 'toggle', label: 'Enable badges', key: 'enablebadges', val: 1 },
+      { t: 'toggle', label: 'Enable analytics', key: 'enableanalytics', val: 1, help: 'Analytics models predict students at risk of dropping out and send insights to teachers.' },
+      { t: 'toggle', label: 'Enable web services', key: 'enablewebservices', val: 0, desc: 'Required for the mobile app and external integrations.' }]]] },
+    { id: 'comp-settings', tab: 'General', group: 'Competencies', title: 'Competencies settings', desc: 'Control how competencies are used in courses and learning plans.', sections: [['Competencies', [
+      { t: 'toggle', label: 'Enable competencies', key: 'core_competency | enabled', val: 1 },
+      { t: 'toggle', label: 'Push course ratings to learning plans', key: 'core_competency | pushcourseratingstouserplans', val: 1, help: 'When on, rating a competency in a course also updates the learner’s plan.' },
+      { t: 'select', label: 'Default rating scale', key: 'core_competency | defaultscale', opts: ['Default competence scale', 'Separate and connected ways of knowing', 'Pass / Fail'] }]]] },
+    { id: 'lpt-add', tab: 'General', group: 'Competencies', parent: 'Learning plan templates', title: 'Add new learning plan template', desc: 'Templates bundle competencies into a plan. Learners assigned to a template get a learning plan based on it.', sections: [['General', [
+      { t: 'text', label: 'Name', req: 1, ph: 'e.g. Design foundations 2026' },
+      { t: 'editor', label: 'Description' },
+      { t: 'select', label: 'Visible', opts: ['Yes', 'No'], help: 'Hidden templates can’t be used to create new learning plans.' },
+      { t: 'date', label: 'Due date', help: 'Learning plans created from this template are due on this date.' },
+      { t: 'static', label: 'Category', val: 'System' }]]] },
+    { id: 'auth', tab: 'Users', group: 'Authentication', title: 'Manage authentication', desc: 'Choose how people sign in and whether they can create their own accounts.', sections: [['Common settings', [
+      { t: 'select', label: 'Self registration', key: 'registerauth', opts: ['Disable', 'Email-based self-registration'] },
+      { t: 'select', label: 'Guest login button', key: 'guestloginbutton', opts: ['Hide', 'Show'] },
+      { t: 'toggle', label: 'Prevent account creation when authenticating', key: 'authpreventaccountcreation', val: 0 },
+      { t: 'text', label: 'Alternate login URL', key: 'alternateloginurl', ph: 'https://', desc: 'Leave empty to use the standard Retani login page.' }]]] },
+    { id: 'user-defaults', tab: 'Users', group: 'Accounts', title: 'User default preferences', desc: 'Defaults for new accounts. Users can change these in their own preferences.', sections: [['Preferences', [
+      { t: 'select', label: 'Email display', key: 'defaultpreference_maildisplay', opts: ['Visible to course participants', 'Hidden from everyone', 'Visible to everyone'] },
+      { t: 'select', label: 'Forum auto-subscribe', key: 'defaultpreference_autosubscribe', opts: ['Yes', 'No'] },
+      { t: 'select', label: 'Forum tracking', key: 'defaultpreference_trackforums', opts: ['No', 'Yes: highlight new posts'] },
+      { t: 'toggle', label: 'Text editor autosave', key: 'editor_autosave', val: 1 }]]] },
+    { id: 'course-defaults', tab: 'Courses', group: 'Courses', title: 'Course default settings', desc: 'Applied to new courses. Teachers can change them in each course.', sections: [['General', [
+      { t: 'select', label: 'Course visibility', key: 'moodlecourse | visible', opts: ['Show', 'Hide'] },
+      { t: 'select', label: 'Format', key: 'moodlecourse | format', opts: ['Custom sections', 'Weekly sections', 'Single activity', 'Social'] },
+      { t: 'number', label: 'Number of sections', key: 'moodlecourse | numsections', val: 4 }]], ['Appearance', [
+      { t: 'select', label: 'Show gradebook to students', key: 'moodlecourse | showgrades', opts: ['Yes', 'No'] },
+      { t: 'select', label: 'Show activity reports', key: 'moodlecourse | showreports', opts: ['No', 'Yes'] },
+      { t: 'select', label: 'Maximum upload size', key: 'moodlecourse | maxbytes', opts: ['Site upload limit (100 MB)', '50 MB', '10 MB', '2 MB'] }]]] },
+    { id: 'course-requests', tab: 'Courses', group: 'Courses', title: 'Course request', desc: 'Let users request new courses for a manager to approve.', sections: [['Requests', [
+      { t: 'toggle', label: 'Enable course requests', key: 'enablecourserequests', val: 1 },
+      { t: 'select', label: 'Default category', key: 'defaultrequestcategory', opts: ['Design', 'Development', 'Marketing', 'Business'] },
+      { t: 'toggle', label: 'Notify site managers', key: 'courserequestnotify', val: 1 }]]] },
+    { id: 'grade-general', tab: 'Grades', group: 'General', title: 'General settings', desc: 'How grades are calculated and displayed across the site.', sections: [['Display', [
+      { t: 'select', label: 'Grade display type', key: 'grade_displaytype', opts: ['Real', 'Percentage', 'Letter', 'Real (percentage)'] },
+      { t: 'number', label: 'Overall decimal points', key: 'grade_decimalpoints', val: 2 },
+      { t: 'number', label: 'Grade point maximum', key: 'gradepointmax', val: 100, help: 'The highest grade a teacher can set for a gradable activity.' }]]] },
+    { id: 'grade-letters', tab: 'Grades', group: 'General', title: 'Letters', desc: 'The lowest percentage needed for each letter grade.', sections: [['Grade letters', [
+      { t: 'number', label: 'A', key: 'gradeboundary1', val: 90, unit: '% and above' },
+      { t: 'number', label: 'B', key: 'gradeboundary2', val: 80, unit: '% and above' },
+      { t: 'number', label: 'C', key: 'gradeboundary3', val: 70, unit: '% and above' },
+      { t: 'number', label: 'D', key: 'gradeboundary4', val: 60, unit: '% and above' }]]] },
+    { id: 'assign', tab: 'Plugins', group: 'Activity modules', title: 'Assignment settings', desc: 'Site-wide defaults for the assignment activity.', sections: [['Submissions', [
+      { t: 'toggle', label: 'Require students to click the submit button', key: 'assign | submissiondrafts', val: 0 },
+      { t: 'number', label: 'Maximum number of uploaded files', key: 'assignsubmission_file | maxfiles', val: 20 },
+      { t: 'select', label: 'Maximum submission size', key: 'assignsubmission_file | maxbytes', opts: ['Site upload limit (100 MB)', '50 MB', '10 MB'] }]], ['Feedback', [
+      { t: 'select', label: 'Default feedback plugin', key: 'assign | feedback_plugin_for_gradebook', opts: ['Feedback comments', 'Annotate PDF', 'Feedback files'] }]]] },
+    { id: 'filters', tab: 'Plugins', group: 'Filters', title: 'Common filter settings', desc: 'Filters change text as it is shown, e.g. turning links or maths into rich content.', sections: [['Filters', [
+      { t: 'select', label: 'Text cache lifetime', key: 'cachetext', opts: ['30 minutes', '5 minutes', '1 minute', 'No'] },
+      { t: 'toggle', label: 'Filter uploaded files', key: 'filteruploadedfiles', val: 0 },
+      { t: 'toggle', label: 'Filter all strings', key: 'filterall', val: 0, desc: 'Applies filters to headings, menus and other interface text. Can slow the site.' }]]] },
+    { id: 'theme', tab: 'Appearance', group: 'Themes', title: 'Retani theme', desc: 'Brand colours, preset and custom styles for the Retani theme.', sections: [['General', [
+      { t: 'select', label: 'Theme preset', key: 'theme_retani | preset', opts: ['retani.scss', 'default.scss', 'plain.scss'] },
+      { t: 'text', label: 'Brand colour', key: 'theme_retani | brandcolor', val: '#111111', swatch: 1 },
+      { t: 'text', label: 'Accent colour', key: 'theme_retani | accentcolor', val: '#95BF47', swatch: 1 },
+      { t: 'select', label: 'Course index position', key: 'theme_retani | courseindex', opts: ['Left drawer', 'Right drawer'] }]], ['Advanced', [
+      { t: 'textarea', label: 'Raw initial SCSS', key: 'theme_retani | scsspre', val: '$border-radius: 6px;\n$enable-shadows: false;\n$font-family-base: "Geist", sans-serif;' },
+      { t: 'textarea', label: 'Raw SCSS', key: 'theme_retani | scss', ph: '// Added after the theme’s styles' }]]] },
+    { id: 'navigation', tab: 'Appearance', group: 'Navigation', title: 'Navigation', desc: 'Where people land after signing in and how courses appear in menus.', sections: [['Navigation', [
+      { t: 'select', label: 'Start page for users', key: 'defaulthomepage', opts: ['Dashboard', 'Home', 'My courses', 'User preference'] },
+      { t: 'toggle', label: 'Show course full names', key: 'navshowfullcoursenames', val: 0 },
+      { t: 'number', label: 'Course limit', key: 'navcourselimit', val: 10, unit: 'courses' }]]] },
+    { id: 'session', tab: 'Server', group: 'Server', title: 'Session handling', desc: 'How long sign-ins last and how session cookies behave.', sections: [['Sessions', [
+      { t: 'number', label: 'Timeout', key: 'sessiontimeout', val: 8, unit: 'hours' },
+      { t: 'text', label: 'Cookie prefix', key: 'sessioncookie', ph: 'e.g. retani_' },
+      { t: 'toggle', label: 'Secure cookies only', key: 'cookiesecure', val: 1 },
+      { t: 'toggle', label: 'HTTP-only cookies', key: 'cookiehttponly', val: 1 }]]] },
+    { id: 'system-paths', tab: 'Server', group: 'Server', title: 'System paths', desc: 'Paths to programs on the server that Retani uses.', sections: [['Paths', [
+      { t: 'text', label: 'Path to du', key: 'pathtodu', ph: '/usr/bin/du' },
+      { t: 'text', label: 'Path to aspell', key: 'aspellpath', ph: '/usr/bin/aspell' },
+      { t: 'text', label: 'Path to dot', key: 'pathtodot', ph: '/usr/bin/dot' }]]] },
+    { id: 'logstore', tab: 'Reports', group: 'Logging', title: 'Standard log', desc: 'What the standard log store records and how long it keeps it.', sections: [['Logging', [
+      { t: 'toggle', label: 'Log guest access', key: 'logstore_standard | logguests', val: 1 },
+      { t: 'select', label: 'Keep logs for', key: 'logstore_standard | loglifetime', opts: ['Never delete logs', '365 days', '180 days', '90 days', '30 days'] },
+      { t: 'select', label: 'Write buffer size', key: 'logstore_standard | buffersize', opts: ['50', '100', '500'] }]]] },
+    { id: 'report-builder', tab: 'Reports', group: 'Report builder', title: 'Report builder settings', desc: 'Limits for custom reports built by managers.', sections: [['Custom reports', [
+      { t: 'toggle', label: 'Enable custom reports', key: 'enablecustomreports', val: 1 },
+      { t: 'number', label: 'Custom reports limit', key: 'customreportslimit', val: 0, desc: '0 means no limit.' },
+      { t: 'toggle', label: 'Live editing', key: 'customreportsliveediting', val: 1 }]]] },
+    { id: 'debugging', tab: 'Development', group: 'Debugging', title: 'Debugging', desc: 'Extra information to help developers find problems. Keep these off on production sites.', sections: [['Messages', [
+      { t: 'select', label: 'Debug messages', key: 'debug', locked: 1, opts: ['NONE: Do not show any errors or warnings', 'MINIMAL: Show only fatal errors', 'NORMAL: Show errors, warnings and notices', 'ALL: Show all reasonable PHP debug messages', 'DEVELOPER: Extra Moodle debug messages for developers'], val: 'DEVELOPER: Extra Moodle debug messages for developers', def: 'NONE: Do not show any errors or warnings', desc: 'Raises PHP’s error_reporting so more warnings are printed. Only useful for developers.' },
+      { t: 'toggle', label: 'Display debug messages', key: 'debugdisplay', locked: 1, val: 1, def: 'No', desc: 'Shows debug messages on the page. This breaks XHTML, JavaScript, cookies and HTTP headers. When off, messages go to the server log set by PHP’s error_log.' }]], ['Page output', [
+      { t: 'toggle', label: 'Performance info', key: 'perfdebug', locked: 1, val: 1, def: 'No', desc: 'Prints performance information in the footer of the theme.' },
+      { t: 'toggle', label: 'Show origin of language strings', key: 'debugstringids', locked: 1, val: 1, def: 'No', desc: 'Shows string components and identifiers when ?strings=1 or &strings=1 is added to the page URL.' },
+      { t: 'select', label: 'Show origin of SQL calls', key: 'debugsqltrace', opts: ['Disabled', 'Show only a single calling line', 'Show 2 calling lines', 'Show full stack trace'], desc: 'Adds a partial or full PHP stack trace to each SQL query as a comment.' },
+      { t: 'toggle', label: 'Show validator links', key: 'debugvalidators', val: 0, def: 'No', desc: 'Adds links to external validator services in the page footer. Needs a user named w3cvalidator and guest access, which may expose the site. Never enable on production.' },
+      { t: 'toggle', label: 'Show page information', key: 'debugpageinfo', locked: 1, val: 1, def: 'No', desc: 'Prints page information, such as the page type and context, in the page footer.' },
+      { t: 'toggle', label: 'Show template origin', key: 'debugtemplateinfo', val: 0, def: 'No', desc: 'Adds HTML comments marking where each Mustache template starts and ends.' }]]] },
+    { id: 'experimental', tab: 'Development', group: 'Experimental', title: 'Experimental settings', desc: 'Features still being tested. They may change or be removed.', sections: [['Experimental', [
+      { t: 'toggle', label: 'Drag and drop text and links', key: 'dndallowtextandlinks', val: 0 },
+      { t: 'toggle', label: 'Enable new grader report', key: 'grader_report_v2', val: 0 }]]] },
+  ];
+  sById = Object.fromEntries(this.sPages.map(p => [p.id, p]));
+  defv(f) {
+    if (f.t === 'toggle') return !!f.val;
+    if (f.t === 'date') return { en: false, d: '18', m: 'October', y: '2026', h: '18', mi: '54' };
+    if (f.val !== undefined) return f.t === 'number' ? String(f.val) : f.val;
+    return f.opts ? f.opts[0] : '';
+  }
+  curv(id, f) { const s = this.state; return id in s.vals ? s.vals[id] : id in s.saved ? s.saved[id] : this.defv(f); }
+  setVal(id, v) { this.setState(st => { const errs = { ...st.errs }; delete errs[id]; return { vals: { ...st.vals, [id]: v }, errs }; }); }
+  setPage(id) {
+    const p = this.sById[id], kids = this.navData[9][2];
+    let k = kids.findIndex(c => this.childMap[c] === id);
+    if (k < 0) k = kids.indexOf(p.tab);
+    if (k < 0) k = kids.indexOf(p.group);
+    this.setState(st => ({ page: id, help: null, errs: {}, edFull: false, active: k >= 0 ? '9:' + k : '9', open: { ...st.open, 9: true } }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  syncEditor() {
+    const el = this.edRef.current;
+    if (!el) { this.edEl = null; return; }
+    if (this.edEl === el && this.edFor === this.state.page) return;
+    this.edEl = el; this.edFor = this.state.page;
+    el.contentEditable = 'true';
+    el.innerHTML = this.edHtml || '';
+    this.countWords();
+  }
+  countWords() {
+    const el = this.edRef.current; if (!el) return;
+    const t = el.innerText.trim(), w = t ? t.split(/\s+/).length : 0, empty = !t && !el.querySelector('img,table,li');
+    if (w !== this.state.edWords || empty !== this.state.edEmpty) this.setState({ edWords: w, edEmpty: empty });
+  }
+  settingsVals() {
+    const st = this.state, pg = this.sById[st.page], pid = pg.id;
+    const q = st.sQuery.trim().toLowerCase();
+    const vw = st.vw, compact = vw < 1200;
+    const avail = compact ? vw - 30 : vw - (st.collapsed ? 64 : 216) - (st.drawerOpen ? 300 : 0) - 30;
+    const wideSub = avail >= 900, formW = avail - (wideSub ? 235 : 0) - 48, twoCol = formW >= 600;
+    let edId = null, hasReq = false;
+    const errCount = Object.keys(st.errs).length;
+    const sections = pg.sections.map(([title, fields], si) => {
+      const sk = pid + si, open = !st.secClosed[sk];
+      return { title, open, rot: open ? 90 : 0, count: fields.length + (fields.length === 1 ? ' setting' : ' settings'), topBorder: si ? '1px solid #DEDCD5' : '0',
+        toggle: () => this.setState(s => ({ secClosed: { ...s.secClosed, [sk]: !s.secClosed[sk] } })),
+        fields: fields.map((f, fi) => {
+          const id = pid + '|' + si + '.' + fi, v = this.curv(id, f), helpOpen = st.help === id, err = !!st.errs[id];
+          if (f.req) hasReq = true;
+          if (f.t === 'editor') { edId = id; this.edHtml = v; }
+          const o = { id: 'set-' + pid + '-' + si + '-' + fi, label: f.label, key: f.key || '', hasKey: !!f.key, req: !!f.req, help: f.help || '', hasHelp: !!f.help, helpOpen,
+            helpBg: helpOpen ? '#111111' : '#FFFFFF', helpColor: helpOpen ? '#FFFFFF' : '#111111', helpBorder: helpOpen ? '#111111' : '#DEDCD5',
+            toggleHelp: () => this.setState(s => ({ help: s.help === id ? null : id })),
+            desc: f.desc || '', hasDesc: !!f.desc, err, border: err ? '#111111' : '#DEDCD5',
+            isText: f.t === 'text', isNumber: f.t === 'number', isTextarea: f.t === 'textarea', isSelect: f.t === 'select', isToggle: f.t === 'toggle', isDate: f.t === 'date', isStatic: f.t === 'static', isEditor: f.t === 'editor',
+            value: v, ph: f.ph || '', unit: f.unit || '', opts: f.opts || [], swatch: !!f.swatch, onChange: e => this.setVal(id, e.target.value) };
+          const def = this.defv(f);
+          o.hasDef = !!f.key && f.t !== 'editor' && f.t !== 'textarea' && def !== '';
+          o.def = f.def !== undefined ? f.def : f.t === 'toggle' ? (def ? 'Yes' : 'No') : String(def);
+          o.hasDef = o.hasDef || f.def !== undefined;
+          o.ctrlBg = f.locked ? '#F4F3EF' : '#FFFFFF'; o.cursor = f.locked ? 'not-allowed' : 'pointer'; o.locked = !!f.locked; o.notLocked = !f.locked;
+          if (f.t === 'toggle') Object.assign(o, { on: !!v, track: f.locked ? (v ? '#B9B7AE' : '#DEDCD5') : v ? '#95BF47' : '#DEDCD5', knob: v ? 17 : 3, onLabel: v ? 'Yes' : 'No', onToggle: () => this.setVal(id, !this.curv(id, f)) });
+          if (f.t === 'date') {
+            const days = Array.from({ length: 31 }, (_, k) => String(k + 1)), months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const years = Array.from({ length: 7 }, (_, k) => String(2024 + k)), hours = Array.from({ length: 24 }, (_, k) => String(k).padStart(2, '0')), mins = Array.from({ length: 60 }, (_, k) => String(k).padStart(2, '0'));
+            const part = (p, label, opts, w) => ({ label, opts, w, value: v[p], onChange: e => this.setVal(id, { ...this.curv(id, f), [p]: e.target.value }) });
+            Object.assign(o, { dEn: !!v.en, dOff: !v.en, dOpacity: v.en ? 1 : .5, onDEn: e => this.setVal(id, { ...this.curv(id, f), en: e.target.checked }),
+              dParts: [part('d', 'Day', days, 70), part('m', 'Month', months, 130), part('y', 'Year', years, 88), part('h', 'Hour', hours, 70), part('mi', 'Minute', mins, 70)] });
+          }
+          return o;
+        }) };
+    });
+    this.edFieldId = edId;
+    const dirty = Object.keys(st.vals).some(k => k.indexOf(pid + '|') === 0);
+    const run = (cmd, arg) => e => {
+      e.preventDefault();
+      const el = this.edRef.current; if (!el) return;
+      if (cmd === 'full') { this.setState(s => ({ edFull: !s.edFull })); return; }
+      el.focus();
+      let a = arg;
+      if (cmd === 'createLink' || cmd === 'insertImage') { a = window.prompt(cmd === 'createLink' ? 'Link URL' : 'Image URL', 'https://'); if (!a) return; }
+      if (cmd === 'table') { document.execCommand('insertHTML', false, '<table style="border-collapse:collapse;width:100%;margin:6px 0"><tr><td style="border:1px solid #DEDCD5;padding:6px">&nbsp;</td><td style="border:1px solid #DEDCD5;padding:6px">&nbsp;</td></tr><tr><td style="border:1px solid #DEDCD5;padding:6px">&nbsp;</td><td style="border:1px solid #DEDCD5;padding:6px">&nbsp;</td></tr></table><p><br></p>'); }
+      else document.execCommand(cmd, false, a);
+      this.onEdInput();
+    };
+    const T = (title, cmd, d, glyph) => ({ title, run: run(cmd), d: d || '', isB: glyph === 'B', isI: glyph === 'I', isIcon: !glyph, bg: cmd === 'full' && st.edFull ? '#FFFFFF' : 'transparent' });
+    const groups = [
+      [T('Undo', 'undo', 'M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3'), T('Redo', 'redo', 'M15 14l5-5-5-5M20 9H9a5 5 0 0 0 0 10h3')],
+      [T('Bold', 'bold', null, 'B'), T('Italic', 'italic', null, 'I')],
+      [T('Insert image', 'insertImage', 'M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6M15.5 9.5h.01'), T('Insert link', 'createLink', 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1'), T('Remove link', 'unlink', 'M10 14a4 4 0 0 0 5.7 0l1.3-1.3M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7M4 4l16 16')],
+      [T('Align left', 'justifyLeft', 'M4 6h16M4 10h10M4 14h16M4 18h10'), T('Align centre', 'justifyCenter', 'M4 6h16M7 10h10M4 14h16M7 18h10'), T('Align right', 'justifyRight', 'M4 6h16M10 10h10M4 14h16M10 18h10')],
+      [T('Bulleted list', 'insertUnorderedList', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01'), T('Numbered list', 'insertOrderedList', 'M10 6h10M10 12h10M10 18h10M4 5l1-1v4M3.5 14.5a1.2 1.2 0 0 1 2 1L3.5 18h2.5'), T('Decrease indent', 'outdent', 'M4 6h16M11 10h9M11 14h9M4 18h16M7 9l-3 3 3 3'), T('Increase indent', 'indent', 'M4 6h16M11 10h9M11 14h9M4 18h16M4 9l3 3-3 3')],
+      [T('Insert table', 'table', 'M3 5h18v14H3zM3 10h18M3 15h18M9 5v14M15 5v14'), T('Clear formatting', 'removeFormat', 'M6 5h12M12 5l-3 14M15 15l5 5M20 15l-5 5')],
+      [T('Full height', 'full', 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5')],
+    ].map((tools, k, arr) => ({ tools, border: k === arr.length - 1 ? '0' : '1px solid #DEDCD5' }));
+    const tabGroups = [];
+    this.sPages.filter(p => p.tab === pg.tab).forEach(p => { let g = tabGroups.find(x => x.name === p.group); if (!g) tabGroups.push(g = { name: p.group, pages: [] }); g.pages.push(p); });
+    const matches = q ? this.sPages.filter(p => (p.title + ' ' + p.group + ' ' + p.tab + ' ' + p.sections.map(s => s[0] + ' ' + s[1].map(x => x.label + ' ' + (x.key || '')).join(' ')).join(' ')).toLowerCase().indexOf(q) >= 0) : [];
+    const crumbs = [{ label: 'Site administration', onClick: e => { e.preventDefault(); this.setPage('site-info'); } }, { label: pg.tab, onClick: e => { e.preventDefault(); this.setPage(this.sPages.find(p => p.tab === pg.tab).id); } }];
+    if (pg.group !== pg.tab) crumbs.push({ label: pg.group, onClick: e => { e.preventDefault(); this.setPage(this.sPages.find(p => p.group === pg.group && p.tab === pg.tab).id); } });
+    if (pg.parent) crumbs.push({ label: pg.parent, onClick: e => e.preventDefault() });
+    crumbs.push({ label: pg.title, current: true });
+    return {
+      pageTitle: 'Site administration', page: pid,
+      crumbs: crumbs.map((c, k) => ({ ...c, sep: k > 0, link: !c.current, current: !!c.current })),
+      eyebrow: pg.tab + ' · ' + pg.group, pTitle: pg.title, pDesc: pg.desc, h1Size: vw < 640 ? 24 : 30,
+      sTabs: this.sTabList.map(t => { const on = t === pg.tab; return { label: t, on, line: on ? '#111111' : 'transparent', color: on ? '#111111' : '#6B6A64', weight: on ? 600 : 400, onClick: () => this.setPage(this.sPages.find(p => p.tab === t).id) }; }),
+      setCols: wideSub ? '220px minmax(0,1fr)' : 'minmax(0,1fr)', subPos: wideSub ? 'sticky' : 'static',
+      formCols: twoCol ? 'minmax(170px,240px) minmax(0,1fr)' : 'minmax(0,1fr)', labelPad: twoCol ? 8 : 0, padX: vw < 640 ? 16 : 24,
+      sQuery: st.sQuery, onSQuery: e => this.setState({ sQuery: e.target.value }),
+      showGroups: !q && wideSub, showPageSelect: !q && !wideSub, showResults: !!q,
+      sGroups: tabGroups.map(g => ({ name: g.name, pages: g.pages.map(p => { const on = p.id === pid; return { title: p.title, onClick: () => this.setPage(p.id), bg: on ? '#F4F3EF' : 'transparent', border: on ? '#DEDCD5' : 'transparent', color: on ? '#111111' : '#6B6A64', weight: on ? 500 : 400, dot: on ? '#95BF47' : 'transparent' }; }) })),
+      tabPages: tabGroups.flatMap(g => g.pages.map(p => ({ id: p.id, label: g.name + ' › ' + p.title }))), onPageSelect: e => this.setPage(e.target.value),
+      resCount: matches.length ? matches.length + (matches.length === 1 ? ' result' : ' results') : 'No matching settings',
+      sResults: matches.map(p => ({ title: p.title, sub: p.tab + ' · ' + p.group, onClick: () => { this.setState({ sQuery: '' }); this.setPage(p.id); } })),
+      sSections: sections, edGroups: groups, edRef: this.edRef, edWords: st.edWords, edEmpty: st.edEmpty, edH: st.edFull ? 360 : 140,
+      edBorder: st.edFocus ? '#111111' : '#DEDCD5',
+      onEdFocus: () => this.setState({ edFocus: true }), onEdBlur: () => this.setState({ edFocus: false }),
+      onEdInput: this.onEdInput,
+      statusText: !dirty && !errCount && pg.sections.some(s => s[1].some(x => x.locked)) ? 'Settings marked “Defined in config.php” can only be changed in that file' : errCount ? errCount + (errCount === 1 ? ' required field is empty' : ' required fields are empty') : dirty ? 'Unsaved changes' : hasReq ? 'Fill in the fields marked Required' : 'All changes saved',
+      statusDot: errCount ? '#111111' : dirty ? '#95BF47' : '#DEDCD5',
+      sCancel: () => { this.setState(s => { const vals = {}; Object.keys(s.vals).forEach(k => { if (k.indexOf(pid + '|') !== 0) vals[k] = s.vals[k]; }); return { vals, errs: {}, help: null }; }); this.edFor = null; },
+      sSave: () => {
+        const errs = {};
+        pg.sections.forEach(([, fields], si) => fields.forEach((f, fi) => { const id = pid + '|' + si + '.' + fi; if (f.req && !String(this.curv(id, f)).trim()) errs[id] = true; }));
+        if (Object.keys(errs).length) { this.setState({ errs }); return; }
+        this.setState(s => { const vals = {}, saved = { ...s.saved }; Object.keys(s.vals).forEach(k => { if (k.indexOf(pid + '|') === 0) saved[k] = s.vals[k]; else vals[k] = s.vals[k]; }); return { vals, saved, errs: {} }; });
+        clearTimeout(this.toastT); this.setState({ toast: 'Changes saved' }); this.toastT = setTimeout(() => this.setState({ toast: null }), 2400);
+      },
+    };
+  }
+  onEdInput = () => { const el = this.edRef.current; if (!el || !this.edFieldId) return; this.setVal(this.edFieldId, el.innerHTML); this.countWords(); };
+  homeVals(menu) {
+    const { hFilter, hSort, hView, hQuery } = this.state;
+    const filters = ['All', 'In progress', 'Not started', 'Completed'];
+    const sorts = ['Course name', 'Last accessed', 'Progress'];
+    const q = hQuery.trim().toLowerCase();
+    let list = this.homeData.filter(c => {
+      const p = c[4];
+      if (hFilter === 1 && !(p > 0 && p < 100)) return false;
+      if (hFilter === 2 && p !== 0) return false;
+      if (hFilter === 3 && p !== 100) return false;
+      return !q || (c[0] + ' ' + c[1] + ' ' + c[2] + ' ' + c[3]).toLowerCase().includes(q);
+    });
+    list = [...list].sort((a, b) => hSort === 0 ? a[1].localeCompare(b[1]) : hSort === 1 ? a[6] - b[6] : (b[4] ?? -1) - (a[4] ?? -1));
+    const N = 30;
+    const opt = (labels, cur, key) => labels.map((label, i) => ({ label, bg: i === cur ? '#F4F3EF' : 'transparent', check: i === cur ? '#111111' : 'transparent', onClick: () => this.setState({ [key]: i, menu: null }) }));
+    const pill = on => on ? { bg: '#fff', border: '#DEDCD5' } : { bg: 'transparent', border: 'transparent' };
+    const seg = (n, filled, on, off) => Array.from({ length: n }, (_, i) => i < filled ? on : off);
+    const gv = [['All', 104, '#111111'], ['Active', 95, '#95BF47'], ['Online', 24, '#6B6A64']];
+    return {
+      gauges: gv.map(([label, v, color]) => ({ label, value: v, color, pct: Math.round(v / 104 * 100) + '%', dash: (226.2 * v / 104).toFixed(1) + ' 302' })),
+      siteStats: [
+        { title: 'All courses', value: '44', unit: '', meta: '6 categories', dot: '#111111', d: 'M4 5h16v11H4zM8 20h8M12 16v4' },
+        { title: 'Visible courses', value: '36', unit: 'of 44', meta: '8 hidden', dot: '#6B6A64', ring: true, ringDash: (113.1 * .82).toFixed(1) + ' 113.1', ringLabel: '82%', d: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z' },
+        { title: 'Disk usage', value: '2.17', unit: 'GB', meta: '22% of 10 GB quota', dot: '#95BF47', bar: true, segs: seg(10, 2, '#95BF47', '#DEDCD5'), d: 'M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3' },
+        { title: 'Performance problems', value: '0', unit: '', meta: 'All checks passed', dot: '#95BF47', d: 'M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7zM9 12l2 2 4-4' },
+      ],
+      hFilterOpen: menu === 'hfilter', hfilterRot: menu === 'hfilter' ? 180 : 0, toggleHFilter: () => this.toggle('hfilter'),
+      hFilterLabel: filters[hFilter], hFilters: opt(filters, hFilter, 'hFilter'),
+      hSortOpen: menu === 'hsort', hsortRot: menu === 'hsort' ? 180 : 0, toggleHSort: () => this.toggle('hsort'),
+      hSortLabel: 'Sort by ' + sorts[hSort].toLowerCase(), hSorts: opt(sorts, hSort, 'hSort'),
+      hQuery, onHQuery: e => this.setState({ hQuery: e.target.value }),
+      isCardView: hView === 'card' && list.length > 0, isListView: hView === 'list' && list.length > 0, noHomeCourses: !list.length,
+      vCard: pill(hView === 'card'), vList: pill(hView === 'list'),
+      setCardView: () => this.setState({ hView: 'card' }), setListView: () => this.setState({ hView: 'list' }),
+      homeCourses: list.map(c => ({ code: c[0], name: c[1], cat: c[2], teacher: c[3],
+        progressLabel: c[4] == null ? 'No completion criteria' : c[4] + '% complete',
+        lessons: c[4] == null ? c[5] + ' lessons' : Math.round(c[4] / 100 * c[5]) + '/' + c[5] + ' lessons',
+        segs: seg(N, c[4] == null ? 0 : Math.round(c[4] / 100 * N), c[4] === 100 ? '#95BF47' : '#95BF47', '#DEDCD5') })),
+    };
+  }
+  componentWillUnmount() { clearTimeout(this.toastT); window.removeEventListener('resize', this.onResize); document.removeEventListener('mousedown', this.onDoc); document.removeEventListener('keydown', this.onKey); }
+  componentDidUpdate(_, prev = {}) {
+    this.syncEditor();
+    const act = this.state.active, was = this._lastActive; this._lastActive = act;
+    if (was !== undefined && was !== act && act.indexOf('9:') === 0) {
+      const ch = this.navData[9][2][+this.state.active.split(':')[1]], pid = this.childMap[ch];
+      if (pid && pid !== this.state.page) this.setState({ page: pid, help: null, errs: {} });
+    } if (this.state.menu === 'search' && prev.menu !== 'search' && this.searchRef.current) this.searchRef.current.focus(); }
+  toggle(m) { this.setState(st => ({ menu: st.menu === m ? null : m, query: m === 'search' ? '' : st.query })); }
+  go(key) { const p = key.split(':')[0]; this.setState(st => ({ active: key, menu: null, navOpen: false, open: key.includes(':') ? { ...st.open, [p]: true } : st.open })); }
+  days = ['06/11','07/11','08/11','09/11','10/11','11/11','12/11','13/11','14/11','15/11','16/11','17/11','18/11','19/11','20/11','21/11','22/11','23/11','24/11','25/11','26/11','28/11','29/11','30/11','01/12','02/12','03/12','04/12','05/12','06/12'];
+  vals = [221,161,177,126,139,180,197,294,214,182,232,332,320,300,273,283,242,276,224,344,385,318,332,173,164,212,257,232,255,355];
+  courses = [
+    ['DES101','UI Design Fundamentals','Beginner','Alice Nguyen',95,92.3,'#111111'],
+    ['DES102','Figma Mastery Bootcamp','Intermediate','Linh Vo',80,88.1,'#111111'],
+    ['DES103','Visual Branding Essentials','Beginner','David Le',82,86.7,'#111111'],
+    ['DES104','Advanced UX Research','Advanced','Michael Tran',75,90.3,'#111111'],
+    ['DES105','Product Design Workflow','Intermediate','Nhi Dang',60,95.1,'#111111'],
+    ['DES106','Design System & Components','Advanced','Quynh Ha',101,94.8,'#111111'],
+  ];
+  series() {
+    if (this.state.mode === 'day') return { labels: this.days, vals: this.vals, dates: this.days.map(d => d + '/2025') };
+    const labels = [], vals = [], dates = [];
+    for (let i = 0; i < 30; i += 6) {
+      const ch = this.vals.slice(i, i + 6);
+      vals.push(Math.round(ch.reduce((a, b) => a + b, 0) / ch.length));
+      labels.push(this.days[i] + '–' + this.days[Math.min(i + 5, 29)]);
+      dates.push('Week of ' + this.days[i] + '/2025');
+    }
+    return { labels, vals, dates };
+  }
+  path(pts) {
+    if (!(this.props.smoothLine ?? false)) return 'M' + pts.map(p => p.join(',')).join('L');
+    let d = 'M' + pts[0].join(',');
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      d += `C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`;
+    }
+    return d;
+  }
+  segs(n, filled, colorsFn) { return Array.from({ length: n }, (_, i) => colorsFn ? colorsFn(i) : (i < filled ? '#95BF47' : '#DEDCD5')); }
+  renderVals() {
+    const { banner, mode, sort, filter } = this.state;
+    const s = this.series(), n = s.vals.length;
+    const pts = s.vals.map((v, i) => [i / (n - 1) * 1000, 500 - v]);
+    const def = mode === 'day' ? 11 : 1;
+    const hi = Math.min(this.state.hover ?? def, n - 1);
+    const hx = hi / (n - 1) * 100;
+    const hover = { x: hx, y: (1 - s.vals[hi] / 500) * 100, date: s.dates[hi], value: s.vals[hi], tf: hx > 78 ? 'translate(calc(-100% - 16px), -32px)' : 'translate(16px, -32px)' };
+    const { active, open, collapsed, menu, query, lang, cat, dark, read } = this.state;
+    const vw = this.state.vw, compact = vw < 1200, mobile = vw < 640;
+    const exp = compact || !collapsed;
+    const navAll = this.navData.map(([label, d, children], i) => {
+      const has = !!children, isOpen = !!open[i];
+      const pOn = active.split(':')[0] === String(i);
+      const box = (!has && pOn) || (collapsed && pOn);
+      return { label, d, hasChildren: has, expanded: exp, showChildren: exp && has && isOpen, rot: isOpen ? 180 : 0,
+        onClick: () => has ? this.setState(st => ({ collapsed: false, open: { ...st.open, [i]: st.collapsed ? true : !st.open[i] } })) : this.go(String(i)),
+        pad: exp ? '0 10px 0 6px' : '0', justify: exp ? 'flex-start' : 'center',
+        bg: box ? '#fff' : 'transparent', border: box ? '#DEDCD5' : 'transparent', shadow: box ? 'none' : 'none',
+        tileBg: pOn ? '#111111' : '#F4F3EF', tileBorder: pOn ? '#111111' : '#DEDCD5', iconColor: pOn ? '#fff' : '#6B6A64',
+        color: pOn ? '#111111' : '#6B6A64', weight: pOn ? 500 : 400,
+        children: (children || []).map((c, j) => { const on = active === i + ':' + j; return { label: c, onClick: () => this.go(i + ':' + j),
+          bg: on ? '#fff' : 'transparent', border: on ? '#DEDCD5' : 'transparent', color: on ? '#111111' : '#6B6A64', weight: on ? 500 : 400, dot: on ? '#111111' : '#DEDCD5' }; }) };
+    });
+    const nav = navAll.slice(0, 9), adminNav = navAll.slice(9);
+    const [ap, ac] = active.split(':');
+    const pageTitle = ac !== undefined ? this.navData[ap][2][ac] : this.navData[ap][0];
+    const all = [];
+    this.navData.forEach(([l, , ch], i) => ch ? ch.forEach((c, j) => all.push({ label: c, type: l, key: i + ':' + j })) : all.push({ label: l, type: 'Page', key: String(i) }));
+    const q = query.trim().toLowerCase();
+    const found = q ? all.filter(r => (r.label + ' ' + r.type).toLowerCase().includes(q)).slice(0, 7) : all.filter(r => r.type === 'My courses');
+    const btn = on => on ? { bg: '#FFFFFF', border: '#111111' } : { bg: '#F4F3EF', border: '#DEDCD5' };
+    const c0 = this.catData[cat];
+    const lv = { Beginner: ['#F4F3EF', '#95BF47'], Intermediate: ['#F4F3EF', '#111111'], Advanced: ['#F4F3EF', '#111111'] };
+    const order = { Beginner: 0, Intermediate: 1, Advanced: 2 };
+    const filters = ['All', 'Beginner', 'Intermediate', 'Advanced'];
+    let list = this.courses.filter(c => filter === 0 || c[2] === filters[filter]);
+    if (sort) list = [...list].sort((a, b) => sort.k === 2 ? (order[a[2]] - order[b[2]]) * sort.dir : (a[sort.k] - b[sort.k]) * sort.dir);
+    const rows = list.map(c => ({ code: c[0], name: c[1], level: c[2], teacher: c[3], enrolled: c[4], rate: c[5], lvBg: lv[c[2]][0], lvFg: lv[c[2]][1], avBg: c[6], initials: c[3].split(' ').map(w => w[0]).join('') }));
+    const toggleSort = k => this.setState(st => ({ sort: { k, dir: st.sort && st.sort.k === k ? -st.sort.dir : -1 } }));
+    const top = [...this.courses].sort((a, b) => b[5] - a[5]).slice(0, 3);
+    const pill = on => on ? ['#fff', '#DEDCD5'] : ['transparent', 'transparent'];
+    const docked = (this.props.sidebarStyle ?? 'docked') === 'docked';
+    return {
+      rootPad: docked ? '0' : '15px', mainPad: docked ? '15px 0' : '0',
+      asideTop: docked ? '0' : '15px', asideH: docked ? '100vh' : 'calc(100vh - 30px)',
+      asideBorder: docked ? '0' : '1px solid #DEDCD5', asideRadius: docked ? '0' : '14px', asideShadow: docked ? 'none' : 'none', userRadius: docked ? '0' : '0 0 7px 7px',
+      sideW: exp ? 216 : 64, expanded: exp, justify: exp ? 'flex-start' : 'center',
+      hdrPad: exp ? '12px 8px 12px 14px' : '12px', csPad: exp ? '0 10px 0 7px' : '0', rowPad: exp ? '0 6px' : '0', userPad: exp ? '10px 14px 12px 10px' : '10px 0 12px',
+      toggleSide: () => this.setState(st => ({ collapsed: !st.collapsed, menu: null })), toggleTitle: exp ? 'Collapse sidebar' : 'Expand sidebar',
+      pageTitle, closeMenus: () => this.setState({ menu: null }),
+      cat: { name: c0[0], code: c0[1], bg: c0[3], d: c0[4] }, courseOpen: menu === 'course', courseRot: menu === 'course' ? 180 : 0,
+      toggleCourse: () => this.toggle('course'),
+      cats: this.catData.map((c, i) => ({ name: c[0], code: c[1], count: c[2], bg: c[3], d: c[4], rowBg: i === cat ? '#F4F3EF' : 'transparent', check: i === cat ? '#111111' : 'transparent', onClick: () => this.setState({ cat: i, menu: null }) })),
+      userOpen: menu === 'user', userRot: menu === 'user' ? 180 : 0, toggleUser: () => this.toggle('user'),
+      userMenu: [['Profile'], ['Grades'], ['Calendar'], ['Private files'], ['Reports'], ['Preferences'], ['Switch role to…', 1], ['Log out', 1, '#111111']].map(([label, divider, color]) => ({ label, divider: !!divider, color: color || '#111111' })),
+      searchOpen: menu === 'search', toggleSearch: () => this.toggle('search'), searchRef: this.searchRef, query,
+      onQuery: e => this.setState({ query: e.target.value }), searchHeading: q ? 'Results' : 'My courses',
+      results: found.map(r => ({ label: r.label, type: r.type, onClick: () => this.go(r.key) })), noResults: !!q && !found.length,
+      notifOpen: menu === 'notif', toggleNotif: () => this.toggle('notif'),
+      hasUnread: this.notifData.some((_, i) => i < 2 && !read[i]),
+      notifs: this.notifData.map(([title, meta, d], i) => { const un = i < 2 && !read[i]; return { title, meta, d, weight: un ? 500 : 400, dot: un ? '#111111' : 'transparent', bg: un ? '#F4F3EF' : '#fff', onClick: () => this.setState(st => ({ read: { ...st.read, [i]: true } })) }; }),
+      markAll: () => this.setState({ read: { 0: true, 1: true } }),
+      toggleTheme: () => this.setState(st => ({ dark: !st.dark })), themeIcon: dark ? 'M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6L4.2 4.2M19.8 19.8l-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z' : 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z',
+      langOpen: menu === 'lang', langRot: menu === 'lang' ? 180 : 0, toggleLang: () => this.toggle('lang'), langShort: this.langData[lang][2],
+      langs: this.langData.map((l, i) => ({ name: l[0], code: l[1], bg: i === lang ? '#F4F3EF' : 'transparent', check: i === lang ? '#111111' : 'transparent', onClick: () => this.setState({ lang: i, menu: null }) })),
+      ...this.homeVals(menu),
+      ...this.settingsVals(),
+      ...this.drawerVals(docked),
+      ...(() => {
+        const dOpen = this.state.drawerOpen, nOpen = this.state.navOpen;
+        if (!compact) return {
+          compact: false, gridCols: (exp ? 216 : 64) + 'px minmax(0,1fr) ' + (dOpen ? 300 : 0) + 'px',
+          asidePos: 'sticky', asideWidth: 'auto', asideTf: 'none', asideZ: 20, asideMinH: '640px', dOuterW: 'auto', drawerTf: 'none', scrimOn: false,
+          ddPos: 'absolute', ddTop: '36px', ddLeft: 'auto', ddRight: '0', ddW1: '320px', ddW2: '330px',
+          topCols: 'minmax(0,1fr) minmax(0,1fr)', statCols: 'repeat(2,minmax(0,1fr))', gSize: 118, gFont: 26, hSearchW: '200px',
+          listCols: '72px minmax(0,1fr) 180px 120px', listProgDisp: 'flex' };
+        return {
+          compact: true, gridCols: 'minmax(0,1fr)', rootPad: '0', mainPad: mobile ? '12px' : '15px', rootMinW: 0,
+          asidePos: 'fixed', asideTop: '0', asideH: '100vh', asideMinH: '0', asideWidth: '248px', asideTf: nOpen ? 'none' : 'translateX(-105%)', asideZ: 95,
+          asideBorder: '0', asideRadius: '0', asideShadow: nOpen ? 'none' : 'none', userRadius: '0',
+          dOuterW: 'min(300px, 88vw)', drawerTf: dOpen ? 'none' : 'translateX(105%)', dBorder: '0', dRadius: '0',
+          scrimOn: nOpen || dOpen, toggleTitle: 'Close menu',
+          toggleSide: () => this.setState({ navOpen: false, menu: null }),
+          ddPos: mobile ? 'fixed' : 'absolute', ddTop: mobile ? '92px' : '36px', ddLeft: mobile ? '12px' : 'auto', ddRight: mobile ? '12px' : '0', ddW1: mobile ? 'auto' : '320px', ddW2: mobile ? 'auto' : '330px',
+          topCols: 'minmax(0,1fr)', statCols: vw < 440 ? 'minmax(0,1fr)' : 'repeat(2,minmax(0,1fr))',
+          gSize: vw < 480 ? 92 : 118, gFont: vw < 480 ? 21 : 26, hSearchW: mobile ? '100%' : '200px',
+          listCols: mobile ? '64px minmax(0,1fr) 104px' : '72px minmax(0,1fr) 180px 120px', listProgDisp: mobile ? 'none' : 'flex' };
+      })(),
+      ...this.msgVals(btn),
+      openNav: () => this.setState({ navOpen: true, menu: null }),
+      closePanels: () => this.setState({ navOpen: false, drawerOpen: false, menu: null }),
+      blocksOpen: this.state.blocksOpen, blockQuery: this.state.blockQuery,
+      openBlocks: () => this.setState({ blocksOpen: true, blockQuery: '', menu: null }),
+      closeBlocks: () => this.setState({ blocksOpen: false }), stop: e => e.stopPropagation(),
+      onBlockQuery: e => this.setState({ blockQuery: e.target.value }),
+      ...(() => { const bq = this.state.blockQuery.trim().toLowerCase(); const list = this.blockData.filter(b => !bq || (b[0] + ' ' + b[1]).toLowerCase().includes(bq));
+        return { noBlocks: !list.length, blockList: list.map(([name, desc, d]) => ({ name, desc, d, onClick: () => { clearTimeout(this.toastT); this.setState({ blocksOpen: false, toast: '“' + name + '” block added' }); this.toastT = setTimeout(() => this.setState({ toast: null }), 2400); } })) }; })(),
+      toastOn: !!this.state.toast, toast: this.state.toast,
+      editing: this.state.editing, toggleEdit: () => this.setState(st => ({ editing: !st.editing, drawerOpen: !st.editing })),
+      bEdit: btn(this.state.editing), editTrack: this.state.editing ? '#95BF47' : '#DEDCD5', editKnob: this.state.editing ? 13 : 2,
+      bSearch: btn(menu === 'search'), bNotif: btn(menu === 'notif'), bTheme: btn(dark), bLang: btn(menu === 'lang'),
+      nav, adminNav, bannerVisible: banner && (this.props.showBanner ?? true),
+      closeBanner: () => this.setState({ banner: false }),
+      stats: [
+        { title: 'Total Courses', value: '212', delta: '+12', b1: 22, b2: 22, d: 'M4 5h16v11H4zM8 20h8M12 16v4' },
+        { title: 'Total Students', value: '103,468', delta: '+4,638', b1: 26, b2: 18, d: 'M3 6h18v13H3zM6 16c.5-1.5 3.5-1.5 4 0M14 10h4M14 14h3M8 10.5h.01' },
+        { title: 'Completion Rate', value: '90.5%', delta: '+1,2%', b1: 24, b2: 24, d: 'M5 3h14v18H5zM9 11l2 2 4-4M9 17h6' },
+        { title: 'New Students', value: '4,638', delta: '+528', b1: 16, b2: 28, d: 'M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5' },
+      ],
+      setDay: () => this.setState({ mode: 'day', hover: null }), setWeek: () => this.setState({ mode: 'week', hover: null }),
+      dayBg: pill(mode === 'day')[0], dayBorder: pill(mode === 'day')[1], weekBg: pill(mode === 'week')[0], weekBorder: pill(mode === 'week')[1],
+      yTicks: Array.from({ length: 11 }, (_, i) => ({ label: 500 - i * 50, top: 8 + i * 24.6, line: i === 10 ? '#DEDCD5' : '#DEDCD5' })),
+      xTicks: s.labels.map((label, i) => ({ label, left: i / (n - 1) * 100 })),
+      linePath: this.path(pts), hover, plotRef: this.plotRef,
+      onMove: e => { const r = this.plotRef.current.getBoundingClientRect(); const i = Math.round((e.clientX - r.left) / r.width * (n - 1)); this.setState({ hover: Math.max(0, Math.min(n - 1, i)) }); },
+      onLeave: () => this.setState({ hover: null }),
+      rows, filterLabel: filter === 0 ? 'Filter' : filters[filter],
+      cycleFilter: () => this.setState(st => ({ filter: (st.filter + 1) % 4 })),
+      sortLevel: () => toggleSort(2), sortEnrolled: () => toggleSort(4), sortRate: () => toggleSort(5),
+      completionSegs: this.segs(62, 0, i => i < 54 ? '#95BF47' : i < 59 ? '#6B6A64' : '#111111'),
+      topCourses: top.map((c, i) => ({ label: `${i + 1}. ${c[1]}`, pct: String(c[5]).replace('.', ',') + '%', segs: this.segs(62, Math.round(c[5] / 100 * 62)) })),
+    };
+  }
+}
+</script>
+</body>
+</html>

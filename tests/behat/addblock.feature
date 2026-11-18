@@ -1,4 +1,4 @@
-@javascript @theme_retani_studio
+@javascript @theme @theme_retani_studio
 Feature: Add a block using boost theme
   In order to decide the blocks to display in the Add a block list for a theme
   As an administrator

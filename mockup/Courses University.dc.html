@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&amp;display=swap">
+<script src="./image-slot.js"></script>
+<style>
+html,body{margin:0;background:#FFFFFF;font-family:'Poppins',system-ui,sans-serif;color:#2B2F36;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:var(--ac,#8B1E3F);text-decoration:none}a:hover{color:color-mix(in oklab,var(--ac,#8B1E3F) 82%,black)}
+button,input,select{font-family:inherit}
+input[type=checkbox],input[type=radio]{accent-color:var(--ac,#8B1E3F)}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="min-width:0">
+
+  <header style="position:sticky;top:0;z-index:50;background:#FFFFFF;border-bottom:1px solid #F0F0F0">
+    <div style="max-width:1200px;margin:0 auto;padding:0 20px;height:68px;display:flex;align-items:center;gap:24px">
+      <a href="Frontpage University.dc.html" style="font-size:19px;font-weight:600;color:#2B2F36;letter-spacing:-.01em;flex:none;white-space:nowrap">Crestfield<span style="color:var(--ac,#8B1E3F)"> University</span></a>
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+        <nav style="flex:1;display:flex;justify-content:center;gap:30px;font-size:12.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase">
+          <sc-for list="{{ navLinks }}" as="n" hint-placeholder-count="5"><a href="{{ n.href }}" style="color:{{ n.color }};white-space:nowrap">{{ n.label }}</a></sc-for>
+        </nav>
+        <a href="#" style="font-size:12px;font-weight:500;color:#2B2F36;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap">Log in / Register</a>
+        <a href="#" style="height:34px;padding:0 18px;border-radius:999px;border:1.5px solid var(--ac,#8B1E3F);color:var(--ac,#8B1E3F);font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;white-space:nowrap">Contact</a>
+      </sc-if>
+      <sc-if value="{{ navNarrow }}" hint-placeholder-val="{{ false }}">
+        <span style="flex:1"></span>
+        <button onClick="{{ toggleMenu }}" aria-label="Menu" style="width:40px;height:40px;border-radius:8px;border:1px solid #E6E6E6;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2B2F36" stroke-width="2" stroke-linecap="round"><path d="{{ menuIcon }}"></path></svg></button>
+      </sc-if>
+    </div>
+    <sc-if value="{{ menuShown }}" hint-placeholder-val="{{ false }}">
+      <nav style="display:flex;flex-direction:column;padding:6px 20px 16px;border-top:1px solid #F0F0F0;font-size:14px">
+        <sc-for list="{{ navLinks }}" as="n"><a href="{{ n.href }}" onClick="{{ closeMenu }}" style="padding:10px 0;color:{{ n.color }}">{{ n.label }}</a></sc-for>
+        <a href="#" style="padding:10px 0;color:#2B2F36">Log in / Register</a>
+      </nav>
+    </sc-if>
+  </header>
+
+  <section style="background:var(--hero,#F4E6EA);padding:44px 20px 40px">
+    <div style="max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+      <nav aria-label="Breadcrumb" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:#4C5B58">
+        <a href="Frontpage University.dc.html" style="color:#4C5B58">Home</a><span>›</span><a href="#" onClick="{{ clearAll }}" style="color:#4C5B58">Courses</a>
+        <sc-if value="{{ hasCatCrumb }}" hint-placeholder-val="{{ false }}"><span>›</span><span style="color:#1F2A2A;font-weight:500">{{ catCrumb }}</span></sc-if>
+      </nav>
+      <h1 style="margin:0;font-size:clamp(26px,3.4vw,34px);line-height:1.2;font-weight:400;letter-spacing:-.01em;color:#1F2A2A">{{ pageTitle }}</h1>
+      <p style="margin:0;max-width:600px;font-size:13.5px;line-height:1.7;color:#4C5B58;text-wrap:pretty">Browse every programme and short course across our six faculties. Filter by level, study mode and fees, then enrol or request a place.</p>
+      <form onSubmit="{{ noSubmit }}" style="margin-top:8px;max-width:620px;display:flex;align-items:center;padding:5px 5px 5px 18px;border-radius:999px;background:#FFFFFF;gap:10px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A8085" stroke-width="2" stroke-linecap="round" style="flex:none"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <input value="{{ q }}" onChange="{{ onQ }}" placeholder="Search courses by name, code or lecturer" aria-label="Search courses" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:13.5px;color:#2B2F36">
+        <button type="submit" style="height:42px;padding:0 24px;border-radius:999px;border:0;background:var(--ac,#8B1E3F);color:#FFFFFF;font-size:12.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;white-space:nowrap">Search</button>
+      </form>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <span style="display:flex;align-items:center;gap:8px;height:28px;padding:0 6px 0 12px;border-radius:999px;background:rgba(255,255,255,.7);font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#4C5B58;max-width:100%;min-width:0">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ url }}</span>
+          <button onClick="{{ copyUrl }}" style="flex:none;height:20px;padding:0 9px;border-radius:999px;border:0;background:#FFFFFF;color:var(--ac,#8B1E3F);font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:500;cursor:pointer;white-space:nowrap">{{ copyLabel }}</button>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#F6F7F9;padding:36px 20px 72px">
+    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:{{ layoutCols }};gap:28px;align-items:start">
+
+      <sc-if value="{{ showFilters }}" hint-placeholder-val="{{ true }}">
+        <aside aria-label="Filters" style="position:{{ asidePos }};top:88px;display:flex;flex-direction:column;background:#FFFFFF;border:1px solid #ECEDEF;border-radius:6px;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid #F0F1F3">
+            <span style="flex:1;font-size:15px;font-weight:500;color:#1F2A2A">Filters</span>
+            <sc-if value="{{ anyActive }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clearAll }}" style="border:0;background:none;padding:0;cursor:pointer;font-size:12px;color:var(--ac,#8B1E3F);font-weight:500">Clear all</button></sc-if>
+            <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toggleFilters }}" aria-label="Close filters" style="width:30px;height:30px;border-radius:50%;border:1px solid #E3E5E8;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2B2F36" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></sc-if>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:4px;padding:16px 18px;border-bottom:1px solid #F0F1F3">
+            <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#1F2A2A;margin-bottom:8px">Course category</span>
+            <sc-for list="{{ catList }}" as="c" hint-placeholder-count="7">
+              <button onClick="{{ c.onClick }}" aria-pressed="{{ c.on }}" style="display:flex;align-items:center;gap:10px;min-height:34px;padding:0 10px;border-radius:4px;border:0;background:{{ c.bg }};cursor:pointer;text-align:left;font-size:13px;color:{{ c.color }};font-weight:{{ c.fw }}">
+                <span style="flex:1;min-width:0">{{ c.label }}</span>
+                <span style="min-width:24px;height:20px;padding:0 6px;border-radius:999px;background:{{ c.countBg }};color:{{ c.countInk }};font-size:10.5px;font-weight:500;display:flex;align-items:center;justify-content:center">{{ c.count }}</span>
+              </button>
+            </sc-for>
+          </div>
+
+          <sc-for list="{{ facets }}" as="f" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:10px;padding:16px 18px;border-bottom:1px solid #F0F1F3">
+              <button onClick="{{ f.toggle }}" aria-expanded="{{ f.open }}" style="display:flex;align-items:center;gap:8px;border:0;background:none;padding:0;cursor:pointer;text-align:left">
+                <span style="flex:1;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#1F2A2A">{{ f.title }}</span>
+                <sc-if value="{{ f.hasSel }}"><span style="height:18px;padding:0 7px;border-radius:999px;background:var(--ac,#8B1E3F);color:#FFFFFF;font-size:10px;font-weight:600;display:flex;align-items:center">{{ f.selCount }}</span></sc-if>
+                <span style="font-size:16px;line-height:1;color:var(--ac,#8B1E3F)">{{ f.sign }}</span>
+              </button>
+              <sc-if value="{{ f.open }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <sc-for list="{{ f.opts }}" as="o">
+                    <label style="display:flex;align-items:center;gap:10px;min-height:32px;cursor:pointer;font-size:13px;color:{{ o.color }}">
+                      <input type="checkbox" checked="{{ o.on }}" onChange="{{ o.onChange }}" style="width:15px;height:15px;margin:0;flex:none">
+                      <span style="flex:1;min-width:0">{{ o.label }}</span>
+                      <span style="font-size:11px;color:#9AA0A6">{{ o.count }}</span>
+                    </label>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px 18px">
+            <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#1F2A2A">Fees</span>
+            <div style="display:flex;padding:3px;border-radius:999px;background:#F1F2F4">
+              <sc-for list="{{ priceOpts }}" as="p" hint-placeholder-count="3">
+                <button onClick="{{ p.onClick }}" style="flex:1;height:28px;border-radius:999px;border:0;background:{{ p.bg }};color:{{ p.color }};font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">{{ p.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:#7A8085"><span>Max per session</span><span style="color:#1F2A2A;font-weight:500">{{ maxFeeLabel }}</span></div>
+              <input type="range" min="0" max="2000000" step="50000" value="{{ maxFee }}" onChange="{{ onMaxFee }}" aria-label="Maximum fee" style="width:100%;accent-color:var(--ac,#8B1E3F)">
+            </div>
+            <label style="display:flex;align-items:center;gap:10px;min-height:32px;cursor:pointer;font-size:13px;color:#4C5258"><input type="checkbox" checked="{{ certOnly }}" onChange="{{ toggleCert }}" style="width:15px;height:15px;margin:0">Awards a certificate</label>
+          </div>
+
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:14px 18px;border-top:1px solid #F0F1F3"><button onClick="{{ toggleFilters }}" style="width:100%;height:42px;border-radius:999px;border:0;background:var(--ac,#8B1E3F);color:#FFFFFF;font-size:12.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;cursor:pointer">Show {{ total }} courses</button></div>
+          </sc-if>
+        </aside>
+      </sc-if>
+
+      <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ toggleFilters }}" style="height:38px;padding:0 16px;border-radius:999px;border:1px solid #D9DCE0;background:#FFFFFF;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12.5px;font-weight:500;color:#2B2F36"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2B2F36" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"></path></svg>Filters<sc-if value="{{ anyActive }}"><span style="height:18px;padding:0 7px;border-radius:999px;background:var(--ac,#8B1E3F);color:#FFFFFF;font-size:10px;font-weight:600;display:flex;align-items:center">{{ activeCount }}</span></sc-if></button>
+          </sc-if>
+          <span style="flex:1;min-width:180px;font-size:13.5px;color:#4C5258"><span style="font-weight:600;color:#1F2A2A">{{ total }}</span> {{ totalWord }}{{ qNote }}</span>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#7A8085">Sort by
+            <select value="{{ sort }}" onChange="{{ onSort }}" style="height:38px;padding:0 12px;border-radius:999px;border:1px solid #D9DCE0;background:#FFFFFF;font-size:12.5px;color:#2B2F36;cursor:pointer;outline:0">
+              <option value="relevance">Relevance</option><option value="name">Course name (A–Z)</option><option value="newest">Newest first</option><option value="rating">Highest rated</option><option value="fee">Lowest fee</option>
+            </select>
+          </label>
+          <div style="display:flex;padding:3px;border-radius:999px;background:#FFFFFF;border:1px solid #E3E5E8">
+            <sc-for list="{{ views }}" as="v" hint-placeholder-count="2">
+              <button onClick="{{ v.onClick }}" aria-label="{{ v.label }}" title="{{ v.label }}" style="width:34px;height:30px;border-radius:999px;border:0;background:{{ v.bg }};display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{ v.ink }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ v.icon }}"></path></svg></button>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-if value="{{ anyActive }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+            <sc-for list="{{ chips }}" as="c">
+              <button onClick="{{ c.remove }}" style="height:30px;padding:0 8px 0 14px;border-radius:999px;border:1px solid color-mix(in oklab,var(--ac,#8B1E3F) 35%,white);background:#FFFFFF;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:#1F2A2A;white-space:nowrap"><span style="color:#9AA0A6">{{ c.k }}:</span>{{ c.v }}<span style="width:18px;height:18px;border-radius:50%;background:color-mix(in oklab,var(--ac,#8B1E3F) 12%,white);display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke-width="3.4" stroke-linecap="round" style="stroke:var(--ac,#8B1E3F)"><path d="M6 6l12 12M18 6L6 18"></path></svg></span></button>
+            </sc-for>
+            <button onClick="{{ clearAll }}" style="border:0;background:none;padding:0 6px;cursor:pointer;font-size:12px;color:var(--ac,#8B1E3F);font-weight:500">Clear all</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:{{ gridCols }};gap:22px">
+            <sc-for list="{{ courses }}" as="c" hint-placeholder-count="6">
+              <article style="display:flex;flex-direction:{{ cardDir }};background:#FFFFFF;border-radius:6px;overflow:hidden;border:1px solid #ECEDEF;min-width:0" style-hover="border-color:color-mix(in oklab,var(--ac,#8B1E3F) 50%,white)">
+                <div style="position:relative;aspect-ratio:{{ imgRatio }};width:{{ imgW }};flex:none;background:{{ c.tint }}">
+                  <image-slot id="{{ c.img }}" shape="rect" src="{{ c.src }}" credit="{{ c.credit }}" credit-href="{{ c.href }}" placeholder="Course image" style="position:absolute;inset:0"></image-slot>
+                  <span style="position:absolute;left:0;bottom:12px;height:22px;padding:0 10px;background:#2B2F36;color:#FFFFFF;font-size:10.5px;font-weight:500;display:flex;align-items:center;white-space:nowrap;pointer-events:none">{{ c.level }}</span>
+                  <sc-if value="{{ c.isNew }}"><span style="position:absolute;right:10px;top:10px;height:22px;padding:0 10px;border-radius:999px;background:var(--ac,#8B1E3F);color:#FFFFFF;font-size:10.5px;font-weight:500;display:flex;align-items:center;pointer-events:none">New</span></sc-if>
+                </div>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+                  <div style="flex:1;display:flex;flex-direction:column;gap:8px;padding:18px">
+                    <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#9AA0A6;flex-wrap:wrap"><span style="font-family:ui-monospace,Menlo,monospace;color:var(--ac,#8B1E3F)">{{ c.code }}</span><span>·</span><span>{{ c.faculty }}</span></div>
+                    <a href="#" style="font-size:15px;font-weight:500;line-height:1.4;color:#1F2A2A;text-wrap:pretty">{{ c.name }}</a>
+                    <span style="font-size:12.5px;line-height:1.65;color:#7A8085;text-wrap:pretty">{{ c.desc }}</span>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:2px">
+                      <sc-for list="{{ c.tags }}" as="t"><span style="height:22px;padding:0 9px;border-radius:999px;background:#F1F2F4;color:#4C5258;font-size:10.5px;display:flex;align-items:center;white-space:nowrap">{{ t }}</span></sc-for>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#7A8085"><span style="color:#F6B21B;letter-spacing:1px;white-space:nowrap">★★★★★</span><span style="white-space:nowrap">{{ c.rating }} ({{ c.reviews }})</span></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid #F0F1F3">
+                    <span style="width:30px;height:30px;flex:none;border-radius:50%;background:{{ c.avBg }};color:#FFFFFF;font-size:10.5px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ c.initials }}</span>
+                    <div style="flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3"><span style="font-size:12px;font-weight:500;color:#1F2A2A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.by }}</span><span style="font-size:10.5px;color:#9AA0A6">{{ c.dur }}</span></div>
+                    <span style="font-size:14px;font-weight:600;color:{{ c.priceColor }};white-space:nowrap">{{ c.price }}</span>
+                  </div>
+                </div>
+              </article>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:64px 20px;background:#FFFFFF;border:1px dashed #D9DCE0;border-radius:6px;text-align:center">
+            <span style="width:64px;height:64px;border-radius:50%;border:1.5px dashed color-mix(in oklab,var(--ac,#8B1E3F) 50%,white);display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" style="stroke:var(--ac,#8B1E3F)"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></span>
+            <span style="font-size:16px;font-weight:500;color:#1F2A2A">No courses match these filters</span>
+            <span style="max-width:360px;font-size:13px;line-height:1.7;color:#7A8085">Try removing a filter or searching for a broader term.</span>
+            <button onClick="{{ clearAll }}" style="margin-top:6px;height:40px;padding:0 24px;border-radius:999px;border:0;background:var(--ac,#8B1E3F);color:#FFFFFF;font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;cursor:pointer">Clear all filters</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasPages }}" hint-placeholder-val="{{ true }}">
+          <nav aria-label="Pagination" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;flex-wrap:wrap">
+            <button onClick="{{ prevPage }}" aria-label="Previous page" style="width:38px;height:38px;border-radius:50%;border:1px solid #D9DCE0;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;opacity:{{ prevOp }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2B2F36" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+            <sc-for list="{{ pages }}" as="p" hint-placeholder-count="3">
+              <button onClick="{{ p.onClick }}" aria-current="{{ p.cur }}" style="width:38px;height:38px;border-radius:50%;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }};font-size:13px;font-weight:500;cursor:pointer;padding:0">{{ p.n }}</button>
+            </sc-for>
+            <button onClick="{{ nextPage }}" aria-label="Next page" style="width:38px;height:38px;border-radius:50%;border:1px solid #D9DCE0;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;opacity:{{ nextOp }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2B2F36" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></button>
+          </nav>
+        </sc-if>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--ac,#8B1E3F);padding:28px 20px">
+    <div style="max-width:1000px;margin:0 auto;display:flex;align-items:center;flex-wrap:wrap;gap:16px 24px">
+      <span style="flex:1;min-width:240px;font-size:17px;font-weight:500;color:#FFFFFF">Can’t find the right course? Talk to an admissions adviser</span>
+      <a href="#" style="height:38px;padding:0 24px;border-radius:999px;border:1.5px solid #FFFFFF;color:#FFFFFF;font-size:11.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;white-space:nowrap" style-hover="background:#FFFFFF;color:var(--ac,#8B1E3F)">Contact admissions</a>
+    </div>
+  </section>
+
+  <footer style="background:var(--deep,#2A1720);color:#C9CDD2;padding:56px 20px 0">
+    <div style="max-width:1000px;margin:0 auto;display:grid;grid-template-columns:{{ footCols }};gap:32px">
+      <sc-for list="{{ footLinks }}" as="c" hint-placeholder-count="3">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#FFFFFF">{{ c.t }}</span>
+          <sc-for list="{{ c.links }}" as="l"><a href="#" style="font-size:12.5px;color:#A9AFB6" style-hover="color:#FFFFFF">{{ l }}</a></sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="max-width:1000px;margin:44px auto 0;padding:18px 0;border-top:1px solid #3D4148;text-align:center;font-size:11.5px;color:#8A9098">© 2026 Crestfield University. Powered by <span style="color:var(--ac,#8B1E3F)">Moodle</span>.</div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;palette&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;label&quot;:&quot;Palette (accent · hero · footer)&quot;,&quot;options&quot;:[[&quot;#8B1E3F&quot;,&quot;#F4E6EA&quot;,&quot;#2A1720&quot;],[&quot;#1E3A8A&quot;,&quot;#E3E9F7&quot;,&quot;#141D33&quot;],[&quot;#0F5F4F&quot;,&quot;#DFEFEA&quot;,&quot;#13261F&quot;],[&quot;#5B2A86&quot;,&quot;#ECE4F5&quot;,&quot;#211633&quot;]],&quot;default&quot;:[&quot;#8B1E3F&quot;,&quot;#F4E6EA&quot;,&quot;#2A1720&quot;],&quot;tsType&quot;:&quot;string[]&quot;}}">
+class Component extends DCLogic {
+  BASE = 'http://localhost:8000/course/index.php';
+  CATS = [[1, 'Computing & IT'], [2, 'Business School'], [3, 'Health Sciences'], [4, 'Engineering'], [5, 'Law'], [6, 'Arts & Humanities']];
+  PH = [['1531482615713-2afd69097998', 'X', 'disruptxn'], ['1507537297725-24a1c029d3ca', 'LinkedIn Sales Solutions', 'linkedinsalesnavigator'], ['1552652893-2aa10a0ab4df', 'bruce mars', 'brucemars'], ['1666281238998-59842bf7e10c', 'Fatima Yusuf', 'fatima_yusuf'], ['1744809482817-9a9d4fc280af', 'David Geneugelijk', 'davidgeneugelijk'], ['1716654716572-7b13ad56ba63', 'Makmot Robin', 'makmot'], ['1573164574572-cb89e39749b4', 'Christina @ wocintechchat.com M', 'wocintechchat'], ['1759852692971-a2abc6799cbd', 'Oluwaseyi Akinlolu', 'seyilostboy'], ['1694175271713-a6e2cc378980', 'Seth Ebenezer Tetteh', 'setmultimedia'], ['1632215863153-0dae7657d0a9', 'Emmanuel Ikwuegbu', 'emmages']];
+  // [code, name, desc, cat, level, mode, duration, fee, rating, reviews, lecturer, cert, new]
+  C = [
+    ['CSC101', 'B.Sc. Computer Science', 'Programming, algorithms and systems with a final-year industry project.', 1, 'Undergraduate', 'Blended', '4 years', 450000, 4.8, 312, 'Prof. Olumide Akin', true, false],
+    ['CSC305', 'Software Engineering with Python', 'Design, test and ship production software in small teams.', 1, 'Short course', 'Online', '10 weeks', 120000, 4.7, 188, 'Dr. Amaka Obi', true, true],
+    ['DSC610', 'M.Sc. Data Science', 'Statistics, machine learning and data engineering for analysts.', 1, 'Postgraduate', 'Online', '18 months', 1350000, 4.9, 142, 'Dr. Tunde Bakare', true, false],
+    ['CYB210', 'Cybersecurity Fundamentals', 'Threats, defences and security operations for beginners.', 1, 'Professional', 'Online', '8 weeks', 95000, 4.6, 260, 'Engr. Femi Lawal', true, true],
+    ['ACC101', 'B.Sc. Accounting', 'A professionally aligned curriculum with ICAN exam exemptions.', 2, 'Undergraduate', 'On campus', '4 years', 400000, 4.7, 268, 'Dr. Halima Sani', true, false],
+    ['MBA700', 'Executive MBA', 'Strategy, finance and leadership for working professionals.', 2, 'Postgraduate', 'Blended', '18 months', 1800000, 4.9, 194, 'Prof. Bayo Adeniran', true, false],
+    ['ENT150', 'Entrepreneurship Essentials', 'Validate an idea, build a business model and pitch to investors.', 2, 'Short course', 'Online', '6 weeks', 0, 4.5, 540, 'Chinedu Eze', false, false],
+    ['DMK220', 'Digital Marketing', 'SEO, paid social and analytics with real campaign briefs.', 2, 'Professional', 'Online', '12 weeks', 150000, 4.6, 233, 'Ifeoma Nwosu', true, true],
+    ['MPH620', 'M.Sc. Public Health', 'Epidemiology, health policy and programme evaluation.', 3, 'Postgraduate', 'Blended', '2 years', 1200000, 4.8, 121, 'Dr. Chioma Udeh', true, false],
+    ['NUR101', 'B.N.Sc. Nursing Science', 'Clinical practice and theory with teaching-hospital placements.', 3, 'Undergraduate', 'On campus', '5 years', 520000, 4.7, 176, 'Dr. Grace Adebayo', true, false],
+    ['FAD110', 'First Aid & Emergency Response', 'Practical life-saving skills for the workplace.', 3, 'Short course', 'On campus', '2 weeks', 0, 4.8, 610, 'Nurse Bola Ajayi', true, false],
+    ['CVE101', 'B.Eng. Civil Engineering', 'Structures, materials and site management for growing cities.', 4, 'Undergraduate', 'On campus', '5 years', 480000, 4.6, 154, 'Engr. Kunle Adeyemi', true, false],
+    ['REN410', 'Renewable Energy Systems', 'Design and size solar and hybrid power for homes and SMEs.', 4, 'Professional', 'Blended', '10 weeks', 180000, 4.7, 98, 'Engr. Zainab Bello', true, true],
+    ['LAW101', 'LL.B. Law', 'Nigerian and common law foundations with moot court practice.', 5, 'Undergraduate', 'On campus', '5 years', 550000, 4.8, 201, 'Prof. Ngozi Okeke', true, false],
+    ['LAW520', 'LL.M. Commercial Law', 'Contracts, corporate governance and dispute resolution.', 5, 'Postgraduate', 'Blended', '1 year', 950000, 4.7, 64, 'Dr. Sola Martins', true, false],
+    ['ENG120', 'Academic Writing', 'Research, argument and referencing for university study.', 6, 'Short course', 'Online', '4 weeks', 0, 4.6, 720, 'Dr. Adaeze Okafor', false, false],
+    ['MCM210', 'B.A. Mass Communication', 'Journalism, broadcasting and media production.', 6, 'Undergraduate', 'On campus', '4 years', 380000, 4.5, 143, 'Dr. Yemi Alade', true, false],
+    ['FRN105', 'French for Professionals', 'Conversational and business French, beginner to B1.', 6, 'Short course', 'Online', '12 weeks', 60000, 4.7, 205, 'Mme. Aïcha Diallo', true, true],
+  ];
+  FACETS = [['level', 'Level', ['Undergraduate', 'Postgraduate', 'Professional', 'Short course'], 4], ['mode', 'Study mode', ['Online', 'Blended', 'On campus'], 5]];
+  avs = [['#0E7C5A', '#DFF3EA'], ['#1F4E9C', '#E3ECFA'], ['#B26A00', '#FBEFD9'], ['#9C2F5E', '#F8E3EC'], ['#6A3FB5', '#ECE4F8'], ['#0E6E8C', '#DFF0F5']];
+  PER = 9;
+  init() {
+    const st = { q: '', cat: 0, level: [], mode: [], price: 'any', maxFee: 2000000, certOnly: false, sort: 'relevance', page: 1 };
+    try { const u = new URLSearchParams(window.location.search); if (u.get('search')) st.q = u.get('search'); const c = +u.get('categoryid'); if (this.CATS.some(x => x[0] === c)) st.cat = c; } catch (_) {}
+    return st;
+  }
+  state = { ...this.init(), view: 'grid', open: { level: true, mode: true }, filtersOpen: false, menu: false, copied: false, vw: typeof window !== 'undefined' ? window.innerWidth : 1280 };
+  rootRef = el => { this.root = el; this.applyTheme(); };
+  palette() { const d = ['#8B1E3F', '#F4E6EA', '#2A1720'], p = this.props.palette; if (Array.isArray(p) && p.length) return [p[0], p[1] || d[1], p[2] || d[2]]; return d; }
+  applyTheme() { if (!this.root) return; const [a, h, k] = this.palette(); this.root.style.setProperty('--ac', a); this.root.style.setProperty('--hero', h); this.root.style.setProperty('--deep', k); }
+  componentDidMount() { this.onR = () => this.setState({ vw: window.innerWidth }); window.addEventListener('resize', this.onR); this.onR(); this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+  componentWillUnmount() { window.removeEventListener('resize', this.onR); clearTimeout(this.ct); }
+  set(patch) { this.setState({ ...patch, page: 1 }); }
+  match(c, s, skip) {
+    const q = s.q.trim().toLowerCase();
+    if (q && !(c[0] + ' ' + c[1] + ' ' + c[2] + ' ' + c[10]).toLowerCase().includes(q)) return false;
+    if (skip !== 'cat' && s.cat && c[3] !== s.cat) return false;
+    if (skip !== 'level' && s.level.length && !s.level.includes(c[4])) return false;
+    if (skip !== 'mode' && s.mode.length && !s.mode.includes(c[5])) return false;
+    if (s.price === 'free' && c[7]) return false;
+    if (s.price === 'paid' && !c[7]) return false;
+    if (c[7] > s.maxFee) return false;
+    if (s.certOnly && !c[11]) return false;
+    return true;
+  }
+  renderVals() {
+    const s = this.state, vw = s.vw, wide = vw >= 1040, desk = vw >= 900, AC = 'var(--ac,#8B1E3F)';
+    const ngn = n => '₦' + n.toLocaleString('en-NG');
+    let list = this.C.filter(c => this.match(c, s));
+    const sorters = { name: (a, b) => a[1].localeCompare(b[1]), newest: (a, b) => (b[12] - a[12]) || (this.C.indexOf(b) - this.C.indexOf(a)), rating: (a, b) => b[8] - a[8], fee: (a, b) => a[7] - b[7] };
+    if (sorters[s.sort]) list = [...list].sort(sorters[s.sort]);
+    const total = list.length, pagesN = Math.max(1, Math.ceil(total / this.PER)), page = Math.min(s.page, pagesN);
+    const shown = list.slice((page - 1) * this.PER, page * this.PER);
+    const catName = id => (this.CATS.find(c => c[0] === id) || [0, ''])[1];
+
+    const params = [];
+    if (s.cat) params.push('categoryid=' + s.cat);
+    if (s.q.trim()) params.push('search=' + encodeURIComponent(s.q.trim()));
+    if (s.level.length) params.push('level=' + s.level.map(l => l.toLowerCase().replace(/\s+/g, '')).join(','));
+    if (s.mode.length) params.push('mode=' + s.mode.map(l => l.toLowerCase().replace(/\s+/g, '')).join(','));
+    if (s.price !== 'any') params.push('price=' + s.price);
+    if (s.maxFee < 2000000) params.push('maxfee=' + s.maxFee);
+    if (s.certOnly) params.push('certificate=1');
+    if (s.sort !== 'relevance') params.push('sort=' + s.sort);
+    if (page > 1) params.push('page=' + (page - 1));
+    const url = this.BASE + (params.length ? '?' + params.join('&') : '');
+
+    const chips = [];
+    if (s.q.trim()) chips.push({ k: 'Search', v: s.q.trim(), remove: () => this.set({ q: '' }) });
+    if (s.cat) chips.push({ k: 'Category', v: catName(s.cat), remove: () => this.set({ cat: 0 }) });
+    s.level.forEach(l => chips.push({ k: 'Level', v: l, remove: () => this.set({ level: s.level.filter(x => x !== l) }) }));
+    s.mode.forEach(l => chips.push({ k: 'Mode', v: l, remove: () => this.set({ mode: s.mode.filter(x => x !== l) }) }));
+    if (s.price !== 'any') chips.push({ k: 'Fees', v: s.price === 'free' ? 'Free' : 'Paid', remove: () => this.set({ price: 'any' }) });
+    if (s.maxFee < 2000000) chips.push({ k: 'Max fee', v: ngn(s.maxFee), remove: () => this.set({ maxFee: 2000000 }) });
+    if (s.certOnly) chips.push({ k: 'Certificate', v: 'Yes', remove: () => this.set({ certOnly: false }) });
+
+    const catPool = this.C.filter(c => this.match(c, s, 'cat'));
+    const catList = [[0, 'All categories'], ...this.CATS].map(([id, label]) => { const on = s.cat === id, count = id ? catPool.filter(c => c[3] === id).length : catPool.length;
+      return { label, count, on, onClick: () => this.set({ cat: id }), bg: on ? 'color-mix(in oklab,' + AC + ' 10%,white)' : 'transparent', color: on ? AC : '#4C5258', fw: on ? 500 : 400, countBg: on ? AC : '#F1F2F4', countInk: on ? '#FFFFFF' : '#7A8085' }; });
+    const facets = this.FACETS.map(([key, title, opts, idx]) => { const pool = this.C.filter(c => this.match(c, s, key)), sel = s[key], open = !!s.open[key];
+      return { title, open, sign: open ? '−' : '+', hasSel: sel.length > 0, selCount: sel.length, toggle: () => this.setState(st => ({ open: { ...st.open, [key]: !st.open[key] } })),
+        opts: opts.map(label => { const on = sel.includes(label), count = pool.filter(c => c[idx] === label).length; return { label, on, count, color: count || on ? '#4C5258' : '#B5BAC0', onChange: () => this.set({ [key]: on ? sel.filter(x => x !== label) : [...sel, label] }) }; }) }; });
+
+    const listView = s.view === 'list' && vw >= 640;
+    const cols = listView ? 1 : desk ? (vw >= 1180 ? 3 : 2) : vw >= 600 ? 2 : 1;
+    return {
+      rootRef: this.rootRef, wide, navNarrow: !wide, narrow: !desk, menuShown: !wide && s.menu, menuIcon: s.menu ? 'M6 6l12 12M18 6L6 18' : 'M4 7h16M4 12h16M4 17h16',
+      toggleMenu: () => this.setState(st => ({ menu: !st.menu })), closeMenu: () => this.setState({ menu: false }),
+      navLinks: [['Home', 'Frontpage University.dc.html'], ['Courses', '#'], ['Faculties', '#'], ['Tuition', '#'], ['News', '#']].map(([label, href], i) => ({ label, href, color: i === 1 ? AC : '#2B2F36' })),
+      pageTitle: s.cat ? catName(s.cat) : 'All courses', hasCatCrumb: !!s.cat, catCrumb: catName(s.cat),
+      q: s.q, onQ: e => this.set({ q: e.target.value }), noSubmit: e => e.preventDefault(),
+      url, copyLabel: s.copied ? 'Copied' : 'Copy link',
+      copyUrl: () => { try { navigator.clipboard.writeText(url); } catch (_) {} clearTimeout(this.ct); this.setState({ copied: true }); this.ct = setTimeout(() => this.setState({ copied: false }), 1600); },
+      layoutCols: desk ? '280px minmax(0,1fr)' : 'minmax(0,1fr)', showFilters: desk || s.filtersOpen, asidePos: desk ? 'sticky' : 'relative',
+      toggleFilters: () => this.setState(st => ({ filtersOpen: !st.filtersOpen })),
+      catList, facets,
+      priceOpts: [['any', 'Any'], ['free', 'Free'], ['paid', 'Paid']].map(([k, label]) => ({ label, onClick: () => this.set({ price: k }), bg: s.price === k ? '#FFFFFF' : 'transparent', color: s.price === k ? '#1F2A2A' : '#7A8085' })),
+      maxFee: s.maxFee, maxFeeLabel: s.maxFee >= 2000000 ? 'No limit' : ngn(s.maxFee), onMaxFee: e => this.set({ maxFee: +e.target.value }),
+      certOnly: s.certOnly, toggleCert: () => this.set({ certOnly: !s.certOnly }),
+      anyActive: chips.length > 0, activeCount: chips.length, chips, clearAll: e => { if (e && e.preventDefault) e.preventDefault(); this.set({ q: '', cat: 0, level: [], mode: [], price: 'any', maxFee: 2000000, certOnly: false }); },
+      total, totalWord: total === 1 ? 'course' : 'courses', qNote: s.q.trim() ? ' for “' + s.q.trim() + '”' : '',
+      sort: s.sort, onSort: e => this.set({ sort: e.target.value }),
+      views: [['grid', 'Grid view', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'], ['list', 'List view', 'M4 6h16M4 12h16M4 18h16']].map(([k, label, icon]) => ({ label, icon, bg: s.view === k ? AC : 'transparent', ink: s.view === k ? '#FFFFFF' : '#7A8085', onClick: () => this.setState({ view: k }) })),
+      gridCols: 'repeat(' + cols + ',minmax(0,1fr))', cardDir: listView ? 'row' : 'column', imgRatio: listView ? 'auto' : '16 / 10', imgW: listView ? '260px' : 'auto',
+      hasResults: total > 0, noResults: total === 0,
+      courses: shown.map(c => { const k = this.C.indexOf(c), av = this.avs[k % this.avs.length], p = this.PH[k % this.PH.length];
+        return { code: c[0], name: c[1], desc: c[2], faculty: catName(c[3]), level: c[4], tags: [c[5], c[6], ...(c[11] ? ['Certificate'] : [])], rating: c[8], reviews: c[9].toLocaleString('en-NG') + ' reviews',
+          by: c[10], dur: c[6] + ' · ' + c[5], price: c[7] ? ngn(c[7]) : 'Free', priceColor: c[7] ? '#2B2F36' : '#1E9E64', isNew: c[12], avBg: av[0], tint: av[1],
+          initials: c[10].replace(/^(Mrs?\.|Mme\.|Dr\.|Prof\.|Engr\.|Nurse)\s+/, '').split(' ').map(w => w[0]).join('').slice(0, 2),
+          img: 'uni-cat-' + k, src: 'https://images.unsplash.com/photo-' + p[0] + '?w=900&q=70&auto=format&fit=crop', credit: p[1], href: 'https://unsplash.com/@' + p[2] }; }),
+      hasPages: pagesN > 1, prevOp: page > 1 ? 1 : 0.4, nextOp: page < pagesN ? 1 : 0.4,
+      prevPage: () => page > 1 && this.setState({ page: page - 1 }), nextPage: () => page < pagesN && this.setState({ page: page + 1 }),
+      pages: Array.from({ length: pagesN }, (_, i) => { const cur = i + 1 === page; return { n: i + 1, cur, onClick: () => this.setState({ page: i + 1 }), bg: cur ? AC : '#FFFFFF', color: cur ? '#FFFFFF' : '#2B2F36', border: cur ? AC : '#D9DCE0' }; }),
+      footCols: vw >= 760 ? '1fr 1fr 1fr' : vw >= 480 ? '1fr 1fr' : '1fr',
+      footLinks: [{ t: 'Study', links: ['Undergraduate', 'Postgraduate', 'Professional', 'Short courses'] }, { t: 'Students', links: ['Student portal', 'Library', 'Timetables', 'Support'] }, { t: 'University', links: ['About Crestfield', 'Faculties', 'News', 'Contact'] }],
+    };
+  }
+}
+</script>
+</body>
+</html>

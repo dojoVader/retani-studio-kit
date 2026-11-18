@@ -1,4 +1,4 @@
-@core @core_course @theme_retani_studio
+@core @core_course @theme @theme_retani_studio
 Feature: Role assignments can be made at the category level
   In order to grant a user different capabilities
   As a user

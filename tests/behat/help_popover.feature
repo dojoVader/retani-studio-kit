@@ -1,4 +1,4 @@
-@theme_retani_studio
+@theme @theme_retani_studio
 Feature: Using the help popover
   As a user who wants to use the help popover
   The help popover must be accessible

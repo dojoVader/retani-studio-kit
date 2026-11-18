@@ -1,4 +1,4 @@
-@theme_retani_studio
+@theme @theme_retani_studio
 Feature: Course sections selector is not available on boost theme
   In order to navigate the course using the course index drawer
   As admin

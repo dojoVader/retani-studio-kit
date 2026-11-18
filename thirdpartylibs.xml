@@ -24,4 +24,15 @@
       <copyright>2022 The Noto Project Authors</copyright>
     </copyrights>
   </library>
+  <library>
+    <location>pix/login</location>
+    <name>Login carousel photos</name>
+    <description>Default images for the login page carousel (slide1.jpg to slide4.jpg), from Unsplash: photo-1522202176988-66273c2fd55f, photo-1523240795612-9a054b0db644, photo-1524178232363-1fb2b075b655 and photo-1513258496099-48168024aec0 on images.unsplash.com.</description>
+    <version>2026-10-26</version>
+    <license>Unsplash License</license>
+    <repository>https://unsplash.com/license</repository>
+    <copyrights>
+      <copyright>The photographers on Unsplash</copyright>
+    </copyrights>
+  </library>
 </libraries>

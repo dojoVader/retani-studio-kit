@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap">
+<style>
+html,body{margin:0;background:#F4F3EF;font-family:'Geist',system-ui,sans-serif;color:#111111;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#111111;text-decoration-color:#95BF47;text-underline-offset:3px}a:hover{color:#6B6A64}
+button,input{font-family:inherit}
+input::placeholder{color:#6B6A64}
+</style>
+</helmet>
+<div style="display:grid;grid-template-columns:{{ cols }};gap:20px;padding:20px;min-height:100vh;background:#F4F3EF">
+
+  <section style="display:{{ panelDisplay }};position:relative;overflow:hidden;border-radius:8px;background:#111111;min-height:760px;flex-direction:column;align-items:center">
+
+    <div style="position:relative;margin-top:42px;display:flex;align-items:center;gap:9px">
+      <span style="flex:1;font-size:28px;font-weight:600;letter-spacing:-.05em;line-height:1;color:#F4F3EF;padding-left:2px">retani<span style="color:#95BF47">.</span></span>
+    </div>
+
+    <div style="position:relative;margin-top:110px;max-width:500px;text-align:center;color:#fff;padding:0 24px">
+      <h2 style="margin:0;font-size:25px;font-weight:700;letter-spacing:-.01em;text-wrap:balance">“{{ slide.title }}”</h2>
+      <p style="margin:12px 0 0;font-size:14.5px;line-height:1.5;color:#DEDCD5;text-wrap:pretty">{{ slide.body }}</p>
+    </div>
+
+    <div ref="{{ frameRef }}" style="position:relative;margin-top:52px;width:min(574px,100% - 48px);aspect-ratio:574/380">
+      <div style="position:absolute;left:20px;right:20px;top:-14px;bottom:-14px;border-radius:8px;background:rgba(255,255,255,.14);transform:rotate(-1.5deg)"></div>
+      <div style="position:absolute;inset:0;border-radius:6px;overflow:hidden;background:#fff;box-shadow:none">
+        <iframe src="Retani Dashboard.dc.html" title="Dashboard preview" tabindex="-1" style="width:1440px;height:952px;border:0;transform:scale({{ scale }});transform-origin:0 0;pointer-events:none"></iframe>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:24px;right:24px;bottom:22px;display:flex;align-items:center;justify-content:space-between">
+      <button onClick="{{ prev }}" style="width:28px;height:28px;border-radius:50%;border:0;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:rgba(255,255,255,.34)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+      <div style="display:flex;gap:12px">
+        <sc-for list="{{ dots }}" as="d" hint-placeholder-count="4">
+          <span onClick="{{ d.go }}" style="width:6px;height:6px;border-radius:50%;background:{{ d.bg }};cursor:pointer"></span>
+        </sc-for>
+      </div>
+      <button onClick="{{ next }}" style="width:28px;height:28px;border-radius:50%;border:0;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:rgba(255,255,255,.34)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></button>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;align-items:center;min-width:0">
+    <form onSubmit="{{ submit }}" style="flex:1;width:100%;max-width:456px;display:flex;flex-direction:column;justify-content:center;padding:40px 0">
+      <h1 style="margin:0;font-size:30px;font-weight:500;letter-spacing:-.015em">Log in to your Account</h1>
+      <p style="margin:10px 0 0;font-size:13.5px;color:#6B6A64">Enter your information to access your account</p>
+
+      <div style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <button type="button" style="height:44px;border-radius:6px;border:1px solid #DEDCD5;background:#fff;box-shadow:none;display:flex;align-items:center;justify-content:center;gap:10px;white-space:nowrap;padding:0 10px;font-size:14px;color:#111111;cursor:pointer" style-hover="background:#F4F3EF">
+          <svg width="20" height="20" viewBox="0 0 24 24" style="flex:none"><path d="M22.5 12.2c0-.8-.1-1.4-.2-2.1H12v4h5.9c-.3 1.4-1.1 2.6-2.3 3.4v2.8h3.7c2.1-2 3.2-4.9 3.2-8.1z" fill="#4285F4"></path><path d="M12 23c3 0 5.6-1 7.4-2.7l-3.7-2.8c-1 .7-2.3 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.6H2v2.9C3.9 20.6 7.7 23 12 23z" fill="#34A853"></path><path d="M5.8 14c-.2-.7-.4-1.4-.4-2s.1-1.4.4-2V7.1H2C1.3 8.6.9 10.2.9 12s.4 3.4 1.1 4.9z" fill="#FBBC05"></path><path d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2C17.6 2.1 15 1 12 1 7.7 1 3.9 3.4 2 7.1L5.8 10c.9-2.7 3.3-4.6 6.2-4.6z" fill="#EA4335"></path></svg>
+          Log in with Google
+        </button>
+        <button type="button" style="height:44px;border-radius:6px;border:1px solid #DEDCD5;background:#fff;box-shadow:none;display:flex;align-items:center;justify-content:center;gap:10px;white-space:nowrap;padding:0 10px;font-size:14px;color:#111111;cursor:pointer" style-hover="background:#F4F3EF">
+          <svg width="18" height="20" viewBox="0 0 24 24" fill="#111" style="flex:none"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z"></path></svg>
+          Log in with Apple
+        </button>
+      </div>
+
+      <div style="margin-top:28px;display:flex;align-items:center;gap:12px;font-size:12px;color:#6B6A64">
+        <span style="flex:1;height:1px;background:#DEDCD5"></span>or continue with email<span style="flex:1;height:1px;background:#DEDCD5"></span>
+      </div>
+
+      <label style="margin-top:36px;font-size:13.5px;font-weight:500">Email address</label>
+      <input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="you@school.edu" style="margin-top:10px;height:44px;padding:0 15px;border-radius:6px;border:1px solid #DEDCD5;background:#fff;font-size:14px;color:#111111;outline:none;box-shadow:none" style-focus="border-color:#111111;box-shadow:none">
+
+      <label style="margin-top:24px;font-size:13.5px;font-weight:500">Password</label>
+      <div style="position:relative;margin-top:10px">
+        <input type="{{ pwType }}" value="{{ password }}" onChange="{{ onPassword }}" placeholder="Enter your password" style="width:100%;height:44px;padding:0 44px 0 15px;border-radius:6px;border:1px solid #DEDCD5;background:#fff;font-size:14px;color:#111111;outline:none;letter-spacing:.06em;box-shadow:none" style-focus="border-color:#111111;box-shadow:none">
+        <button type="button" onClick="{{ togglePw }}" aria-label="Toggle password visibility" style="position:absolute;right:10px;top:10px;width:24px;height:24px;border:0;background:none;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="1.8" stroke-linecap="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle><path d="{{ eyeSlash }}"></path></svg>
+        </button>
+      </div>
+
+      <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;font-size:13px">
+        <label onClick="{{ toggleRemember }}" style="display:flex;align-items:center;gap:7px;color:#111111;cursor:pointer">
+          <span style="width:15px;height:15px;border-radius:4px;border:1px solid {{ rememberBorder }};background:{{ rememberBg }};display:flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>
+          Remember me
+        </label>
+        <a href="#" style="color:#111111;text-decoration:none">Forgot password?</a>
+      </div>
+
+      <button type="submit" style="margin-top:22px;height:44px;border-radius:6px;border:1px solid #111111;background:#7756E4;color:#fff;font-size:14.5px;font-weight:500;cursor:pointer;box-shadow:none" style-hover="background:#111111">Login</button>
+
+      <p style="margin:24px 0 0;text-align:center;font-size:13px;color:#111111">Don’t have an account? <a href="#" style="color:#111111;text-underline-offset:2px">Sign Up!</a></p>
+    </form>
+    <p style="margin:0 0 4px;font-size:12.5px;color:#6B6A64">Copyright © 2026 Retani Consults. All rights reserved</p>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { i: 1, email: 'tnbao2212@gmail.com', password: 'retani-admin-24', show: false, remember: true };
+  slides = [
+    { title: 'Teach better with clearer data', body: 'See how every course, lesson and learner is performing — in one place, updated in real time.' },
+    { title: 'Helping you easily track learning progress', body: 'An intuitive system to monitor courses and students efficiently, giving you real-time insights to boost engagement.' },
+    { title: 'Spot struggling courses early', body: 'Smart alerts flag drops in engagement so you can update materials before students fall behind.' },
+    { title: 'Celebrate every completion', body: 'Track certificates, skill graphs and completion rates across your entire academy.' },
+  ];
+  frameRef = React.createRef();
+  componentDidMount() {
+    this.t = setInterval(() => this.go(this.state.i + 1), 6000);
+    this.onResize = () => this.setState({ vw: window.innerWidth });
+    window.addEventListener('resize', this.onResize); this.onResize();
+    this.ro = new ResizeObserver(() => { const el = this.frameRef.current; if (el) this.setState({ fw: el.clientWidth }); });
+    if (this.frameRef.current) this.ro.observe(this.frameRef.current);
+  }
+  componentDidUpdate() { const el = this.frameRef.current; if (el && el !== this.obs) { this.obs = el; this.ro.observe(el); } }
+  componentWillUnmount() { clearInterval(this.t); window.removeEventListener('resize', this.onResize); this.ro && this.ro.disconnect(); }
+  go(i) { const n = this.slides.length; this.setState({ i: (i + n) % n }); }
+  renderVals() {
+    const { i, show, remember } = this.state;
+    const wide = (this.state.vw ?? 1440) >= 1000;
+    return {
+      cols: wide ? 'minmax(0,692fr) minmax(400px,748fr)' : 'minmax(0,1fr)',
+      panelDisplay: wide ? 'flex' : 'none',
+      frameRef: this.frameRef, scale: (this.state.fw ?? 574) / 1440,
+      slide: this.slides[i],
+      dots: this.slides.map((_, k) => ({ bg: k === i ? '#fff' : 'rgba(255,255,255,.45)', go: () => this.go(k) })),
+      prev: () => this.go(i - 1), next: () => this.go(i + 1),
+      email: this.state.email, password: this.state.password,
+      onEmail: e => this.setState({ email: e.target.value }),
+      onPassword: e => this.setState({ password: e.target.value }),
+      pwType: show ? 'text' : 'password', eyeSlash: show ? '' : 'M4 4l16 16',
+      togglePw: () => this.setState({ show: !show }),
+      toggleRemember: e => { e.preventDefault(); this.setState({ remember: !remember }); },
+      rememberBg: remember ? '#111111' : '#fff', rememberBorder: remember ? '#111111' : '#DEDCD5',
+      submit: e => { e.preventDefault(); window.location.href = 'Retani Dashboard.dc.html'; },
+    };
+  }
+}
+</script>
+</body>
+</html>

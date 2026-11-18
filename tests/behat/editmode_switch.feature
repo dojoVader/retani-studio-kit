@@ -1,4 +1,4 @@
-@theme_retani_studio
+@theme @theme_retani_studio
 Feature: Edit mode switch
   In order to safely toggle editing on a page
   As a teacher

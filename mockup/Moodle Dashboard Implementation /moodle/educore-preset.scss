@@ -1,0 +1,249 @@
+// EduCore — Moodle theme preset (Boost / Bootstrap 5)
+// Usage: Site admin › Appearance › Themes › Boost › Advanced settings › "Raw initial SCSS"
+// or as a child-theme preset (theme/<name>/scss/preset/default.scss) before Bootstrap is imported.
+
+// Font (Fontshare — not on Google Fonts)
+@import url("https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap");
+
+// ---------------------------------------------------------------------------
+// Palette
+// ---------------------------------------------------------------------------
+$white:    #fff !default;
+$gray-100: #F8F8F9 !default; // card surface
+$gray-200: #F1F1F3 !default; // table head
+$gray-300: #EDEDEF !default; // card border
+$gray-400: #E4E4E7 !default; // control border
+$gray-500: #A0A0A6 !default;
+$gray-600: #6B6B70 !default; // muted text
+$gray-700: #55555B !default;
+$gray-800: #48484D !default; // secondary text
+$gray-900: #1C1C1E !default; // body text
+$black:    #000 !default;
+
+$purple:      #8B6CF0 !default;
+$purple-600:  #6E52E0 !default;
+$purple-700:  #5338C9 !default;
+$purple-100:  #EFECFB !default;
+$purple-200:  #DCD5F6 !default;
+$green:       #22A35A !default;
+$green-300:   #5ACF8E !default;
+$green-100:   #DDF3E6 !default;
+$orange:      #F7883C !default;
+$orange-600:  #E36A1C !default;
+$orange-100:  #FDE8D9 !default;
+$red:         #EF4D3F !default;
+$red-100:     #FDE4E2 !default;
+$blue:        #7B8CE6 !default;
+
+$primary:   $purple !default;
+$secondary: $gray-200 !default;
+$success:   $green !default;
+$info:      $blue !default;
+$warning:   $orange !default;
+$danger:    $red !default;
+$light:     $gray-100 !default;
+$dark:      $gray-900 !default;
+
+$theme-colors: (
+  "primary":   $primary,
+  "secondary": $secondary,
+  "success":   $success,
+  "info":      $info,
+  "warning":   $warning,
+  "danger":    $danger,
+  "light":     $light,
+  "dark":      $dark
+) !default;
+
+$min-contrast-ratio: 3 !default;
+
+// ---------------------------------------------------------------------------
+// Body & links
+// ---------------------------------------------------------------------------
+$body-bg:              $white !default;
+$body-color:           $gray-900 !default;
+$body-secondary-color: $gray-800 !default;
+$body-tertiary-bg:     $gray-100 !default;
+$text-muted:           $gray-600 !default;
+
+$link-color:            $purple-600 !default;
+$link-hover-color:      $purple-700 !default;
+$link-decoration:       none !default;
+$link-hover-decoration: underline !default;
+
+// ---------------------------------------------------------------------------
+// Typography
+// ---------------------------------------------------------------------------
+$font-family-sans-serif: "Satoshi", system-ui, -apple-system, "Segoe UI", sans-serif !default;
+$font-family-base:       $font-family-sans-serif !default;
+$font-size-base:         0.875rem !default; // 14px
+$font-size-sm:           0.75rem !default;  // 12px
+$font-size-lg:           1rem !default;
+$font-weight-normal:     400 !default;
+$font-weight-semibold:   500 !default;
+$font-weight-bold:       700 !default;
+$line-height-base:       1.45 !default;
+
+$headings-font-weight:   500 !default;
+$headings-color:         $gray-900 !default;
+$headings-letter-spacing: -0.01em !default;
+$h1-font-size: 1.1875rem !default; // 19px page title
+$h2-font-size: 1.125rem !default;
+$h3-font-size: 0.9375rem !default; // 15px card title
+$h4-font-size: 0.875rem !default;
+$h5-font-size: 0.8125rem !default;
+$h6-font-size: 0.75rem !default;
+
+// ---------------------------------------------------------------------------
+// Spacing, radius, borders, shadows
+// ---------------------------------------------------------------------------
+$spacer:            1rem !default;
+$grid-gutter-width: 15px !default;
+
+$border-color:     $gray-300 !default;
+$border-width:     1px !default;
+$border-radius:    8px !default;
+$border-radius-sm: 5px !default;
+$border-radius-lg: 10px !default;
+$border-radius-xl: 14px !default;
+$border-radius-pill: 50rem !default;
+
+$box-shadow-sm: 0 1px 2px rgba(0, 0, 0, .04) !default;
+$box-shadow:    0 1px 3px rgba(0, 0, 0, .04), inset 0 1px 0 #fff !default;
+$box-shadow-lg: 0 6px 18px rgba(20, 20, 40, .08) !default;
+
+$focus-ring-color:   rgba($purple, .25) !default;
+$focus-ring-width:   3px !default;
+
+// ---------------------------------------------------------------------------
+// Components
+// ---------------------------------------------------------------------------
+// Cards
+$card-bg:            $gray-100 !default;
+$card-border-color:  $gray-300 !default;
+$card-border-radius: $border-radius-xl !default;
+$card-box-shadow:    $box-shadow !default;
+$card-spacer-x:      14px !default;
+$card-spacer-y:      14px !default;
+$card-cap-bg:        transparent !default;
+$card-title-color:   $gray-900 !default;
+
+// Buttons
+$btn-font-weight:        500 !default;
+$btn-font-size:          $font-size-sm !default;
+$btn-padding-y:          .4375rem !default;
+$btn-padding-x:          .75rem !default;
+$btn-border-radius:      $border-radius !default;
+$btn-border-radius-sm:   $border-radius-sm !default;
+$btn-border-radius-lg:   $border-radius-lg !default;
+$btn-box-shadow:         $box-shadow-sm !default;
+$btn-focus-box-shadow:   0 0 0 $focus-ring-width $focus-ring-color !default;
+
+// Forms
+$input-bg:                 $white !default;
+$input-color:              $gray-900 !default;
+$input-border-color:       $gray-400 !default;
+$input-border-radius:      $border-radius !default;
+$input-padding-y:          .5rem !default;
+$input-padding-x:          .75rem !default;
+$input-placeholder-color:  $gray-600 !default;
+$input-focus-border-color: $purple !default;
+$input-focus-box-shadow:   0 0 0 $focus-ring-width $focus-ring-color !default;
+$form-label-font-weight:   500 !default;
+$form-check-input-checked-bg-color:     $purple !default;
+$form-check-input-checked-border-color: $purple !default;
+
+// Tables
+$table-bg:           $gray-100 !default;
+$table-color:        $gray-900 !default;
+$table-border-color: $gray-300 !default;
+$table-head-bg:      $gray-200 !default;
+$table-hover-bg:     $white !default;
+$table-cell-padding-y: .5rem !default;
+$table-cell-padding-x: .625rem !default;
+$table-th-font-weight: 500 !default;
+
+// Badges (course level pills)
+$badge-font-size:     .6875rem !default;
+$badge-font-weight:   500 !default;
+$badge-padding-y:     .1875rem !default;
+$badge-padding-x:     .375rem !default;
+$badge-border-radius: $border-radius-sm !default;
+
+// Alerts (engagement banner)
+$alert-bg-scale:      -88% !default;
+$alert-border-scale:  -72% !default;
+$alert-color-scale:   40% !default;
+$alert-border-radius: $border-radius-lg !default;
+$alert-padding-y:     .75rem !default;
+$alert-padding-x:     .875rem !default;
+
+// Progress
+$progress-height:        .875rem !default;
+$progress-bg:            #DCDCE0 !default;
+$progress-bar-bg:        $green-300 !default;
+$progress-border-radius: 2px !default;
+
+// Dropdowns & tooltips/popovers
+$dropdown-bg:            $white !default;
+$dropdown-border-color:  $gray-300 !default;
+$dropdown-border-radius: $border-radius !default;
+$dropdown-box-shadow:    $box-shadow-lg !default;
+$dropdown-link-hover-bg: $gray-100 !default;
+$dropdown-link-active-bg: $purple !default;
+$popover-bg:             $white !default;
+$popover-border-color:   $gray-300 !default;
+$popover-border-radius:  $border-radius !default;
+$popover-box-shadow:     $box-shadow-lg !default;
+
+// Nav / pills (Day | Week toggle)
+$nav-pills-border-radius:   6px !default;
+$nav-pills-link-active-bg:  $white !default;
+$nav-pills-link-active-color: $gray-900 !default;
+$nav-link-color:            $gray-800 !default;
+$nav-link-hover-color:      $gray-900 !default;
+
+// Navbar
+$navbar-light-color:        $gray-700 !default;
+$navbar-light-hover-color:  $gray-900 !default;
+$navbar-light-active-color: $gray-900 !default;
+
+// Modals
+$modal-content-bg:            $white !default;
+$modal-content-border-color:  $gray-300 !default;
+$modal-content-border-radius: $border-radius-xl !default;
+$modal-content-box-shadow-sm-up: $box-shadow-lg !default;
+
+// Pagination
+$pagination-color:           $gray-800 !default;
+$pagination-border-color:    $gray-400 !default;
+$pagination-active-bg:       $purple !default;
+$pagination-active-border-color: $purple !default;
+$pagination-border-radius:   $border-radius !default;
+
+// ---------------------------------------------------------------------------
+// Moodle (Boost) specific
+// ---------------------------------------------------------------------------
+$navbar-height:        60px !default;
+$drawer-width:         216px !default;
+$drawer-right-width:   315px !default;
+$drawer-bg-color:      $gray-100 !default;
+$drawer-padding-x:     10px !default;
+$drawer-padding-y:     14px !default;
+$course-content-maxwidth: 1200px !default;
+
+// Course index / primary nav active item
+$courseindex-link-color:              $gray-800 !default;
+$courseindex-link-hover-color:        $gray-900 !default;
+$courseindex-item-active-bg:          $white !default;
+$courseindex-item-active-border:      $gray-400 !default;
+$courseindex-link-color-selected:     $gray-900 !default;
+$courseindex-item-current:            $purple !default;
+
+// Activity icon colours (Moodle 4.x+ purpose groups)
+$activity-icon-administration-bg: $orange !default;
+$activity-icon-assessment-bg:     $red !default;
+$activity-icon-collaboration-bg:  $green !default;
+$activity-icon-communication-bg:  $purple !default;
+$activity-icon-content-bg:        $blue !default;
+$activity-icon-interface-bg:      $gray-600 !default;

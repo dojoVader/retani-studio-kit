@@ -69,10 +69,10 @@ function theme_retani_studio_get_extra_scss($theme) {
     }
 
     // Get the extra css from the parent theme, if it exists.
-    $extraCss = $CFG->dirroot . '/theme/retani_studio/scss/post.scss';
+    $extracss = $CFG->dirroot . '/theme/retani_studio/scss/post.scss';
 
-    if(file_exists($extraCss)) {
-        $content .= file_get_contents($extraCss);
+    if (file_exists($extracss)) {
+        $content .= file_get_contents($extracss);
     }
 
     // Always return the background image with the scss when we have it.
@@ -93,7 +93,7 @@ function theme_retani_studio_get_extra_scss($theme) {
  */
 function theme_retani_studio_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'logo' || $filearea === 'backgroundimage' ||
-        $filearea === 'loginbackgroundimage')) {
+        $filearea === 'loginbackgroundimage' || preg_match('/^loginslide[1-9]image$/', $filearea))) {
         $theme = theme_config::load('retani_studio');
         // By default, theme files must be cache-able by both browsers and proxies.
         if (!array_key_exists('cacheability', $options)) {
@@ -228,9 +228,9 @@ function theme_retani_studio_get_pre_scss($theme) {
     }
 
     // Also read from the pre.scss file in the theme's scss folder.
-    $preScssFile = $CFG->dirroot . '/theme/retani_studio/scss/pre.scss';
-    if (file_exists($preScssFile)) {
-        $scss.= file_get_contents($preScssFile);
+    $prescssfile = $CFG->dirroot . '/theme/retani_studio/scss/pre.scss';
+    if (file_exists($prescssfile)) {
+        $scss .= file_get_contents($prescssfile);
     }
 
     return $scss;

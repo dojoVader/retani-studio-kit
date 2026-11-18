@@ -1,4 +1,4 @@
-@core @core_admin @theme_retani_studio
+@core @core_admin @theme @theme_retani_studio
 Feature: Select a theme in Boost theme
   In order to choose a theme
   As an admin

@@ -1,4 +1,4 @@
-@theme_retani_studio
+@theme @theme_retani_studio
 Feature: Light and dark colour modes
   In order to read the site comfortably
   As a user

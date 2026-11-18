@@ -105,6 +105,37 @@ if ($ADMIN->fulltree) {
     // Must add the page after definiting all the settings!
     $settings->add($page);
 
+    // Login page: the image carousel on the left panel.
+    $page = new admin_settingpage('theme_retani_studio_login', get_string('loginsettings', 'theme_retani_studio'));
+    $page->add(new admin_setting_heading('theme_retani_studio/loginslidesheading',
+        get_string('loginslidesheading', 'theme_retani_studio'), get_string('loginslidesheading_desc', 'theme_retani_studio')));
+    $max = \theme_retani_studio\output\login_carousel::MAX_SLIDES;
+    $page->add(new admin_setting_configselect('theme_retani_studio/loginslides',
+        get_string('loginslides', 'theme_retani_studio'), get_string('loginslides_desc', 'theme_retani_studio'),
+        $max, array_combine(range(0, $max), range(0, $max))));
+    for ($i = 1; $i <= $max; $i++) {
+        $str = fn(string $key) => get_string($key, 'theme_retani_studio', $i);
+        $page->add(new admin_setting_heading("theme_retani_studio/loginslide{$i}heading", $str('loginslideheading'), ''));
+        $default = fn(string $part) => get_string('loginslidedefault_desc', 'theme_retani_studio',
+            get_string("loginslide{$i}{$part}_default", 'theme_retani_studio'));
+        $page->add(new admin_setting_configtext("theme_retani_studio/loginslide{$i}title", $str('loginslidetitle'),
+            $default('title'), '', PARAM_TEXT));
+        $page->add(new admin_setting_configtextarea("theme_retani_studio/loginslide{$i}body", $str('loginslidebody'),
+            $default('body'), '', PARAM_TEXT));
+        $setting = new admin_setting_configstoredfile("theme_retani_studio/loginslide{$i}image", $str('loginslideimage'),
+            $str('loginslideimage_desc'), "loginslide{$i}image", 0, ['maxfiles' => 1, 'accepted_types' => ['web_image']]);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $page->add($setting);
+        $page->add(new admin_setting_configtext("theme_retani_studio/loginslide{$i}alt", $str('loginslidealt'),
+            $str('loginslidealt_desc') . ' ' . $default('alt'), '', PARAM_TEXT));
+        // Hide the fields of slides beyond the number shown.
+        $fewer = implode('|', range(0, $i - 1));
+        foreach (['title', 'body', 'image', 'alt'] as $part) {
+            $settings->hide_if("theme_retani_studio/loginslide{$i}{$part}", 'theme_retani_studio/loginslides', 'in', $fewer);
+        }
+    }
+    $settings->add($page);
+
     // Advanced settings.
     $page = new admin_settingpage('theme_retani_studio_advanced', get_string('advancedsettings', 'theme_retani_studio'));
 

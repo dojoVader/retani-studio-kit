@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap">
+<style>
+html,body{margin:0;background:#F4F3EF;font-family:'Geist',system-ui,sans-serif;color:#111111;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#111111;text-decoration-color:#95BF47;text-underline-offset:3px}a:hover{color:#6B6A64}
+button{font-family:inherit}
+</style>
+<script src="./image-slot.js"></script>
+</helmet>
+<div style="display:grid;grid-template-columns:{{ gridCols }};transition:grid-template-columns .25s ease;gap:15px;padding:{{ rootPad }};min-height:100vh;min-width:{{ rootMinW }}px;background:#F4F3EF">
+
+  <aside style="position:{{ asidePos }};top:{{ asideTop }};left:0;width:{{ asideWidth }};transform:{{ asideTf }};transition:transform .25s ease;z-index:{{ asideZ }};height:{{ asideH }};min-height:{{ asideMinH }};display:flex;flex-direction:column;background:#F4F3EF;border:{{ asideBorder }};border-right:1px solid #DEDCD5;border-radius:{{ asideRadius }};box-shadow:{{ asideShadow }}">
+    <div style="display:flex;align-items:center;gap:8px;padding:{{ hdrPad }};height:56px;border-bottom:1px solid #DEDCD5;justify-content:{{ justify }}">
+      <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+        <span style="flex:1;font-size:20px;font-weight:600;letter-spacing:-.05em;line-height:1;color:#111111;padding-left:2px">retani<span style="color:#95BF47">.</span></span>
+      </sc-if>
+      <button onClick="{{ toggleSide }}" title="{{ toggleTitle }}" style="width:28px;height:28px;flex:none;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg></button>
+    </div>
+    <div data-dd="course" style="position:relative;padding:15px 10px;border-bottom:1px solid #DEDCD5">
+      <div onClick="{{ toggleCourse }}" title="Switch category" style="display:flex;align-items:center;justify-content:{{ justify }};gap:8px;height:46px;padding:{{ csPad }};background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none;cursor:pointer">
+        <div style="width:32px;height:32px;flex:none;border-radius:5px;background:{{ cat.bg }};display:flex;align-items:center;justify-content:center">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="{{ cat.d }}"></path></svg>
+        </div>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;display:flex;flex-direction:column;line-height:1.25;min-width:0">
+            <span style="font-size:12.5px;font-weight:500">{{ cat.name }}</span>
+            <span style="font-size:10px;color:#6B6A64">{{ cat.code }}</span>
+          </div>
+          <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ courseRot }}deg);transition:transform .15s"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg>
+        </sc-if>
+      </div>
+      <sc-if value="{{ courseOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:10px;top:66px;width:236px;z-index:60;padding:6px;background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none">
+          <div style="padding:6px 8px 8px;font-size:11px;color:#6B6A64">Course categories</div>
+          <sc-for list="{{ cats }}" as="c">
+            <div onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:8px;height:40px;padding:0 8px 0 5px;border-radius:5px;cursor:pointer;background:{{ c.rowBg }}" style-hover="background:#F4F3EF">
+              <div style="width:28px;height:28px;flex:none;border-radius:6px;background:{{ c.bg }};display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="{{ c.d }}"></path></svg></div>
+              <div style="flex:1;display:flex;flex-direction:column;line-height:1.25"><span style="font-size:12.5px;font-weight:500">{{ c.name }}</span><span style="font-size:10px;color:#6B6A64">{{ c.code }} · {{ c.count }} courses</span></div>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ c.check }}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>
+            </div>
+          </sc-for>
+          <div style="margin:6px -6px 0;padding:8px 14px 4px;border-top:1px solid #DEDCD5;font-size:12px"><a href="#" style="color:#111111;text-decoration:none">Manage courses and categories</a></div>
+        </div>
+      </sc-if>
+    </div>
+    <div style="padding:10px;border-bottom:1px solid #DEDCD5">
+      <div onClick="{{ toggleOutline }}" title="Course outline" style="display:flex;align-items:center;justify-content:{{ justify }};gap:8px;min-height:42px;padding:{{ cRowPad }};border-radius:6px;cursor:pointer;background:{{ cRowBg }};border:1px solid {{ cRowBorder }}" style-hover="background:#fff">
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;line-height:1.3">
+            <span style="font-size:10px;color:#6B6A64">Current course</span>
+            <span style="font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Critical Thinking: Develop your skills</span>
+          </div>
+        </sc-if>
+        <div style="width:26px;height:26px;flex:none;border-radius:5px;background:{{ olTileBg }};border:1px solid {{ olTileBorder }};display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{ olIcon }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h4M4 12h4M4 19h4M12 5h8M14 12h6M14 19h6M6 5v14"></path></svg></div>
+      </div>
+    </div>
+    <sc-if value="{{ outlineShown }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding:12px 10px 14px">
+        <div style="display:flex;align-items:center;gap:8px;height:28px;padding:0 4px 0 8px;margin-bottom:4px">
+          <span style="flex:1;font-size:10.5px;color:#6B6A64;font-weight:500;letter-spacing:.06em;text-transform:uppercase">Course outline</span>
+          <button onClick="{{ toggleAllSecs }}" style="border:0;background:none;padding:2px 4px;cursor:pointer;font-size:11.5px;color:#111111;text-decoration:underline;text-decoration-color:#95BF47;text-underline-offset:3px">{{ allLabel }}</button>
+        </div>
+        <sc-for list="{{ outline }}" as="s" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column">
+            <div onClick="{{ s.onClick }}" title="{{ s.title }}" style="display:flex;align-items:center;gap:6px;height:32px;flex:none;padding:0 8px 0 6px;border-radius:6px;border:1px solid {{ s.border }};background:{{ s.bg }};cursor:pointer" style-hover="background:#fff">
+              <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ s.rot }}deg);transition:transform .15s"><path d="M3.5 2v6L7 5z" fill="#111111"></path></svg>
+              <span style="flex:1;font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.title }}</span>
+              <span style="font-size:10.5px;color:#6B6A64;flex:none">{{ s.doneOf }}</span>
+            </div>
+            <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:1px;margin:2px 0 6px 12px;padding-left:9px;border-left:1px solid #DEDCD5">
+                <sc-for list="{{ s.acts }}" as="a">
+                  <div onClick="{{ a.go }}" title="{{ a.name }}" style="display:flex;align-items:center;gap:7px;height:28px;flex:none;padding:0 8px;border-radius:5px;border:1px solid {{ a.olBorder }};background:{{ a.olBg }};cursor:pointer;font-size:12px;color:{{ a.olColor }};font-weight:{{ a.olWeight }}" style-hover="background:#fff;color:#111111">
+                    <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.name }}</span>
+                    <span style="width:13px;height:13px;flex:none;border-radius:50%;border:1.5px solid {{ a.ring }};background:{{ a.fill }};display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="{{ a.tick }}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5 9-10"></path></svg></span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ navShown }}" hint-placeholder-val="{{ false }}">
+    <nav style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:4px;padding:14px 10px">
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="9">
+        <div style="display:flex;flex-direction:column">
+          <div onClick="{{ item.onClick }}" title="{{ item.label }}" style="display:flex;align-items:center;justify-content:{{ item.justify }};gap:8px;height:34px;flex:none;padding:{{ item.pad }};border-radius:6px;border:1px solid {{ item.border }};background:{{ item.bg }};box-shadow:{{ item.shadow }};cursor:pointer" style-hover="background:#fff">
+            <div style="width:21px;height:21px;flex:none;border-radius:5px;display:flex;align-items:center;justify-content:center;background:{{ item.tileBg }};border:1px solid {{ item.tileBorder }}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ item.iconColor }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ item.d }}"></path></svg>
+            </div>
+            <sc-if value="{{ item.expanded }}" hint-placeholder-val="{{ true }}">
+              <span style="flex:1;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ item.color }};font-weight:{{ item.weight }}">{{ item.label }}</span>
+              <sc-if value="{{ item.hasChildren }}" hint-placeholder-val="{{ false }}"><svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ item.rot }}deg);transition:transform .15s"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg></sc-if>
+            </sc-if>
+          </div>
+          <sc-if value="{{ item.showChildren }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:2px;margin:4px 0 4px 16px;padding-left:9px;border-left:1px solid #DEDCD5">
+              <sc-for list="{{ item.children }}" as="c">
+                <div onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:7px;height:28px;flex:none;padding:0 8px;border-radius:6px;border:1px solid {{ c.border }};background:{{ c.bg }};cursor:pointer;font-size:12px;color:{{ c.color }};font-weight:{{ c.weight }}" style-hover="background:#fff;color:#111111">
+                  <span style="width:5px;height:5px;flex:none;border-radius:50%;background:{{ c.dot }}"></span>
+                  <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </nav>
+    </sc-if>
+    <div style="display:flex;flex-direction:column;gap:6px;padding:10px 10px 14px;border-top:1px solid #DEDCD5">
+      <sc-for list="{{ adminNav }}" as="item" hint-placeholder-count="1">
+        <div style="display:flex;flex-direction:column">
+          <div onClick="{{ item.onClick }}" title="{{ item.label }}" style="display:flex;align-items:center;justify-content:{{ item.justify }};gap:8px;height:34px;flex:none;padding:{{ item.pad }};border-radius:6px;border:1px solid {{ item.border }};background:{{ item.bg }};box-shadow:{{ item.shadow }};cursor:pointer" style-hover="background:#fff">
+            <div style="width:21px;height:21px;flex:none;border-radius:5px;display:flex;align-items:center;justify-content:center;background:{{ item.tileBg }};border:1px solid {{ item.tileBorder }}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ item.iconColor }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ item.d }}"></path></svg>
+            </div>
+            <sc-if value="{{ item.expanded }}" hint-placeholder-val="{{ true }}">
+              <span style="flex:1;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ item.color }};font-weight:{{ item.weight }}">{{ item.label }}</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ item.rot }}deg);transition:transform .15s"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg>
+            </sc-if>
+          </div>
+          <sc-if value="{{ item.showChildren }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:2px;max-height:236px;overflow-y:auto;margin:4px 0 4px 16px;padding-left:9px;border-left:1px solid #DEDCD5">
+              <sc-for list="{{ item.children }}" as="c">
+                <div onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:7px;height:28px;flex:none;padding:0 8px;border-radius:6px;border:1px solid {{ c.border }};background:{{ c.bg }};cursor:pointer;font-size:12px;color:{{ c.color }};font-weight:{{ c.weight }}" style-hover="background:#fff;color:#111111">
+                  <span style="width:5px;height:5px;flex:none;border-radius:50%;background:{{ c.dot }}"></span>
+                  <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <div title="Help &amp; Support" style="display:flex;align-items:center;justify-content:{{ justify }};gap:8px;height:34px;padding:{{ rowPad }};border-radius:6px;cursor:pointer" style-hover="background:#fff">
+        <div style="width:21px;height:21px;flex:none;border-radius:5px;display:flex;align-items:center;justify-content:center;background:#F4F3EF;border:1px solid #DEDCD5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.2" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg></div>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}"><span style="font-size:12.5px;color:#6B6A64;white-space:nowrap">Help &amp; Support</span></sc-if>
+      </div>
+    </div>
+    <div data-dd="user" style="position:relative;border-top:1px solid #DEDCD5">
+      <div onClick="{{ toggleUser }}" style="display:flex;align-items:center;justify-content:{{ justify }};gap:8px;padding:{{ userPad }};cursor:pointer;border-radius:{{ userRadius }}" style-hover="background:#F4F3EF">
+        <div style="width:32px;height:32px;flex:none;border-radius:5px;background:#111111;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">TB</div>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;display:flex;flex-direction:column;line-height:1.3">
+            <span style="font-size:12.5px;font-weight:500">Tran Ngoc Bao</span>
+            <span style="font-size:10px;color:#6B6A64">Admin</span>
+          </div>
+          <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ userRot }}deg);transition:transform .15s"><path d="M2 6.5h6L5 3z" fill="#6B6A64"></path></svg>
+        </sc-if>
+      </div>
+      <sc-if value="{{ userOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:10px;bottom:62px;width:220px;z-index:60;padding:6px;background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none">
+          <div style="padding:6px 8px 8px;border-bottom:1px solid #DEDCD5;margin-bottom:4px;display:flex;flex-direction:column;line-height:1.35"><span style="font-size:12.5px;font-weight:500">Tran Ngoc Bao</span><span style="font-size:11px;color:#6B6A64">bao.tran@retaniconsults.com</span></div>
+          <sc-for list="{{ userMenu }}" as="u">
+            <sc-if value="{{ u.divider }}" hint-placeholder-val="{{ false }}"><div style="height:1px;background:#DEDCD5;margin:4px 0"></div></sc-if>
+            <div onClick="{{ closeMenus }}" style="display:flex;align-items:center;height:30px;padding:0 8px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ u.color }}" style-hover="background:#F4F3EF">{{ u.label }}</div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </aside>
+
+  <sc-if value="{{ scrimOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closePanels }}" style="position:fixed;inset:0;z-index:90;background:rgba(20,20,30,.28)"></div>
+  </sc-if>
+  <main style="display:flex;flex-direction:column;gap:15px;min-width:0;padding:{{ mainPad }}">
+    <header style="position:relative;z-index:30;display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;min-height:28px">
+      <sc-if value="{{ compact }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ openNav }}" title="Open menu" style="width:28px;height:28px;flex:none;margin-right:10px;border-radius:6px;border:1px solid #DEDCD5;background:#F4F3EF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+      </sc-if>
+      <h1 style="flex:1;white-space:nowrap;margin:0;font-size:19px;font-weight:500;letter-spacing:-.01em">{{ pageTitle }}</h1>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+        <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ openBlocks }}" style="height:28px;padding:0 10px 0 8px;border-radius:6px;border:1px solid #DEDCD5;background:#F4F3EF;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#111111;font-weight:500;white-space:nowrap;flex:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Add a block</button>
+        </sc-if>
+        <button onClick="{{ toggleEdit }}" role="switch" aria-checked="{{ editing }}" style="height:28px;padding:0 8px 0 10px;border-radius:6px;border:1px solid {{ bEdit.border }};background:{{ bEdit.bg }};box-shadow:none;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:#6B6A64;white-space:nowrap;flex:none">
+          <span style="white-space:nowrap">Edit mode</span>
+          <span style="position:relative;width:26px;height:15px;border-radius:6px;background:{{ editTrack }};transition:background .15s;flex:none">
+            <span style="position:absolute;top:2px;left:{{ editKnob }}px;width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:none;transition:left .15s"></span>
+          </span>
+        </button>
+        <span style="width:1px;height:18px;background:#DEDCD5;margin:0 2px"></span>
+        <div data-dd="search" style="position:relative">
+          <button onClick="{{ toggleSearch }}" title="Search" style="width:28px;height:28px;border-radius:6px;border:1px solid {{ bSearch.border }};background:{{ bSearch.bg }};box-shadow:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg></button>
+          <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:{{ ddPos }};top:{{ ddTop }};left:{{ ddLeft }};right:{{ ddRight }};width:{{ ddW1 }};padding:8px;background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none">
+              <div style="display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid #DEDCD5;border-radius:6px;background:#fff;box-shadow:none">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" style="flex:none"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+                <input ref="{{ searchRef }}" value="{{ query }}" onChange="{{ onQuery }}" placeholder="Search pages, courses, settings" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:12.5px;color:#111111">
+              </div>
+              <div style="padding:10px 8px 4px;font-size:11px;color:#6B6A64">{{ searchHeading }}</div>
+              <sc-for list="{{ results }}" as="r">
+                <div onClick="{{ r.onClick }}" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 8px;border-radius:6px;cursor:pointer;font-size:12.5px" style-hover="background:#F4F3EF">
+                  <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.label }}</span>
+                  <span style="font-size:10.5px;color:#6B6A64;white-space:nowrap">{{ r.type }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}"><div style="padding:6px 8px 8px;font-size:12px;color:#6B6A64">No results for “{{ query }}”</div></sc-if>
+            </div>
+          </sc-if>
+        </div>
+        <div data-dd="notif" style="position:relative">
+          <button onClick="{{ toggleNotif }}" title="Notifications" style="position:relative;width:28px;height:28px;border-radius:6px;border:1px solid {{ bNotif.border }};background:{{ bNotif.bg }};box-shadow:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9zM10 20a2 2 0 0 0 4 0"></path></svg><sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:#95BF47;border:1px solid #fff"></span></sc-if></button>
+          <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:{{ ddPos }};top:{{ ddTop }};left:{{ ddLeft }};right:{{ ddRight }};width:{{ ddW2 }};background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none;overflow:hidden">
+              <div style="display:flex;align-items:center;padding:12px 14px 10px;border-bottom:1px solid #DEDCD5">
+                <span style="flex:1;font-size:13px;font-weight:500">Notifications</span>
+                <button onClick="{{ markAll }}" style="border:0;background:none;padding:0;cursor:pointer;font-size:11.5px;color:#111111">Mark all as read</button>
+              </div>
+              <sc-for list="{{ notifs }}" as="n">
+                <div onClick="{{ n.onClick }}" style="display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid #DEDCD5;cursor:pointer;background:{{ n.bg }}" style-hover="background:#F4F3EF">
+                  <div style="width:28px;height:28px;flex:none;border-radius:5px;background:#F4F3EF;border:1px solid #DEDCD5;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg></div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+                    <span style="font-size:12px;line-height:1.35;font-weight:{{ n.weight }};text-wrap:pretty">{{ n.title }}</span>
+                    <span style="font-size:10.5px;color:#6B6A64">{{ n.meta }}</span>
+                  </div>
+                  <span style="width:7px;height:7px;flex:none;margin-top:5px;border-radius:50%;background:{{ n.dot }}"></span>
+                </div>
+              </sc-for>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;font-size:12px"><a href="#" style="text-decoration:none">See all</a><a href="#" style="color:#6B6A64;text-decoration:none">Notification preferences</a></div>
+            </div>
+          </sc-if>
+        </div>
+        <button onClick="{{ toggleMsg }}" title="Messages" style="position:relative;width:28px;height:28px;border-radius:6px;border:1px solid {{ bMsg.border }};background:{{ bMsg.bg }};box-shadow:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path></svg><sc-if value="{{ msgUnread }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:-5px;right:-5px;min-width:15px;height:15px;padding:0 4px;border-radius:6px;background:#111111;border:1.5px solid #fff;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center">1</span></sc-if></button>
+        <button onClick="{{ toggleTheme }}" title="Toggle dark mode" style="width:28px;height:28px;border-radius:6px;border:1px solid {{ bTheme.border }};background:{{ bTheme.bg }};box-shadow:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="{{ themeIcon }}"></path></svg></button>
+        <div data-dd="lang" style="position:relative">
+          <button onClick="{{ toggleLang }}" style="height:28px;padding:0 9px 0 7px;border-radius:6px;border:1px solid {{ bLang.border }};background:{{ bLang.bg }};box-shadow:none;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#6B6A64"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"></path></svg><span>{{ langShort }}</span><svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;margin-left:6px;transform:rotate({{ langRot }}deg);transition:transform .15s"><path d="M2 3.5h6L5 7z" fill="#6B6A64"></path></svg></button>
+          <sc-if value="{{ langOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:36px;right:0;width:190px;padding:6px;background:#fff;border:1px solid #DEDCD5;border-radius:6px;box-shadow:none">
+              <div style="padding:6px 8px 6px;font-size:11px;color:#6B6A64">Language</div>
+              <sc-for list="{{ langs }}" as="l">
+                <div onClick="{{ l.onClick }}" style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:6px;cursor:pointer;font-size:12.5px;background:{{ l.bg }}" style-hover="background:#F4F3EF">
+                  <span style="flex:1">{{ l.name }}</span><span style="font-size:10.5px;color:#6B6A64">{{ l.code }}</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{ l.check }}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </header>
+
+    <nav aria-label="Breadcrumb" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px;color:#6B6A64">
+      <a href="#" style="color:#6B6A64">Critical thinking</a><span style="color:#DEDCD5">/</span><a href="#" style="color:#6B6A64">Module 2: Identify and analyse arguments</a><span style="color:#DEDCD5">/</span><a href="#" style="color:#6B6A64">Module 2 quick check</a><span style="color:#DEDCD5">/</span><span style="color:#111111;font-weight:500">Preview</span>
+    </nav>
+
+    <section style="display:flex;flex-direction:column;gap:16px;padding:20px;background:#FFFFFF;border:1px solid #DEDCD5;border-radius:8px">
+      <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+        <div style="width:46px;height:46px;flex:none;border-radius:8px;background:#111111;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#95BF47" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18H5zM9 11l2 2 4-4M9 17h6"></path></svg></div>
+        <div style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="display:flex;align-items:center;height:22px;padding:0 8px;border-radius:5px;border:1px solid #DEDCD5;background:#F4F3EF;font-size:11px;white-space:nowrap">Quiz</span><span style="display:flex;align-items:center;height:22px;padding:0 8px;border-radius:5px;border:1px solid #DEDCD5;background:#F4F3EF;font-size:11px;white-space:nowrap">{{ qCount }} questions</span><span style="display:flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:5px;border:1px solid #111111;background:#111111;color:#FFFFFF;font-size:11px;white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:#95BF47"></span>{{ qModeLabel }}</span>
+          </div>
+          <h2 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-.03em;line-height:1.15">Module 2 quick check</h2>
+        </div>
+        <button onClick="{{ qBack }}" style="height:30px;padding:0 12px 0 9px;border-radius:6px;border:1px solid #DEDCD5;background:#F4F3EF;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#111111;white-space:nowrap;flex:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>Back to module</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;padding-top:14px;border-top:1px solid #DEDCD5">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px"><span style="font-weight:500">{{ qProgTitle }}</span><span style="color:#6B6A64">{{ qProgMeta }}</span></div>
+        <div style="display:flex;gap:3px;height:8px"><sc-for list="{{ qSegs }}" as="x" hint-placeholder-count="10"><span style="flex:1;border-radius:2px;background:{{ x }}"></span></sc-for></div>
+      </div>
+    </section>
+
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="display:flex;gap:2px;padding:2px;border-radius:6px;background:#FFFFFF;border:1px solid #DEDCD5;flex-wrap:wrap">
+        <sc-for list="{{ qTabs }}" as="t" hint-placeholder-count="6">
+          <button onClick="{{ t.onClick }}" style="height:28px;padding:0 12px;border-radius:5px;border:0;background:{{ t.bg }};color:{{ t.color }};font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">{{ t.label }}</button>
+        </sc-for>
+      </div>
+      <span style="margin-left:auto;font-size:12px;color:#6B6A64;white-space:nowrap">Graded out of {{ qCount }}.00</span>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ questions }}" as="q" hint-placeholder-count="3">
+        <article id="q-{{ q.n }}" style="display:grid;grid-template-columns:{{ qCols }};background:#FFFFFF;border:1px solid {{ q.border }};border-radius:8px;overflow:hidden;transition:border-color .15s">
+          <div style="display:flex;flex-direction:{{ qMetaDir }};flex-wrap:wrap;align-items:{{ qMetaAlign }};gap:10px;padding:16px;background:#F4F3EF;border-right:{{ qMetaBR }};border-bottom:{{ qMetaBB }}">
+            <div style="display:flex;align-items:baseline;gap:6px"><span style="font-size:10.5px;color:#6B6A64;letter-spacing:.06em;text-transform:uppercase">Question</span><span style="font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1">{{ q.n }}</span></div>
+            <span style="display:flex;align-items:center;gap:6px;height:22px;padding:0 8px;border-radius:5px;background:#FFFFFF;border:1px solid #DEDCD5;font-size:11px;white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:{{ q.dot }}"></span>{{ q.status }}</span>
+            <span style="font-size:11.5px;color:#6B6A64;white-space:nowrap">{{ q.marks }}</span>
+            <button onClick="{{ q.flag }}" aria-pressed="{{ q.flagged }}" style="display:flex;align-items:center;gap:6px;height:26px;padding:0 8px 0 6px;border-radius:5px;border:1px solid {{ q.flagBorder }};background:{{ q.flagBg }};cursor:pointer;font-size:11.5px;color:#111111;white-space:nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="{{ q.flagFill }}" stroke="#111111" stroke-width="2" stroke-linejoin="round"><path d="M5 21V4h11l-2 4 2 4H5"></path></svg>{{ q.flagLabel }}</button>
+            <a href="#" style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#6B6A64;text-decoration:none;white-space:nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"></path></svg>Edit question</a>
+            <span style="display:flex;align-items:center;align-self:{{ qMetaAlign }};height:20px;padding:0 7px;border-radius:4px;border:1px solid #DEDCD5;background:#FFFFFF;font-family:'Geist Mono',monospace;font-size:10px;color:#6B6A64;white-space:nowrap">v1 · latest</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;padding:20px;min-width:0">
+            <p style="margin:0;font-size:15.5px;font-weight:500;line-height:1.45;letter-spacing:-.01em;text-wrap:pretty">{{ q.text }}</p>
+            <div role="radiogroup" aria-label="{{ q.text }}" style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ q.opts }}" as="o">
+                <button role="radio" aria-checked="{{ o.on }}" onClick="{{ o.pick }}" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:8px 12px 8px 8px;border-radius:6px;border:1px solid {{ o.border }};background:{{ o.bg }};text-align:left;cursor:{{ o.cursor }};font-size:13px;line-height:1.4;color:#111111;transition:border-color .15s,background .15s" style-hover="border-color:#111111">
+                  <span style="width:28px;height:28px;flex:none;border-radius:5px;border:1px solid {{ o.tileBorder }};background:{{ o.tileBg }};color:{{ o.tileColor }};font-size:11.5px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ o.l }}</span>
+                  <span style="flex:1;min-width:0;text-wrap:pretty">{{ o.t }}</span>
+                  <span style="font-size:11px;color:#6B6A64;white-space:nowrap">{{ o.note }}</span>
+                  <span style="width:16px;height:16px;flex:none;border-radius:50%;border:1.5px solid {{ o.ring }};display:flex;align-items:center;justify-content:center"><span style="width:8px;height:8px;border-radius:50%;background:{{ o.dot }}"></span></span>
+                </button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ q.canClear }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ q.clear }}" style="align-self:flex-start;border:0;background:none;padding:0;cursor:pointer;font-size:12px;color:#111111;text-decoration:underline;text-decoration-color:#95BF47;text-underline-offset:3px">Clear my choice</button>
+            </sc-if>
+            <sc-if value="{{ q.hasFb }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:6px;background:#F4F3EF;border:1px solid #DEDCD5;font-size:12.5px;line-height:1.5">
+                <span style="width:18px;height:18px;flex:none;margin-top:1px;border-radius:50%;background:{{ q.fbDot }};display:flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="{{ q.fbIcon }}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="{{ q.fbPath }}"></path></svg></span>
+                <span style="flex:1;min-width:0;text-wrap:pretty"><span style="font-weight:500">{{ q.fbTitle }}</span> The correct answer is: {{ q.correct }}</span>
+              </div>
+            </sc-if>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 12px 12px 16px;background:#FFFFFF;border:1px solid #DEDCD5;border-radius:8px">
+      <span style="flex:1;min-width:200px;font-size:12.5px;color:#6B6A64">{{ qFootNote }}</span>
+      <sc-if value="{{ qLive }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ qFinish }}" style="height:34px;padding:0 14px;border-radius:6px;border:1px solid #111111;background:#111111;color:#FFFFFF;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12.5px;font-weight:500;white-space:nowrap" style-hover="background:#2A2A2A">Finish attempt<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#95BF47" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></button>
+      </sc-if>
+      <sc-if value="{{ qDone }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ qRestart }}" style="height:34px;padding:0 14px;border-radius:6px;border:1px solid #111111;background:#111111;color:#FFFFFF;cursor:pointer;font-size:12.5px;font-weight:500;white-space:nowrap">Start a new preview</button>
+      </sc-if>
+    </div>
+  </main>
+
+  <aside style="position:{{ asidePos }};top:{{ asideTop }};right:0;width:{{ dOuterW }};transform:{{ drawerTf }};transition:transform .25s ease;height:{{ asideH }};min-height:{{ asideMinH }};min-width:0;overflow:hidden;z-index:{{ asideZ }}">
+    <div style="width:300px;max-width:100%;height:100%;display:flex;flex-direction:column;background:#F4F3EF;border:{{ dBorder }};border-left:1px solid #DEDCD5;border-radius:{{ dRadius }}">
+      <div style="display:flex;align-items:center;gap:8px;height:56px;flex:none;padding:0 12px 0 15px;border-bottom:1px solid #DEDCD5">
+        <span style="flex:1;font-size:15px;font-weight:500">Blocks</span>
+        <span title="Learning streak" hidden="{{ true }}" style="white-space:nowrap;flex:none;display:flex;align-items:center;gap:5px;height:26px;padding:0 9px 0 7px;border-radius:6px;background:#fff;border:1px solid #DEDCD5;font-size:12px;font-weight:500"><svg width="13" height="13" viewBox="0 0 24 24" fill="#6B6A64"><path d="M12 2c1 3.5 5 6 5 11a5 5 0 0 1-10 0c0-2.2 1-3.6 2-4.5.2 1.6 1 2.6 2 3C10.5 8.5 11 5 12 2z"></path></svg>3 days</span>
+        <button onClick="{{ closeDrawer }}" title="Collapse blocks drawer" style="width:28px;height:28px;flex:none;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg></button>
+      </div>
+      <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:15px">
+        <div style="display:flex;flex-direction:column;gap:14px;padding:14px;background:#fff;border:1px solid #DEDCD5;border-radius:8px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="flex:1;font-size:14px;font-weight:500">Quiz navigation</span><span style="font-size:11.5px;color:#6B6A64">{{ qNavMeta }}</span></div>
+          <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px">
+            <sc-for list="{{ qNav }}" as="b" hint-placeholder-count="10">
+              <button onClick="{{ b.go }}" title="{{ b.tip }}" style="position:relative;aspect-ratio:1;border-radius:6px;border:1.5px solid {{ b.border }};background:{{ b.bg }};color:{{ b.color }};font-size:13px;font-weight:600;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:{{ b.ring }}">{{ b.n }}<span style="position:absolute;top:0;right:0;width:12px;height:12px;background:{{ b.flagC }};clip-path:polygon(0 0,100% 0,100% 100%)"></span></button>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px 12px;font-size:11px;color:#6B6A64">
+            <sc-for list="{{ qLegend }}" as="l"><span style="display:flex;align-items:center;gap:5px;white-space:nowrap"><span style="width:10px;height:10px;border-radius:3px;background:{{ l.bg }};border:1.5px solid {{ l.border }}"></span>{{ l.label }}</span></sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid #DEDCD5">
+            <sc-if value="{{ qLive }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ qFinish }}" style="height:34px;border-radius:6px;border:1px solid #DEDCD5;background:#F4F3EF;cursor:pointer;font-size:12.5px;font-weight:500;color:#111111" style-hover="background:#fff">Finish attempt…</button>
+            </sc-if>
+            <button onClick="{{ qRestart }}" style="height:34px;border-radius:6px;border:1px solid #111111;background:#111111;cursor:pointer;font-size:12.5px;font-weight:500;color:#FFFFFF" style-hover="background:#2A2A2A">Start a new preview</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:#fff;border:1px solid #DEDCD5;border-radius:8px">
+          <span style="font-size:14px;font-weight:500">Attempt summary</span>
+          <sc-for list="{{ qSummary }}" as="r" hint-placeholder-count="4">
+            <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px"><span style="color:#6B6A64">{{ r.k }}</span><span style="font-weight:500;text-align:right">{{ r.v }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <sc-if value="{{ drawerClosed }}" hint-placeholder-val="{{ true }}">
+    <button onClick="{{ openDrawer }}" title="Open blocks drawer" style="position:fixed;right:0;top:96px;z-index:25;width:30px;padding:12px 0 14px;display:flex;flex-direction:column;align-items:center;gap:10px;border:1px solid #DEDCD5;border-right:0;border-radius:6px 0 0 6px;background:#fff;box-shadow:none;cursor:pointer" style-hover="background:#F4F3EF;width:34px">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+      <span style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:11.5px;font-weight:500;color:#111111;letter-spacing:.02em">Blocks</span>
+      <span style="width:6px;height:6px;border-radius:50%;background:#111111"></span>
+    </button>
+  </sc-if>
+<sc-if value="{{ msgOpen }}" hint-placeholder-val="{{ false }}">
+    <div role="dialog" aria-label="Messages" style="position:fixed;top:0;right:0;bottom:0;width:min(320px,100vw);z-index:98;display:flex;flex-direction:column;background:#F4F3EF;border-left:1px solid #DEDCD5;box-shadow:none">
+      <div style="display:flex;align-items:center;gap:8px;height:56px;flex:none;padding:0 10px 0 15px;border-bottom:1px solid #DEDCD5">
+        <sc-if value="{{ inConv }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ backMsg }}" title="Back" style="width:28px;height:28px;flex:none;margin-left:-6px;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+        </sc-if>
+        <span style="flex:1;font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ msgTitle }}</span>
+        <button onClick="{{ closeMsg }}" title="Close" style="width:28px;height:28px;flex:none;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+      </div>
+      <sc-if value="{{ inList }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 10px 8px 15px">
+          <div style="flex:1;display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid #DEDCD5;border-radius:6px;background:#fff">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" style="flex:none"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+            <input value="{{ msgQuery }}" onChange="{{ onMsgQuery }}" placeholder="Search" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:12.5px;color:#111111">
+          </div>
+          <button title="Message preferences" style="width:28px;height:28px;flex:none;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></button>
+        </div>
+        <div style="display:flex;justify-content:flex-end;padding:0 15px 10px">
+          <a href="#" style="display:flex;align-items:center;gap:5px;font-size:12px;text-decoration:none;color:#111111"><svg width="12" height="12" viewBox="0 0 24 24" fill="#6B6A64"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"></path></svg>Contacts</a>
+        </div>
+        <div style="flex:1;min-height:0;overflow-y:auto;border-top:1px solid #DEDCD5">
+          <div style="border-bottom:1px solid #DEDCD5">
+            <div onClick="{{ msgSec.starred.toggle }}" style="display:flex;align-items:center;gap:8px;height:44px;padding:0 15px;cursor:pointer" style-hover="background:#F4F3EF">
+              <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ msgSec.starred.rot }}deg);transition:transform .15s"><path d="M3.5 2v6L7 5z" fill="#111111"></path></svg>
+              <span style="font-size:13px;font-weight:500">Starred</span><span style="font-size:11.5px;color:#6B6A64">({{ msgSec.starred.count }})</span>
+            </div>
+            <sc-if value="{{ msgSec.starred.open }}" hint-placeholder-val="{{ false }}">
+              <sc-for list="{{ msgSec.starred.items }}" as="m">
+                <div onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:10px;padding:10px 15px;background:#fff;border-top:1px solid #DEDCD5;cursor:pointer" style-hover="background:#F4F3EF">
+                  <div style="position:relative;width:34px;height:34px;flex:none;border-radius:6px;background:{{ m.av }};color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ m.initials }}<span style="position:absolute;right:-3px;bottom:-3px;width:11px;height:11px;border-radius:50%;background:{{ m.status }};border:2px solid #fff"></span></div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:12.5px;font-weight:500">{{ m.name }}</span>
+                    <span style="font-size:11px;color:#6B6A64;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.preview }}</span>
+                  </div>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+                </div>
+              </sc-for>
+              <sc-if value="{{ msgSec.starred.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:4px 15px 14px 33px;font-size:11.5px;color:#6B6A64">No conversations</div></sc-if>
+            </sc-if>
+          </div>
+          <div style="border-bottom:1px solid #DEDCD5">
+            <div onClick="{{ msgSec.group.toggle }}" style="display:flex;align-items:center;gap:8px;height:44px;padding:0 15px;cursor:pointer" style-hover="background:#F4F3EF">
+              <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ msgSec.group.rot }}deg);transition:transform .15s"><path d="M3.5 2v6L7 5z" fill="#111111"></path></svg>
+              <span style="font-size:13px;font-weight:500">Group</span><span style="font-size:11.5px;color:#6B6A64">({{ msgSec.group.count }})</span>
+            </div>
+            <sc-if value="{{ msgSec.group.open }}" hint-placeholder-val="{{ false }}">
+              <sc-for list="{{ msgSec.group.items }}" as="m">
+                <div onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:10px;padding:10px 15px;background:#fff;border-top:1px solid #DEDCD5;cursor:pointer" style-hover="background:#F4F3EF">
+                  <div style="position:relative;width:34px;height:34px;flex:none;border-radius:6px;background:{{ m.av }};color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ m.initials }}<span style="position:absolute;right:-3px;bottom:-3px;width:11px;height:11px;border-radius:50%;background:{{ m.status }};border:2px solid #fff"></span></div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:12.5px;font-weight:500">{{ m.name }}</span>
+                    <span style="font-size:11px;color:#6B6A64;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.preview }}</span>
+                  </div>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+                </div>
+              </sc-for>
+              <sc-if value="{{ msgSec.group.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:4px 15px 14px 33px;font-size:11.5px;color:#6B6A64">No conversations</div></sc-if>
+            </sc-if>
+          </div>
+          <div style="border-bottom:1px solid #DEDCD5">
+            <div onClick="{{ msgSec.private.toggle }}" style="display:flex;align-items:center;gap:8px;height:44px;padding:0 15px;cursor:pointer" style-hover="background:#F4F3EF">
+              <svg width="10" height="10" viewBox="0 0 10 10" style="flex:none;transform:rotate({{ msgSec.private.rot }}deg);transition:transform .15s"><path d="M3.5 2v6L7 5z" fill="#111111"></path></svg>
+              <span style="font-size:13px;font-weight:500">Private</span><span style="font-size:11.5px;color:#6B6A64">({{ msgSec.private.count }})</span>
+            </div>
+            <sc-if value="{{ msgSec.private.open }}" hint-placeholder-val="{{ false }}">
+              <sc-for list="{{ msgSec.private.items }}" as="m">
+                <div onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:10px;padding:10px 15px;background:#fff;border-top:1px solid #DEDCD5;cursor:pointer" style-hover="background:#F4F3EF">
+                  <div style="position:relative;width:34px;height:34px;flex:none;border-radius:6px;background:{{ m.av }};color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ m.initials }}<span style="position:absolute;right:-3px;bottom:-3px;width:11px;height:11px;border-radius:50%;background:{{ m.status }};border:2px solid #fff"></span></div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:12.5px;font-weight:500">{{ m.name }}</span>
+                    <span style="font-size:11px;color:#6B6A64;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.preview }}</span>
+                  </div>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+                </div>
+              </sc-for>
+              <sc-if value="{{ msgSec.private.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:4px 15px 14px 33px;font-size:11.5px;color:#6B6A64">No conversations</div></sc-if>
+            </sc-if>
+          </div>
+        </div>
+        <div style="flex:none;padding:12px;text-align:center;border-top:1px solid #DEDCD5"><a href="#" style="font-size:12.5px;font-weight:500;text-decoration:none">See all</a></div>
+      </sc-if>
+      <sc-if value="{{ inConv }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:15px">
+          <div style="align-self:center;font-size:10.5px;color:#6B6A64;padding-bottom:4px">Today</div>
+          <sc-for list="{{ convMsgs }}" as="m">
+            <div style="align-self:{{ m.align }};max-width:82%;padding:8px 11px;border-radius:6px;background:{{ m.bg }};color:{{ m.color }};border:1px solid {{ m.border }};font-size:12.5px;line-height:1.4;text-wrap:pretty">{{ m.text }}<div style="margin-top:3px;font-size:10px;opacity:.7;text-align:right">{{ m.time }}</div></div>
+          </sc-for>
+        </div>
+        <div style="flex:none;display:flex;gap:8px;padding:10px;border-top:1px solid #DEDCD5;background:#fff">
+          <input value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}" placeholder="Write a message…" style="flex:1;min-width:0;height:34px;padding:0 10px;border:1px solid #DEDCD5;border-radius:6px;outline:0;font:inherit;font-size:12.5px;color:#111111">
+          <button onClick="{{ sendMsg }}" title="Send" style="width:34px;height:34px;flex:none;border-radius:6px;border:1px solid #111111;background:#111111;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"><path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"></path></svg></button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+<sc-if value="{{ blocksOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeBlocks }}" style="position:fixed;inset:0;z-index:100;background:rgba(20,20,30,.28);display:flex;align-items:center;justify-content:center;padding:24px">
+      <div onClick="{{ stop }}" role="dialog" aria-label="Add a block" style="width:520px;max-width:100%;max-height:calc(100vh - 48px);display:flex;flex-direction:column;background:#fff;border:1px solid #DEDCD5;border-radius:8px;box-shadow:none;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:11px;padding:14px 14px 12px">
+          <div style="width:32px;height:32px;flex:none;border-radius:6px;background:#F4F3EF;border:1px solid #DEDCD5;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+          <span style="flex:1;font-size:15px;font-weight:500">Add a block</span>
+          <button onClick="{{ closeBlocks }}" title="Close" style="width:28px;height:28px;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:#F4F3EF"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+        </div>
+        <div style="padding:0 14px 10px">
+          <div style="display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid #DEDCD5;border-radius:6px;background:#FFFFFF">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B6A64" stroke-width="2" style="flex:none"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+            <input value="{{ blockQuery }}" onChange="{{ onBlockQuery }}" placeholder="Search blocks" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:12.5px;color:#111111">
+          </div>
+        </div>
+        <div style="flex:1;min-height:0;overflow-y:auto;border-top:1px solid #DEDCD5;padding:6px">
+          <sc-for list="{{ blockList }}" as="b">
+            <div onClick="{{ b.onClick }}" style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;cursor:pointer" style-hover="background:#F4F3EF">
+              <div style="width:28px;height:28px;flex:none;border-radius:5px;background:#F4F3EF;border:1px solid #DEDCD5;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="{{ b.d }}"></path></svg></div>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:12.5px;font-weight:500">{{ b.name }}</span>
+                <span style="font-size:11px;color:#6B6A64;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.desc }}</span>
+              </div>
+              <span style="font-size:11.5px;color:#111111;font-weight:500">Add</span>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noBlocks }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 8px;font-size:12px;color:#6B6A64">No blocks match “{{ blockQuery }}”</div></sc-if>
+        </div>
+        <div style="display:flex;justify-content:flex-end;padding:10px 14px;border-top:1px solid #DEDCD5">
+          <button onClick="{{ closeBlocks }}" style="height:30px;padding:0 14px;border-radius:6px;border:1px solid #DEDCD5;background:#F4F3EF;cursor:pointer;font-size:12px;color:#111111">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:110;display:flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:6px;background:#111111;color:#fff;font-size:12px;box-shadow:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#95BF47" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;sidebarStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;docked&quot;,&quot;floating&quot;],&quot;default&quot;:&quot;docked&quot;,&quot;tsType&quot;:&quot;'docked' | 'floating'&quot;}}">
+class Component extends DCLogic {
+  state = { outlineOpen: true, secOpen: { 2: true }, actActive: '2-3', done: { '0-0': 1, '0-1': 1, '1-0': 1, '1-1': 1, '1-2': 1, '1-3': 1, '1-4': 1, '1-5': 1 }, cTab: 0, msgOpen: false, msgSecs: { starred: true, group: false, private: false }, conv: null, msgQuery: '', draft: '', msgRead: false, sent: [], vw: typeof window !== 'undefined' ? window.innerWidth : 1440, navOpen: false, drawerOpen: typeof window !== 'undefined' && window.innerWidth >= 1200, qAns: {}, qFlag: {}, qCur: 0, qDone: false, qTab: 0, hFilter: 0, hSort: 0, hView: 'card', hQuery: '', blocksOpen: false, blockQuery: '', toast: null, editing: false, active: '2', open: { 6: true }, collapsed: false, menu: null, query: '', lang: 0, cat: 0, dark: false, read: {}, banner: true, mode: 'day', hover: null, sort: null, filter: 0 };
+  plotRef = React.createRef();
+  searchRef = React.createRef();
+  navData = [
+    ['Dashboard', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', null],
+    ['Calendar', 'M3 5h18v16H3zM3 10h18M8 3v4M16 3v4', null],
+    ['My courses', 'M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z', ['UI Design Fundamentals', 'Figma Mastery Bootcamp', 'Visual Branding Essentials', 'Advanced UX Research']],
+    ['Course management', 'M4 5h16v11H4zM8 20h8M12 16v4', ['Manage courses and categories', 'Add a new course', 'Course requests', 'Restore course', 'Download courses']],
+    ['Users', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21c0-4 3-6 7-6s7 2 7 6M16 3a4 4 0 0 1 0 8M22 21c0-3-2-5-4-5.5', ['Browse list of users', 'Add a new user', 'Bulk user actions', 'Upload users', 'Cohorts', 'Define roles']],
+    ['Grades', 'M5 3h14v18H5zM9 11l2 2 4-4M9 17h6', ['Grader report', 'Gradebook setup', 'Outcomes', 'Scales', 'Letters']],
+    ['Reports', 'M5 20v-8M10 20V6M15 20v-9M20 20V9', ['Course Statistics', 'Logs', 'Live logs', 'Activity completion', 'Course participation', 'Event monitoring rules']],
+    ['Badges', 'M12 2l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z', ['Manage badges', 'Add a new badge', 'Badge settings']],
+    ['Competencies', 'M12 3a9 9 0 1 0 9 9h-9zM15 3.5A9 9 0 0 1 20.5 9H15z', ['Competency frameworks', 'Learning plan templates', 'Migrate frameworks']],
+    ['Site administration', 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1', ['Notifications', 'Registration', 'Advanced features', 'Users', 'Courses', 'Grades', 'Analytics', 'Competencies', 'Badges', 'H5P', 'Location', 'Language', 'Messaging', 'Plugins', 'Security', 'Appearance', 'Front page', 'Server', 'Reports', 'Development']],
+  ];
+  catData = [
+    ['Design', 'CORE#DES1', 24, '#111111', 'M12 3L2.5 20h19zM7 20l7.5-9'],
+    ['Development', 'CORE#DEV1', 31, '#111111', 'M8 7l-5 5 5 5M16 7l5 5-5 5'],
+    ['Marketing', 'CORE#MKT1', 18, '#95BF47', 'M3 10v4l12 5V5zM15 9a3 3 0 0 1 0 6'],
+    ['Business', 'CORE#BUS1', 15, '#111111', 'M4 8h16v11H4zM9 8V5h6v3'],
+  ];
+  langData = [['English', 'en', 'Eng'], ['Tiếng Việt', 'vi', 'Vie'], ['Español', 'es', 'Esp'], ['Français', 'fr', 'Fra'], ['Deutsch', 'de', 'Deu'], ['日本語', 'ja', 'Jpn']];
+  notifData = [
+    ['Assignment due tomorrow: Wireframe critique', 'UI Design Fundamentals · 2h ago', 'M5 3h14v18H5zM9 11l2 2 4-4M9 17h6'],
+    ['Linh Vo replied in “Auto layout tips”', 'Figma Mastery Bootcamp · 5h ago', 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z'],
+    ['12 new enrolments in Design System & Components', 'DES106 · Yesterday', 'M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5'],
+    ['Scheduled course backup completed', 'Site administration · 2 days ago', 'M3 7l9-4 9 4-9 4zM3 12l9 4 9-4M3 17l9 4 9-4'],
+  ];
+  componentDidMount() {
+    this.onDoc = e => { const m = this.state.menu; if (!m) return; const el = e.target.closest && e.target.closest('[data-dd]'); if (!el || el.getAttribute('data-dd') !== m) this.setState({ menu: null }); };
+    this.onKey = e => { if (e.key === 'Escape') this.setState({ menu: null, blocksOpen: false, navOpen: false, msgOpen: false }); };
+    document.addEventListener('mousedown', this.onDoc); document.addEventListener('keydown', this.onKey);
+    this.onResize = () => this.setState({ vw: window.innerWidth }); window.addEventListener('resize', this.onResize); this.onResize();
+    setTimeout(() => this.syncJump(), 0);
+  }
+  homeData = [
+    ['DES101', 'UI Design Fundamentals', 'UI Design', 'Alice Nguyen', 71, 24, 3],
+    ['DES102', 'Figma Mastery Bootcamp', 'UI Design', 'Linh Vo', 50, 18, 1],
+    ['DES103', 'Visual Branding Essentials', 'Branding', 'David Le', 25, 16, 5],
+    ['DES104', 'Advanced UX Research', 'Research', 'Michael Tran', null, 20, 2],
+    ['DES105', 'Product Design Workflow', 'Product', 'Nhi Dang', 100, 14, 4],
+    ['DES106', 'Design System & Components', 'UI Design', 'Quynh Ha', 0, 22, 0],
+  ];
+  blockData = [
+    ['Activities', 'Lists activity types used in the course', 'M4 6h16M4 12h16M4 18h10'],
+    ['Calendar', 'Shows upcoming events and deadlines', 'M3 5h18v16H3zM3 10h18M8 3v4M16 3v4'],
+    ['Comments', 'Lets users leave comments on the page', 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z'],
+    ['Course completion status', 'Progress against completion criteria', 'M5 3h14v18H5zM9 11l2 2 4-4M9 17h6'],
+    ['Latest announcements', 'Recent posts from the announcements forum', 'M3 10v4l12 5V5zM15 9a3 3 0 0 1 0 6'],
+    ['Latest badges', 'Badges recently earned by the user', 'M12 2l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z'],
+    ['Learning plans', 'Active learning plans and competencies', 'M12 3a9 9 0 1 0 9 9h-9z'],
+    ['Online users', 'Users active in the last 5 minutes', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21c0-4 3-6 7-6s7 2 7 6'],
+    ['Private files', 'Quick access to the user’s files', 'M4 4h10l6 6v10H4zM14 4v6h6'],
+    ['Recently accessed courses', 'Courses the user opened recently', 'M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z'],
+    ['Text', 'Custom HTML content and media', 'M4 6h16M9 6v14M15 6v14'],
+    ['Timeline', 'Upcoming activity deadlines by date', 'M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z'],
+  ];
+  drawerVals(docked) {
+    const open = this.state.drawerOpen;
+    const s1 = [5,6,7,8,9,9,10,11,12,12,13,14,13,14,15,14,13,12,13,12,11,12,10,9,7,6,5,4,4,3,3];
+    const s2 = [3,5,7,8,9,10,11,12,12,11,10,8,6,4,3,2];
+    const cols = [...s1.map(h => [h, '#111111', 'UI Design']), ...s2.map(h => [h, '#95BF47', 'Figma Bootcamp'])];
+    return {
+      drawerW: open ? 300 : 0, rootMinW: this.state.vw < 1200 ? 0 : open ? 1500 : 1200, drawerClosed: !open,
+      openDrawer: () => this.setState({ drawerOpen: true }), closeDrawer: () => this.setState({ drawerOpen: false }),
+      dBorder: docked ? '0' : '1px solid #DEDCD5', dRadius: docked ? '0' : '14px',
+      blockBorder: this.state.editing ? '#DEDCD5' : '#DEDCD5',
+      xpCols: cols.map(([h, c, n]) => ({ tip: n + ': ' + h * 4 + ' XP', dots: Array.from({ length: h }, () => c) })),
+      monthStats: [['Days', 22], ['Lessons', 36], ['Quizzes', 18], ['Minutes', 231]].map(([label, value], i) => ({ label, value, border: i ? '1px solid #DEDCD5' : '0' })),
+    };
+  }
+  convData = {
+    starred: [['Admin User', 'AU', '#111111', '#95BF47', [['in', 'Reminder: site maintenance is scheduled for Saturday 22:00.', '09:12'], ['out', 'Thanks — I’ll let the teachers know.', '09:20'], ['in', 'Can you also check the DES106 enrolments?', '10:04']]]],
+    group: [], private: [],
+  };
+  msgVals(btn) {
+    const { msgOpen, msgSecs, conv, msgQuery, draft, msgRead, sent } = this.state;
+    const q = msgQuery.trim().toLowerCase();
+    const msgSec = {};
+    for (const k of ['starred', 'group', 'private']) {
+      const items = this.convData[k].filter(c => !q || c[0].toLowerCase().includes(q));
+      msgSec[k] = { open: msgSecs[k], rot: msgSecs[k] ? 90 : 0, count: items.length, empty: !items.length,
+        toggle: () => this.setState(st => ({ msgSecs: { ...st.msgSecs, [k]: !st.msgSecs[k] } })),
+        items: items.map(c => ({ name: c[0], initials: c[1], av: c[2], status: c[3], preview: c[4][c[4].length - 1][1], onClick: () => this.setState({ conv: c[0], msgRead: true }) })) };
+    }
+    const c = conv && this.convData.starred.find(x => x[0] === conv);
+    const send = () => { const t = this.state.draft.trim(); if (!t) return; const d = new Date(); this.setState(st => ({ draft: '', sent: [...st.sent, [t, String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0')]] })); };
+    return {
+      msgOpen, msgSec, msgQuery, inConv: !!c, inList: !c, msgTitle: c ? c[0] : 'Messages', msgUnread: !msgRead, bMsg: btn(msgOpen),
+      toggleMsg: () => this.setState(st => ({ msgOpen: !st.msgOpen, menu: null })), closeMsg: () => this.setState({ msgOpen: false }),
+      backMsg: () => this.setState({ conv: null }), onMsgQuery: e => this.setState({ msgQuery: e.target.value }),
+      draft, onDraft: e => this.setState({ draft: e.target.value }), onDraftKey: e => { if (e.key === 'Enter') send(); }, sendMsg: send,
+      convMsgs: c ? [...c[4], ...sent.map(([t, time]) => ['out', t, time])].map(([dir, text, time]) => ({ text, time, align: dir === 'out' ? 'flex-end' : 'flex-start', bg: dir === 'out' ? '#111111' : '#fff', color: dir === 'out' ? '#fff' : '#111111', border: dir === 'out' ? '#111111' : '#DEDCD5' })) : [],
+    };
+  }
+  courseData = [
+    ['Welcome!', 'Start here: how the course works and key terms.', [['page', 'About this course', '5 min read'], ['glossary', 'Glossary of terms', '42 entries']]],
+    ['Module 1: The historical background', 'From Socrates to the scientific method.', [['video', 'Useful video Lesson from Socrates', '12 min'], ['forum', 'Module discussion: Speak your mind!', '18 posts'], ['page', 'Historical overview of Critical thinking', '8 min read'], ['book', 'Learning materials for this module', '6 chapters'], ['url', 'Advice and Resources: Useful links', ''], ['assign', 'Tasks to complete', 'Due 24 Oct'], ['quiz', 'Module 1 quick check', '10 questions'], ['lesson', 'The historical background', '20 min']]],
+    ['Module 2: Identify and analyse arguments', 'Premises, conclusions and the structure of reasoning.', [['forum', 'Module discussion: Speak your mind!', '9 posts'], ['book', 'Learning materials for this module', '5 chapters'], ['assign', 'Tasks to complete', 'Due 31 Oct'], ['quiz', 'Module 2 quick check', '10 questions']]],
+    ['Module 3: Evaluate evidence and reasoning', 'Sources, bias, and common fallacies.', [['forum', 'Module discussion: Speak your mind!', ''], ['book', 'Learning materials for this module', '7 chapters'], ['assign', 'Tasks to complete', 'Due 7 Nov'], ['quiz', 'Module 3 quick check', '12 questions']]],
+    ['Module 4: Construct your own arguments', 'Put it together in clear, well-supported writing.', [['forum', 'Module discussion: Speak your mind!', ''], ['book', 'Learning materials for this module', '4 chapters'], ['assign', 'Argument essay', 'Due 14 Nov']]],
+    ['Final assessment', 'Complete all modules to unlock.', [['quiz', 'Final quiz', '25 questions'], ['feedback', 'Course feedback', '3 min'], ['cert', 'Course certificate', '']]],
+  ];
+  actTypes = {
+    page: ['Page', 'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5'],
+    glossary: ['Glossary', 'M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3zM4 17a3 3 0 0 1 3-3h12'],
+    video: ['Video', 'M3 6h13v12H3zM16 10l5-3v10l-5-3'],
+    forum: ['Forum', 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12zM8 10h8M8 14h5'],
+    book: ['Book', 'M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z'],
+    url: ['URL', 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1'],
+    assign: ['Assignment', 'M6 3h12v18H6zM9 8h6M9 12h6M9 16h4'],
+    quiz: ['Quiz', 'M5 3h14v18H5zM9 11l2 2 4-4M9 17h6'],
+    lesson: ['Lesson', 'M12 3l9 5-9 5-9-5zM3 13l9 5 9-5'],
+    feedback: ['Feedback', 'M12 2l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z'],
+    cert: ['Certificate', 'M4 4h16v11H4zM8 8h8M8 11h5M15 15v6l2-1.5 2 1.5v-6'],
+  };
+  goAct(id) {
+    const s = +id.split('-')[0];
+    this.setState(st => ({ actActive: id, secOpen: { ...st.secOpen, [s]: true }, navOpen: false }));
+    setTimeout(() => { const el = document.getElementById('act-' + id); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 90, behavior: 'smooth' }); }, 60);
+  }
+  quizData = [
+    ['What is a counterargument?', ['An argument that is completely unrelated to the main argument', 'An argument that supports the main argument', 'An argument that opposes the main argument'], 2],
+    ['What is a fallacy?', ['A type of reasoning that is rarely used', 'An unsound argument', 'A sound argument'], 1],
+    ['What is a premise?', ['A conclusion that is drawn from other statements', 'A statement that provides support for a conclusion', 'A statement that is irrelevant to the argument'], 1],
+    ['Which word most often signals a conclusion?', ['Because', 'Therefore', 'Since'], 1],
+    ['An argument is valid when…', ['Its premises are all true', 'The conclusion follows necessarily from the premises', 'Most people agree with it'], 1],
+    ['Attacking the person instead of their argument is called…', ['Ad hominem', 'Straw man', 'False dilemma'], 0],
+    ['What is a straw man fallacy?', ['Misrepresenting an argument to make it easier to attack', 'Appealing to an authority', 'Assuming what you are trying to prove'], 0],
+    ['An inductive argument…', ['Guarantees its conclusion', 'Moves from specific observations to a probable generalisation', 'Has no premises'], 1],
+    ['A sound argument is one that is…', ['Persuasive', 'Valid with true premises', 'Long and detailed'], 1],
+    ['“Begging the question” means…', ['Asking a follow-up question', 'Assuming the conclusion within a premise', 'Avoiding the question entirely'], 1],
+  ];
+  goQ(i) { this.setState({ qCur: i }); setTimeout(() => { const el = document.getElementById('q-' + (i + 1)); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 20, behavior: 'smooth' }); }, 30); }
+  quizVals() {
+    const { qAns, qFlag, qCur, qDone, qTab, vw } = this.state;
+    const N = this.quizData.length, L = ['A', 'B', 'C', 'D'];
+    const answered = Object.keys(qAns).filter(k => qAns[k] != null).length, flagged = Object.values(qFlag).filter(Boolean).length;
+    const score = this.quizData.reduce((s, q, i) => s + (qAns[i] === q[2] ? 1 : 0), 0);
+    const narrow = vw < 760;
+    return {
+      pageTitle: 'Critical thinking › Module 2 quick check', qCount: N, qDone, qLive: !qDone,
+      qModeLabel: qDone ? 'Reviewing attempt' : 'Preview',
+      qProgTitle: qDone ? 'Result: ' + score + ' of ' + N + ' correct' : 'Your attempt',
+      qProgMeta: qDone ? Math.round(score / N * 100) + '% · ' + (score / N * 10).toFixed(2) + ' / 10.00' : answered + ' of ' + N + ' answered' + (flagged ? ' · ' + flagged + ' flagged' : ''),
+      qSegs: this.quizData.map((q, i) => qDone ? (qAns[i] === q[2] ? '#95BF47' : '#111111') : qAns[i] != null ? '#95BF47' : '#DEDCD5'),
+      qTabs: ['Quiz', 'Settings', 'Questions', 'Results', 'Question bank', 'More'].map((label, i) => ({ label, onClick: () => this.setState({ qTab: i }), bg: i === qTab ? '#111111' : 'transparent', color: i === qTab ? '#FFFFFF' : '#6B6A64' })),
+      qBack: () => {}, qCols: narrow ? 'minmax(0,1fr)' : '168px minmax(0,1fr)',
+      qMetaDir: narrow ? 'row' : 'column', qMetaAlign: narrow ? 'center' : 'flex-start', qMetaBR: narrow ? '0' : '1px solid #DEDCD5', qMetaBB: narrow ? '1px solid #DEDCD5' : '0',
+      questions: this.quizData.map(([text, opts, ok], i) => {
+        const a = qAns[i], has = a != null, right = a === ok, fl = !!qFlag[i], cur = i === qCur;
+        return { n: i + 1, text, flagged: fl,
+          border: cur && !qDone ? '#111111' : '#DEDCD5',
+          status: qDone ? (has ? (right ? 'Correct' : 'Incorrect') : 'Not answered') : has ? 'Answer saved' : 'Not yet answered',
+          dot: qDone ? (right ? '#95BF47' : '#111111') : has ? '#95BF47' : '#DEDCD5',
+          marks: qDone ? 'Mark ' + (right ? '1.00' : '0.00') + ' out of 1.00' : 'Marked out of 1.00',
+          flag: () => this.setState(st => ({ qFlag: { ...st.qFlag, [i]: !st.qFlag[i] } })), flagLabel: fl ? 'Flagged' : 'Flag question',
+          flagFill: fl ? '#95BF47' : 'none', flagBg: fl ? '#FFFFFF' : 'transparent', flagBorder: fl ? '#111111' : '#DEDCD5',
+          canClear: has && !qDone, clear: () => this.setState(st => ({ qAns: { ...st.qAns, [i]: null } })),
+          hasFb: qDone, correct: opts[ok], fbTitle: right ? 'Correct.' : has ? 'Incorrect.' : 'Not answered.',
+          fbDot: right ? '#95BF47' : '#111111', fbIcon: right ? '#111111' : '#FFFFFF', fbPath: right ? 'M5 12l5 5 9-10' : 'M6 6l12 12M18 6L6 18',
+          opts: opts.map((t2, j) => { const on = a === j, isOk = j === ok;
+            const rev = qDone && (isOk || on);
+            return { l: L[j], t: t2, on, cursor: qDone ? 'default' : 'pointer',
+              pick: () => { if (!qDone) this.setState(st => ({ qAns: { ...st.qAns, [i]: j }, qCur: i })); },
+              note: qDone ? (isOk ? 'Correct answer' : on ? 'Your answer' : '') : '',
+              border: rev ? (isOk ? '#95BF47' : '#111111') : on ? '#111111' : '#DEDCD5',
+              bg: qDone && isOk ? '#F3F8EA' : on ? '#FAFAF8' : '#FFFFFF',
+              tileBg: (qDone ? isOk : on) ? (qDone ? '#95BF47' : '#111111') : '#F4F3EF', tileBorder: (qDone ? isOk : on) ? (qDone ? '#95BF47' : '#111111') : '#DEDCD5', tileColor: (qDone ? isOk : on) ? (qDone ? '#111111' : '#FFFFFF') : '#6B6A64',
+              ring: on ? '#111111' : '#DEDCD5', dot: on ? (qDone ? (isOk ? '#95BF47' : '#111111') : '#95BF47') : 'transparent' }; }) };
+      }),
+      qNavMeta: qDone ? score + '/' + N + ' correct' : answered + '/' + N + ' answered',
+      qNav: this.quizData.map((q, i) => { const has = qAns[i] != null, right = qAns[i] === q[2], cur = i === qCur;
+        const bg = qDone ? (right ? '#95BF47' : has ? '#111111' : '#F4F3EF') : has ? '#111111' : '#FFFFFF';
+        const color = qDone ? (right ? '#111111' : has ? '#FFFFFF' : '#6B6A64') : has ? '#FFFFFF' : '#111111';
+        return { n: i + 1, go: () => this.goQ(i), bg, color, border: has || (qDone && right) ? bg : '#DEDCD5', ring: cur ? '0 0 0 2px #F4F3EF, 0 0 0 3.5px #111111' : 'none', flagC: qFlag[i] ? '#95BF47' : 'transparent',
+          tip: 'Question ' + (i + 1) + (has ? ' · answered' : ' · not answered') + (qFlag[i] ? ' · flagged' : '') }; }),
+      qLegend: (qDone ? [['Correct', '#95BF47', '#95BF47'], ['Incorrect', '#111111', '#111111'], ['Not answered', '#F4F3EF', '#DEDCD5']] : [['Answered', '#111111', '#111111'], ['Not answered', '#FFFFFF', '#DEDCD5'], ['Flagged', '#95BF47', '#95BF47']]).map(([label, bg, border]) => ({ label, bg, border })),
+      qSummary: [['Started', 'Today, 10:42'], ['State', qDone ? 'Finished' : 'In progress'], ['Answered', answered + ' of ' + N], ['Flagged', String(flagged)], ['Grade', qDone ? (score / N * 10).toFixed(2) + ' out of 10.00' : '—']].map(([k, v]) => ({ k, v })),
+      qFootNote: qDone ? 'You scored ' + score + ' of ' + N + '. Review the answers above or start a new preview.' : (N - answered) ? (N - answered) + ' question' + (N - answered > 1 ? 's' : '') + ' still unanswered. You can finish at any time.' : 'All questions answered. Ready to submit.',
+      qFinish: () => { this.setState({ qDone: true }); window.scrollTo({ top: 0, behavior: 'smooth' }); },
+      qRestart: () => { this.setState({ qAns: {}, qFlag: {}, qDone: false, qCur: 0 }); window.scrollTo({ top: 0, behavior: 'smooth' }); },
+    };
+  }
+  courseVals() {
+    const { outlineOpen, secOpen, actActive, done, cTab, collapsed, vw } = this.state;
+    const exp = vw < 1200 || !collapsed;
+    const total = this.courseData.reduce((n, s) => n + s[2].length, 0);
+    const doneCount = Object.values(done).filter(Boolean).length;
+    const anyOpen = this.courseData.some((_, i) => secOpen[i]);
+    const toggleDone = id => this.setState(st => ({ done: { ...st.done, [id]: !st.done[id] } }));
+    const secs = this.courseData.map(([title, summary, acts], si) => {
+      const open = !!secOpen[si], d = acts.filter((_, ai) => done[si + '-' + ai]).length;
+      const activeSec = actActive.split('-')[0] === String(si);
+      return { idx: si, title, summary, open, rot: open ? 90 : 0, doneOf: d + '/' + acts.length,
+        dot: d === acts.length ? '#95BF47' : d ? '#111111' : '#DEDCD5', chevBorder: open ? '#111111' : '#DEDCD5',
+        bg: activeSec ? '#fff' : 'transparent', border: activeSec ? '#DEDCD5' : 'transparent',
+        onClick: () => this.setState(st => ({ secOpen: { ...st.secOpen, [si]: !st.secOpen[si] } })),
+        acts: acts.map(([t, name, meta], ai) => {
+          const id = si + '-' + ai, isDone = !!done[id], on = actActive === id;
+          return { id, name, meta, type: this.actTypes[t][0], d: this.actTypes[t][1],
+            border: on ? '#111111' : '#DEDCD5',
+            go: () => this.goAct(id), select: e => { e.preventDefault(); this.setState({ actActive: id }); },
+            toggle: () => toggleDone(id),
+            btnLabel: isDone ? 'Done' : 'Mark as done', btnBg: isDone ? '#111111' : '#FFFFFF', btnColor: isDone ? '#FFFFFF' : '#111111', btnBorder: isDone ? '#111111' : '#DEDCD5', btnIcon: isDone ? '#95BF47' : '#DEDCD5',
+            olBg: on ? '#fff' : 'transparent', olBorder: on ? '#DEDCD5' : 'transparent', olColor: on ? '#111111' : '#6B6A64', olWeight: on ? 500 : 400,
+            ring: isDone ? '#95BF47' : '#DEDCD5', fill: isDone ? '#95BF47' : 'transparent', tick: isDone ? '#FFFFFF' : 'transparent' };
+        }) };
+    });
+    const N = 40, filled = Math.round(doneCount / total * N);
+    const flat = []; this.courseData.forEach(([st], si) => this.courseData[si][2].forEach(([t, name], ai) => flat.push({ id: si + '-' + ai, name, sec: st, type: this.actTypes[t][0] })));
+    const ci = Math.max(0, flat.findIndex(f => f.id === actActive)), pv = flat[ci - 1], nx = flat[ci + 1];
+    const navBtn = (f, dir) => ({ has: !!f, none: !f, name: f ? f.name : '', meta: f ? f.type + ' · ' + f.sec : '', go: () => f && this.goAct(f.id), label: dir });
+    return {
+      actPrev: navBtn(pv, 'Previous activity'), actNext: navBtn(nx, 'Next activity'),
+      actPos: (ci + 1) + ' of ' + flat.length, curActName: flat[ci].name,
+      jumpOpts: flat.map((f, i) => ({ id: f.id, name: f.name, val: f.id })), jumpVal: flat[ci].id,
+      onJump: e => this.goAct(e.target.value), jumpRef: this.jumpRef,
+      pageTitle: 'My courses › Critical Thinking',
+      outlineShown: exp && outlineOpen, navShown: !(exp && outlineOpen),
+      toggleOutline: () => this.setState(st => ({ collapsed: false, outlineOpen: st.collapsed ? true : !st.outlineOpen })),
+      cRowPad: exp ? '6px 6px 6px 10px' : '6px 0', cRowBg: outlineOpen ? '#FFFFFF' : 'transparent', cRowBorder: outlineOpen ? '#DEDCD5' : 'transparent',
+      olTileBg: outlineOpen ? '#111111' : '#F4F3EF', olTileBorder: outlineOpen ? '#111111' : '#DEDCD5', olIcon: outlineOpen ? '#FFFFFF' : '#6B6A64',
+      outline: secs, sections: secs,
+      allLabel: anyOpen ? 'Collapse all' : 'Expand all', allIcon: anyOpen ? 'M7 14l5-5 5 5' : 'M7 10l5 5 5-5',
+      toggleAllSecs: () => this.setState({ secOpen: anyOpen ? {} : Object.fromEntries(this.courseData.map((_, i) => [i, true])) }),
+      secTotal: this.courseData.length, actTotal: total, doneCount, donePct: Math.round(doneCount / total * 100),
+      progSegs: Array.from({ length: N }, (_, i) => i < filled ? '#95BF47' : '#DEDCD5'),
+      cTabs: ['Course', 'Participants', 'Grades', 'Learning outcomes', 'Reports'].map((label, i) => ({ label, onClick: () => this.setState({ cTab: i }), bg: i === cTab ? '#111111' : 'transparent', color: i === cTab ? '#FFFFFF' : '#6B6A64' })),
+    };
+  }
+  homeVals(menu) {
+    const { hFilter, hSort, hView, hQuery } = this.state;
+    const filters = ['All', 'In progress', 'Not started', 'Completed'];
+    const sorts = ['Course name', 'Last accessed', 'Progress'];
+    const q = hQuery.trim().toLowerCase();
+    let list = this.homeData.filter(c => {
+      const p = c[4];
+      if (hFilter === 1 && !(p > 0 && p < 100)) return false;
+      if (hFilter === 2 && p !== 0) return false;
+      if (hFilter === 3 && p !== 100) return false;
+      return !q || (c[0] + ' ' + c[1] + ' ' + c[2] + ' ' + c[3]).toLowerCase().includes(q);
+    });
+    list = [...list].sort((a, b) => hSort === 0 ? a[1].localeCompare(b[1]) : hSort === 1 ? a[6] - b[6] : (b[4] ?? -1) - (a[4] ?? -1));
+    const N = 30;
+    const opt = (labels, cur, key) => labels.map((label, i) => ({ label, bg: i === cur ? '#F4F3EF' : 'transparent', check: i === cur ? '#111111' : 'transparent', onClick: () => this.setState({ [key]: i, menu: null }) }));
+    const pill = on => on ? { bg: '#fff', border: '#DEDCD5' } : { bg: 'transparent', border: 'transparent' };
+    const seg = (n, filled, on, off) => Array.from({ length: n }, (_, i) => i < filled ? on : off);
+    const gv = [['All', 104, '#111111'], ['Active', 95, '#95BF47'], ['Online', 24, '#6B6A64']];
+    return {
+      gauges: gv.map(([label, v, color]) => ({ label, value: v, color, pct: Math.round(v / 104 * 100) + '%', dash: (226.2 * v / 104).toFixed(1) + ' 302' })),
+      siteStats: [
+        { title: 'All courses', value: '44', unit: '', meta: '6 categories', dot: '#111111', d: 'M4 5h16v11H4zM8 20h8M12 16v4' },
+        { title: 'Visible courses', value: '36', unit: 'of 44', meta: '8 hidden', dot: '#6B6A64', ring: true, ringDash: (113.1 * .82).toFixed(1) + ' 113.1', ringLabel: '82%', d: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z' },
+        { title: 'Disk usage', value: '2.17', unit: 'GB', meta: '22% of 10 GB quota', dot: '#95BF47', bar: true, segs: seg(10, 2, '#95BF47', '#DEDCD5'), d: 'M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3' },
+        { title: 'Performance problems', value: '0', unit: '', meta: 'All checks passed', dot: '#95BF47', d: 'M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7zM9 12l2 2 4-4' },
+      ],
+      hFilterOpen: menu === 'hfilter', hfilterRot: menu === 'hfilter' ? 180 : 0, toggleHFilter: () => this.toggle('hfilter'),
+      hFilterLabel: filters[hFilter], hFilters: opt(filters, hFilter, 'hFilter'),
+      hSortOpen: menu === 'hsort', hsortRot: menu === 'hsort' ? 180 : 0, toggleHSort: () => this.toggle('hsort'),
+      hSortLabel: 'Sort by ' + sorts[hSort].toLowerCase(), hSorts: opt(sorts, hSort, 'hSort'),
+      hQuery, onHQuery: e => this.setState({ hQuery: e.target.value }),
+      isCardView: hView === 'card' && list.length > 0, isListView: hView === 'list' && list.length > 0, noHomeCourses: !list.length,
+      vCard: pill(hView === 'card'), vList: pill(hView === 'list'),
+      setCardView: () => this.setState({ hView: 'card' }), setListView: () => this.setState({ hView: 'list' }),
+      homeCourses: list.map(c => ({ code: c[0], name: c[1], cat: c[2], teacher: c[3],
+        progressLabel: c[4] == null ? 'No completion criteria' : c[4] + '% complete',
+        lessons: c[4] == null ? c[5] + ' lessons' : Math.round(c[4] / 100 * c[5]) + '/' + c[5] + ' lessons',
+        segs: seg(N, c[4] == null ? 0 : Math.round(c[4] / 100 * N), c[4] === 100 ? '#95BF47' : '#95BF47', '#DEDCD5') })),
+    };
+  }
+  componentWillUnmount() { clearTimeout(this.toastT); window.removeEventListener('resize', this.onResize); document.removeEventListener('mousedown', this.onDoc); document.removeEventListener('keydown', this.onKey); }
+  jumpRef = el => { this.jumpEl = el; this.syncJump(); };
+  syncJump() { if (this.jumpEl && this.jumpEl.value !== this.state.actActive) this.jumpEl.value = this.state.actActive; }
+  componentDidUpdate(_, prev) { this.syncJump(); if (this.state.menu === 'search' && prev.menu !== 'search' && this.searchRef.current) this.searchRef.current.focus(); }
+  toggle(m) { this.setState(st => ({ menu: st.menu === m ? null : m, query: m === 'search' ? '' : st.query })); }
+  go(key) { const p = key.split(':')[0]; this.setState(st => ({ active: key, menu: null, navOpen: false, open: key.includes(':') ? { ...st.open, [p]: true } : st.open })); }
+  days = ['06/11','07/11','08/11','09/11','10/11','11/11','12/11','13/11','14/11','15/11','16/11','17/11','18/11','19/11','20/11','21/11','22/11','23/11','24/11','25/11','26/11','28/11','29/11','30/11','01/12','02/12','03/12','04/12','05/12','06/12'];
+  vals = [221,161,177,126,139,180,197,294,214,182,232,332,320,300,273,283,242,276,224,344,385,318,332,173,164,212,257,232,255,355];
+  courses = [
+    ['DES101','UI Design Fundamentals','Beginner','Alice Nguyen',95,92.3,'#111111'],
+    ['DES102','Figma Mastery Bootcamp','Intermediate','Linh Vo',80,88.1,'#111111'],
+    ['DES103','Visual Branding Essentials','Beginner','David Le',82,86.7,'#111111'],
+    ['DES104','Advanced UX Research','Advanced','Michael Tran',75,90.3,'#111111'],
+    ['DES105','Product Design Workflow','Intermediate','Nhi Dang',60,95.1,'#111111'],
+    ['DES106','Design System & Components','Advanced','Quynh Ha',101,94.8,'#111111'],
+  ];
+  series() {
+    if (this.state.mode === 'day') return { labels: this.days, vals: this.vals, dates: this.days.map(d => d + '/2025') };
+    const labels = [], vals = [], dates = [];
+    for (let i = 0; i < 30; i += 6) {
+      const ch = this.vals.slice(i, i + 6);
+      vals.push(Math.round(ch.reduce((a, b) => a + b, 0) / ch.length));
+      labels.push(this.days[i] + '–' + this.days[Math.min(i + 5, 29)]);
+      dates.push('Week of ' + this.days[i] + '/2025');
+    }
+    return { labels, vals, dates };
+  }
+  path(pts) {
+    if (!(this.props.smoothLine ?? false)) return 'M' + pts.map(p => p.join(',')).join('L');
+    let d = 'M' + pts[0].join(',');
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      d += `C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`;
+    }
+    return d;
+  }
+  segs(n, filled, colorsFn) { return Array.from({ length: n }, (_, i) => colorsFn ? colorsFn(i) : (i < filled ? '#95BF47' : '#DEDCD5')); }
+  renderVals() {
+    const { banner, mode, sort, filter } = this.state;
+    const s = this.series(), n = s.vals.length;
+    const pts = s.vals.map((v, i) => [i / (n - 1) * 1000, 500 - v]);
+    const def = mode === 'day' ? 11 : 1;
+    const hi = Math.min(this.state.hover ?? def, n - 1);
+    const hx = hi / (n - 1) * 100;
+    const hover = { x: hx, y: (1 - s.vals[hi] / 500) * 100, date: s.dates[hi], value: s.vals[hi], tf: hx > 78 ? 'translate(calc(-100% - 16px), -32px)' : 'translate(16px, -32px)' };
+    const { active, open, collapsed, menu, query, lang, cat, dark, read } = this.state;
+    const vw = this.state.vw, compact = vw < 1200, mobile = vw < 640;
+    const exp = compact || !collapsed;
+    const navAll = this.navData.map(([label, d, children], i) => {
+      const has = !!children, isOpen = !!open[i];
+      const pOn = active.split(':')[0] === String(i);
+      const box = (!has && pOn) || (collapsed && pOn);
+      return { label, d, hasChildren: has, expanded: exp, showChildren: exp && has && isOpen, rot: isOpen ? 180 : 0,
+        onClick: () => has ? this.setState(st => ({ collapsed: false, open: { ...st.open, [i]: st.collapsed ? true : !st.open[i] } })) : this.go(String(i)),
+        pad: exp ? '0 10px 0 6px' : '0', justify: exp ? 'flex-start' : 'center',
+        bg: box ? '#fff' : 'transparent', border: box ? '#DEDCD5' : 'transparent', shadow: box ? 'none' : 'none',
+        tileBg: pOn ? '#111111' : '#F4F3EF', tileBorder: pOn ? '#111111' : '#DEDCD5', iconColor: pOn ? '#fff' : '#6B6A64',
+        color: pOn ? '#111111' : '#6B6A64', weight: pOn ? 500 : 400,
+        children: (children || []).map((c, j) => { const on = active === i + ':' + j; return { label: c, onClick: () => this.go(i + ':' + j),
+          bg: on ? '#fff' : 'transparent', border: on ? '#DEDCD5' : 'transparent', color: on ? '#111111' : '#6B6A64', weight: on ? 500 : 400, dot: on ? '#111111' : '#DEDCD5' }; }) };
+    });
+    const nav = navAll.slice(0, 9), adminNav = navAll.slice(9);
+    const [ap, ac] = active.split(':');
+    const pageTitle = ac !== undefined ? this.navData[ap][2][ac] : this.navData[ap][0];
+    const all = [];
+    this.navData.forEach(([l, , ch], i) => ch ? ch.forEach((c, j) => all.push({ label: c, type: l, key: i + ':' + j })) : all.push({ label: l, type: 'Page', key: String(i) }));
+    const q = query.trim().toLowerCase();
+    const found = q ? all.filter(r => (r.label + ' ' + r.type).toLowerCase().includes(q)).slice(0, 7) : all.filter(r => r.type === 'My courses');
+    const btn = on => on ? { bg: '#FFFFFF', border: '#111111' } : { bg: '#F4F3EF', border: '#DEDCD5' };
+    const c0 = this.catData[cat];
+    const lv = { Beginner: ['#F4F3EF', '#95BF47'], Intermediate: ['#F4F3EF', '#111111'], Advanced: ['#F4F3EF', '#111111'] };
+    const order = { Beginner: 0, Intermediate: 1, Advanced: 2 };
+    const filters = ['All', 'Beginner', 'Intermediate', 'Advanced'];
+    let list = this.courses.filter(c => filter === 0 || c[2] === filters[filter]);
+    if (sort) list = [...list].sort((a, b) => sort.k === 2 ? (order[a[2]] - order[b[2]]) * sort.dir : (a[sort.k] - b[sort.k]) * sort.dir);
+    const rows = list.map(c => ({ code: c[0], name: c[1], level: c[2], teacher: c[3], enrolled: c[4], rate: c[5], lvBg: lv[c[2]][0], lvFg: lv[c[2]][1], avBg: c[6], initials: c[3].split(' ').map(w => w[0]).join('') }));
+    const toggleSort = k => this.setState(st => ({ sort: { k, dir: st.sort && st.sort.k === k ? -st.sort.dir : -1 } }));
+    const top = [...this.courses].sort((a, b) => b[5] - a[5]).slice(0, 3);
+    const pill = on => on ? ['#fff', '#DEDCD5'] : ['transparent', 'transparent'];
+    const docked = (this.props.sidebarStyle ?? 'docked') === 'docked';
+    return {
+      rootPad: docked ? '0' : '15px', mainPad: docked ? '15px 0' : '0',
+      asideTop: docked ? '0' : '15px', asideH: docked ? '100vh' : 'calc(100vh - 30px)',
+      asideBorder: docked ? '0' : '1px solid #DEDCD5', asideRadius: docked ? '0' : '14px', asideShadow: docked ? 'none' : 'none', userRadius: docked ? '0' : '0 0 7px 7px',
+      sideW: exp ? 216 : 64, expanded: exp, justify: exp ? 'flex-start' : 'center',
+      hdrPad: exp ? '12px 8px 12px 14px' : '12px', csPad: exp ? '0 10px 0 7px' : '0', rowPad: exp ? '0 6px' : '0', userPad: exp ? '10px 14px 12px 10px' : '10px 0 12px',
+      toggleSide: () => this.setState(st => ({ collapsed: !st.collapsed, menu: null })), toggleTitle: exp ? 'Collapse sidebar' : 'Expand sidebar',
+      pageTitle, closeMenus: () => this.setState({ menu: null }),
+      cat: { name: c0[0], code: c0[1], bg: c0[3], d: c0[4] }, courseOpen: menu === 'course', courseRot: menu === 'course' ? 180 : 0,
+      toggleCourse: () => this.toggle('course'),
+      cats: this.catData.map((c, i) => ({ name: c[0], code: c[1], count: c[2], bg: c[3], d: c[4], rowBg: i === cat ? '#F4F3EF' : 'transparent', check: i === cat ? '#111111' : 'transparent', onClick: () => this.setState({ cat: i, menu: null }) })),
+      userOpen: menu === 'user', userRot: menu === 'user' ? 180 : 0, toggleUser: () => this.toggle('user'),
+      userMenu: [['Profile'], ['Grades'], ['Calendar'], ['Private files'], ['Reports'], ['Preferences'], ['Switch role to…', 1], ['Log out', 1, '#111111']].map(([label, divider, color]) => ({ label, divider: !!divider, color: color || '#111111' })),
+      searchOpen: menu === 'search', toggleSearch: () => this.toggle('search'), searchRef: this.searchRef, query,
+      onQuery: e => this.setState({ query: e.target.value }), searchHeading: q ? 'Results' : 'My courses',
+      results: found.map(r => ({ label: r.label, type: r.type, onClick: () => this.go(r.key) })), noResults: !!q && !found.length,
+      notifOpen: menu === 'notif', toggleNotif: () => this.toggle('notif'),
+      hasUnread: this.notifData.some((_, i) => i < 2 && !read[i]),
+      notifs: this.notifData.map(([title, meta, d], i) => { const un = i < 2 && !read[i]; return { title, meta, d, weight: un ? 500 : 400, dot: un ? '#111111' : 'transparent', bg: un ? '#F4F3EF' : '#fff', onClick: () => this.setState(st => ({ read: { ...st.read, [i]: true } })) }; }),
+      markAll: () => this.setState({ read: { 0: true, 1: true } }),
+      toggleTheme: () => this.setState(st => ({ dark: !st.dark })), themeIcon: dark ? 'M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6L4.2 4.2M19.8 19.8l-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z' : 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z',
+      langOpen: menu === 'lang', langRot: menu === 'lang' ? 180 : 0, toggleLang: () => this.toggle('lang'), langShort: this.langData[lang][2],
+      langs: this.langData.map((l, i) => ({ name: l[0], code: l[1], bg: i === lang ? '#F4F3EF' : 'transparent', check: i === lang ? '#111111' : 'transparent', onClick: () => this.setState({ lang: i, menu: null }) })),
+      ...this.homeVals(menu),
+      ...this.courseVals(),
+      ...this.quizVals(),
+      ...this.drawerVals(docked),
+      ...(() => {
+        const dOpen = this.state.drawerOpen, nOpen = this.state.navOpen;
+        if (!compact) return {
+          compact: false, gridCols: (exp ? 216 : 64) + 'px minmax(0,1fr) ' + (dOpen ? 300 : 0) + 'px',
+          asidePos: 'sticky', asideWidth: 'auto', asideTf: 'none', asideZ: 20, asideMinH: '640px', dOuterW: 'auto', drawerTf: 'none', scrimOn: false,
+          ddPos: 'absolute', ddTop: '36px', ddLeft: 'auto', ddRight: '0', ddW1: '320px', ddW2: '330px',
+          topCols: 'minmax(0,1fr) minmax(0,1fr)', statCols: 'repeat(2,minmax(0,1fr))', gSize: 118, gFont: 26, hSearchW: '200px',
+          listCols: '72px minmax(0,1fr) 180px 120px', listProgDisp: 'flex' };
+        return {
+          compact: true, gridCols: 'minmax(0,1fr)', rootPad: '0', mainPad: mobile ? '12px' : '15px', rootMinW: 0,
+          asidePos: 'fixed', asideTop: '0', asideH: '100vh', asideMinH: '0', asideWidth: '248px', asideTf: nOpen ? 'none' : 'translateX(-105%)', asideZ: 95,
+          asideBorder: '0', asideRadius: '0', asideShadow: nOpen ? 'none' : 'none', userRadius: '0',
+          dOuterW: 'min(300px, 88vw)', drawerTf: dOpen ? 'none' : 'translateX(105%)', dBorder: '0', dRadius: '0',
+          scrimOn: nOpen || dOpen, toggleTitle: 'Close menu',
+          toggleSide: () => this.setState({ navOpen: false, menu: null }),
+          ddPos: mobile ? 'fixed' : 'absolute', ddTop: mobile ? '92px' : '36px', ddLeft: mobile ? '12px' : 'auto', ddRight: mobile ? '12px' : '0', ddW1: mobile ? 'auto' : '320px', ddW2: mobile ? 'auto' : '330px',
+          topCols: 'minmax(0,1fr)', statCols: vw < 440 ? 'minmax(0,1fr)' : 'repeat(2,minmax(0,1fr))',
+          gSize: vw < 480 ? 92 : 118, gFont: vw < 480 ? 21 : 26, hSearchW: mobile ? '100%' : '200px',
+          listCols: mobile ? '64px minmax(0,1fr) 104px' : '72px minmax(0,1fr) 180px 120px', listProgDisp: mobile ? 'none' : 'flex' };
+      })(),
+      ...this.msgVals(btn),
+      openNav: () => this.setState({ navOpen: true, menu: null }),
+      closePanels: () => this.setState({ navOpen: false, drawerOpen: false, menu: null }),
+      blocksOpen: this.state.blocksOpen, blockQuery: this.state.blockQuery,
+      openBlocks: () => this.setState({ blocksOpen: true, blockQuery: '', menu: null }),
+      closeBlocks: () => this.setState({ blocksOpen: false }), stop: e => e.stopPropagation(),
+      onBlockQuery: e => this.setState({ blockQuery: e.target.value }),
+      ...(() => { const bq = this.state.blockQuery.trim().toLowerCase(); const list = this.blockData.filter(b => !bq || (b[0] + ' ' + b[1]).toLowerCase().includes(bq));
+        return { noBlocks: !list.length, blockList: list.map(([name, desc, d]) => ({ name, desc, d, onClick: () => { clearTimeout(this.toastT); this.setState({ blocksOpen: false, toast: '“' + name + '” block added' }); this.toastT = setTimeout(() => this.setState({ toast: null }), 2400); } })) }; })(),
+      toastOn: !!this.state.toast, toast: this.state.toast,
+      editing: this.state.editing, toggleEdit: () => this.setState(st => ({ editing: !st.editing, drawerOpen: !st.editing })),
+      bEdit: btn(this.state.editing), editTrack: this.state.editing ? '#95BF47' : '#DEDCD5', editKnob: this.state.editing ? 13 : 2,
+      bSearch: btn(menu === 'search'), bNotif: btn(menu === 'notif'), bTheme: btn(dark), bLang: btn(menu === 'lang'),
+      nav, adminNav, bannerVisible: banner && (this.props.showBanner ?? true),
+      closeBanner: () => this.setState({ banner: false }),
+      stats: [
+        { title: 'Total Courses', value: '212', delta: '+12', b1: 22, b2: 22, d: 'M4 5h16v11H4zM8 20h8M12 16v4' },
+        { title: 'Total Students', value: '103,468', delta: '+4,638', b1: 26, b2: 18, d: 'M3 6h18v13H3zM6 16c.5-1.5 3.5-1.5 4 0M14 10h4M14 14h3M8 10.5h.01' },
+        { title: 'Completion Rate', value: '90.5%', delta: '+1,2%', b1: 24, b2: 24, d: 'M5 3h14v18H5zM9 11l2 2 4-4M9 17h6' },
+        { title: 'New Students', value: '4,638', delta: '+528', b1: 16, b2: 28, d: 'M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5' },
+      ],
+      setDay: () => this.setState({ mode: 'day', hover: null }), setWeek: () => this.setState({ mode: 'week', hover: null }),
+      dayBg: pill(mode === 'day')[0], dayBorder: pill(mode === 'day')[1], weekBg: pill(mode === 'week')[0], weekBorder: pill(mode === 'week')[1],
+      yTicks: Array.from({ length: 11 }, (_, i) => ({ label: 500 - i * 50, top: 8 + i * 24.6, line: i === 10 ? '#DEDCD5' : '#DEDCD5' })),
+      xTicks: s.labels.map((label, i) => ({ label, left: i / (n - 1) * 100 })),
+      linePath: this.path(pts), hover, plotRef: this.plotRef,
+      onMove: e => { const r = this.plotRef.current.getBoundingClientRect(); const i = Math.round((e.clientX - r.left) / r.width * (n - 1)); this.setState({ hover: Math.max(0, Math.min(n - 1, i)) }); },
+      onLeave: () => this.setState({ hover: null }),
+      rows, filterLabel: filter === 0 ? 'Filter' : filters[filter],
+      cycleFilter: () => this.setState(st => ({ filter: (st.filter + 1) % 4 })),
+      sortLevel: () => toggleSort(2), sortEnrolled: () => toggleSort(4), sortRate: () => toggleSort(5),
+      completionSegs: this.segs(62, 0, i => i < 54 ? '#95BF47' : i < 59 ? '#6B6A64' : '#111111'),
+      topCourses: top.map((c, i) => ({ label: `${i + 1}. ${c[1]}`, pct: String(c[5]).replace('.', ',') + '%', segs: this.segs(62, Math.round(c[5] / 100 * 62)) })),
+    };
+  }
+}
+</script>
+</body>
+</html>

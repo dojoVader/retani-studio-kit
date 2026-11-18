@@ -1,4 +1,4 @@
-@javascript @theme_retani_studio
+@javascript @theme @theme_retani_studio
 Feature: My courses page block layout in Boost theme
   In order to have a clear and consistent view on the my courses page
   As a student

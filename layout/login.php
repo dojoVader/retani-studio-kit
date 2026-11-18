@@ -43,6 +43,7 @@ $templatecontext = [
     'bodyattributes' => $bodyattributes,
     'leftinstructions' => $leftinstructions,
     'logourl' => $logourl,
+    'carousel' => (new \theme_retani_studio\output\login_carousel($PAGE->theme))->export_for_template($OUTPUT),
     'copyright' => get_string('copyright', 'theme_retani_studio', [
         'year' => userdate(time(), '%Y'),
         'sitename' => format_string($SITE->fullname, true, ['context' => context_course::instance(SITEID), "escape" => false]),

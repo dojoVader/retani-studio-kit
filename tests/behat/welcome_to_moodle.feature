@@ -1,4 +1,4 @@
-@javascript @theme_retani_studio
+@javascript @theme @theme_retani_studio
 Feature: Welcome message on boost
   To be welcome in moodle
   As a User
