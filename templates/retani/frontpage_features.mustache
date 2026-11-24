@@ -1,0 +1,45 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_retani_studio/retani/frontpage_features
+
+    The feature cards of the front page, under the hero.
+
+    Example context (json):
+    {
+        "features": [{"title": "24/7 help", "text": "Mentors to guide you.", "url": "#", "linktext": "More about this",
+            "iconclock": true}]
+    }
+}}
+{{#features.0}}
+<div class="rfp-features">
+    {{#features}}
+    <div class="rfp-feature">
+        <div class="rfp-feature-head">
+            <span aria-hidden="true">
+                {{#iconclock}}<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{{/iconclock}}
+                {{#iconchat}}<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>{{/iconchat}}
+                {{#iconshield}}<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>{{/iconshield}}
+            </span>
+            <h2 class="h5">{{title}}</h2>
+        </div>
+        {{#text}}<p>{{text}}</p>{{/text}}
+        {{#url}}<a href="{{url}}" class="rfp-textlink">{{linktext}} <span aria-hidden="true">→</span></a>{{/url}}
+    </div>
+    {{/features}}
+</div>
+{{/features.0}}

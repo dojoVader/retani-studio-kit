@@ -1,0 +1,22 @@
+// Dark mode for the Site administration pages (\theme_retani_studio\admin_dark_mode).
+//
+// A class of its own, .retani-admin-dark on the html tag, set only on administration pages seen by a site
+// administrator when "Dark mode for Site administration" is on. It is separate from the colour modes: the
+// data-bs-theme attribute, the switcher and the user preference are not used or changed, and no other page is
+// affected.
+//
+// Imported after moodle/dark.scss, so that the extend below reaches every dark override.
+
+// Components: everything which already has a dark colour mode. Bootstrap's dark palette (the root variables,
+// color-scheme and the component variables), the theme's dark palette (moodle/dark.scss, which re-points the
+// greyscale and the design system tokens) and every component's @include dark-mode block (navbar, left bar, block
+// bar, admin settings, forms, tables, modals, alerts, calendar, course overview, quiz and question) are written for
+// [data-bs-theme="dark"]. Extending it gives this class each of those rules, in place, at the same specificity, so
+// the administration pages are dark in exactly the way the tested dark colour mode is.
+.retani-admin-dark {
+    @extend [data-bs-theme="dark"];
+}
+
+// Components with colours of their own which are not covered above go here, inside .retani-admin-dark, so that they
+// only ever apply to the administration dark mode. A component which should also be dark in the colour modes belongs
+// in its own partial, in an @include dark-mode block, which reaches this class through the extend above.

@@ -1,0 +1,120 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_retani_studio/retani/frontpage_header
+
+    The header of the front page: the logo, the primary navigation with the courses menu, the language menu and,
+    for visitors who are not logged in, the login button. It has no user menu, notifications or messages.
+
+    Context variables required for this template:
+    * sitename - The site short name, shown when there is no logo
+    * logourl - The logo, or null
+    * header.firstlinks, header.otherlinks - Primary navigation links, before and after the courses menu
+    * header.coursesmenu - The courses menu, or false
+    * header.langmenu - Context for theme_retani_studio/language_menu, or false
+    * header.modetoggle - The light and dark mode toggle (dark, preference, cookieattributes, canstore, label), or false
+    * header.loginurl, header.loginlabel - The login button, shown when not logged in
+
+    Example context (json):
+    {
+        "sitename": "Retani",
+        "logourl": null,
+        "header": {
+            "firstlinks": [{"text": "Home", "url": "#", "isactive": true}],
+            "otherlinks": [{"text": "Dashboard", "url": "#"}],
+            "coursesmenu": false,
+            "langmenu": false,
+            "modetoggle": false,
+            "loginurl": "#",
+            "loginlabel": "Log in"
+        }
+    }
+}}
+<header class="rfp-header" data-region="rfp-header">
+    <div class="rfp-container rfp-header-row">
+        <a href="{{config.wwwroot}}/?redirect=0" class="rfp-logo">
+            {{#logourl}}<img src="{{logourl}}" alt="{{sitename}}">{{/logourl}}
+            {{^logourl}}<span class="rfp-wordmark">{{sitename}}<span aria-hidden="true">.</span></span>{{/logourl}}
+        </a>
+        <button type="button" class="rfp-navtoggle" data-action="rfp-navtoggle" aria-expanded="false" aria-controls="rfp-primary">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            <span class="visually-hidden">{{#str}}fpmenu, theme_retani_studio{{/str}}</span>
+        </button>
+        {{#header}}
+        <nav id="rfp-primary" class="rfp-nav" aria-label="{{#str}}primarynavigation, theme_retani_studio{{/str}}">
+            <ul class="rfp-nav-list" role="list">
+                {{#firstlinks}}{{> theme_retani_studio/retani/frontpage_navlink }}{{/firstlinks}}
+                {{#coursesmenu}}
+                <li class="rfp-mm" data-region="rfp-menu">
+                    <button type="button" class="rfp-nav-link" data-action="rfp-menu" aria-expanded="false" aria-controls="{{id}}">
+                        {{#str}}courses, core{{/str}}{{> theme_retani_studio/retani/frontpage_chevron }}
+                    </button>
+                    <div class="rfp-mm-panel" id="{{id}}">
+                        <div class="rfp-container rfp-mm-inner">
+                            <div class="rfp-mm-row">
+                                <div class="rfp-mm-columns">
+                                    {{#columns}}
+                                    <div>
+                                        <div class="rfp-code rfp-code-sm">{{code}}</div>
+                                        <a class="rfp-mm-link rfp-mm-head" href="{{url}}">{{name}}</a>
+                                        <ul role="list">
+                                            {{#links}}<li><a class="rfp-mm-link" href="{{url}}">{{text}}</a></li>{{/links}}
+                                        </ul>
+                                    </div>
+                                    {{/columns}}
+                                </div>
+                                {{#featured}}
+                                <div class="rfp-mm-featured">
+                                    <span class="rfp-code rfp-code-accent">{{#str}}fpfeatured, theme_retani_studio{{/str}}</span>
+                                    <span class="rfp-mm-featured-title">{{name}}</span>
+                                    <span class="rfp-mm-featured-meta">{{students}} · {{activities}}</span>
+                                    {{#price}}<span class="rfp-mm-featured-price">{{price}}</span>{{/price}}
+                                    <a class="rfp-btn rfp-btn-light" href="{{url}}">{{viewlabel}}{{> theme_retani_studio/retani/frontpage_arrow }}</a>
+                                </div>
+                                {{/featured}}
+                            </div>
+                            <div class="rfp-mm-foot">
+                                <span class="rfp-code rfp-code-sm">{{summary}}</span>
+                                <a class="rfp-mm-link rfp-mm-all" href="{{allurl}}">{{#str}}fpbrowseall, theme_retani_studio{{/str}} →</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {{/coursesmenu}}
+                {{#otherlinks}}{{> theme_retani_studio/retani/frontpage_navlink }}{{/otherlinks}}
+            </ul>
+        </nav>
+        <div class="rfp-actions">
+            {{#modetoggle}}
+            <button type="button" class="rfp-modetoggle" data-action="rfp-modetoggle"
+                    data-preference="{{preference}}" data-cookieattributes="{{cookieattributes}}"{{#canstore}} data-canstore="1"{{/canstore}}
+                    aria-pressed="{{#dark}}true{{/dark}}{{^dark}}false{{/dark}}" title="{{label}}">
+                <svg class="rfp-modetoggle-dark" aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+                <svg class="rfp-modetoggle-light" aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                <span class="visually-hidden">{{label}}</span>
+            </button>
+            {{/modetoggle}}
+            {{#langmenu}}
+                {{> theme_retani_studio/language_menu }}
+            {{/langmenu}}
+            {{#loginurl}}
+                <a class="rfp-btn rfp-btn-dark" href="{{loginurl}}">{{loginlabel}}</a>
+            {{/loginurl}}
+        </div>
+        {{/header}}
+    </div>
+</header>

@@ -1,0 +1,149 @@
+// Dark mode for the Dashboard (/my/, pagelayout-mydashboard), from the dark palette of
+// "Moodle Dashboard Implementation – Retani Dashboard": warm neutrals instead of Bootstrap's blue-greys.
+//
+//   canvas #141413  page, left bar, header        card  #1f1f1d  cards, blocks, menus
+//   line   #363633  borders and dividers          ink   #f4f3ef  text
+//   muted  #a8a79f  secondary text                btn   #3a3a36  dark buttons and avatars
+//
+// Kept apart from the component partials on purpose: everything here only applies in dark mode, and the palette only
+// on the Dashboard. It is appended after post.scss (theme_retani_studio_get_extra_scss) so that it wins over the light
+// values set there. The [data-bs-theme="dark"] selectors also reach the Site administration dark mode
+// (.retani-admin-dark) through the extend in retani_admindark.scss.
+
+$retani-dash-canvas: #141413;
+$retani-dash-card: #1f1f1d;
+$retani-dash-hover: #2a2a27;
+$retani-dash-recessed: #191918;
+$retani-dash-line: #363633;
+$retani-dash-line-strong: #4a4a45;
+$retani-dash-ink: #f4f3ef;
+$retani-dash-muted: #a8a79f;
+$retani-dash-btn: #3a3a36;
+$retani-dash-btn-hover: #45453f;
+
+// post.scss sets the page background on :root after the dark palette, which leaves a light page under light text
+// on every page in dark mode. Put the dark values back, for every page.
+[data-bs-theme="dark"] {
+    --#{$prefix}body-bg: #{$dark-surface-page};
+    --#{$prefix}body-bg-rgb: #{to-rgb($dark-surface-page)};
+
+    #page.drawers {
+        background: var(--#{$prefix}body-bg);
+    }
+
+    .mform:not(fieldset) {
+        background: var(--#{$prefix}body-bg);
+        box-shadow: none;
+    }
+
+    .retani-icon {
+        color: var(--#{$prefix}secondary-color);
+        background: var(--#{$prefix}tertiary-bg);
+        border-color: var(--#{$prefix}border-color);
+    }
+
+    div.edit-mode:hover {
+        border-color: var(--#{$prefix}secondary-color);
+    }
+}
+
+// The Dashboard palette. Set on the body so that it is inherited by everything on the page, including the dialogs
+// and menus Moodle adds to the end of the body. The component palettes (left bar, block bar, course overview,
+// calendar, tables, modals, alerts) are already written against these tokens in dark mode, so they follow.
+[data-bs-theme="dark"] body.pagelayout-mydashboard {
+    // Surfaces: body-bg is the card, tertiary-bg the canvas behind it, secondary-bg the hover between them.
+    --#{$prefix}body-bg: #{$retani-dash-card};
+    --#{$prefix}body-bg-rgb: #{to-rgb($retani-dash-card)};
+    --#{$prefix}tertiary-bg: #{$retani-dash-canvas};
+    --#{$prefix}tertiary-bg-rgb: #{to-rgb($retani-dash-canvas)};
+    --#{$prefix}secondary-bg: #{$retani-dash-hover};
+    --#{$prefix}secondary-bg-rgb: #{to-rgb($retani-dash-hover)};
+
+    // Text.
+    --#{$prefix}body-color: #{$retani-dash-ink};
+    --#{$prefix}body-color-rgb: #{to-rgb($retani-dash-ink)};
+    --#{$prefix}emphasis-color: #{$white};
+    --#{$prefix}emphasis-color-rgb: #{to-rgb($white)};
+    --#{$prefix}secondary-color: #{$retani-dash-muted};
+    --#{$prefix}secondary-color-rgb: #{to-rgb($retani-dash-muted)};
+    --#{$prefix}tertiary-color: #{rgba($retani-dash-muted, .7)};
+    --#{$prefix}heading-color: #{$retani-dash-ink};
+    --#{$prefix}link-color: #{$retani-dash-ink};
+    --#{$prefix}link-color-rgb: #{to-rgb($retani-dash-ink)};
+    --#{$prefix}link-hover-color: #{$retani-dash-muted};
+    --#{$prefix}link-hover-color-rgb: #{to-rgb($retani-dash-muted)};
+
+    // Borders.
+    --#{$prefix}border-color: #{$retani-dash-line};
+    --#{$prefix}border-color-translucent: #{rgba($retani-dash-ink, .1)};
+
+    // The greyscale, which much of Boost reads through.
+    --#{$prefix}white: #{$retani-dash-card};
+    --#{$prefix}gray-100: #{$retani-dash-canvas};
+    --#{$prefix}gray-200: #{$retani-dash-recessed};
+    --#{$prefix}gray-300: #{$retani-dash-line};
+    --#{$prefix}gray-400: #{$retani-dash-line-strong};
+    --#{$prefix}gray-600: #{$retani-dash-muted};
+    --#{$prefix}gray-700: #{mix($retani-dash-muted, $retani-dash-ink, 50%)};
+    --#{$prefix}gray-800: #{mix($retani-dash-muted, $retani-dash-ink, 25%)};
+    --#{$prefix}gray-900: #{$retani-dash-ink};
+    --#{$prefix}black: #{$retani-dash-ink};
+
+    // Design system tokens.
+    --mds-bg-surface-default: #{$retani-dash-card};
+    --mds-bg-surface-strong: #{$retani-dash-recessed};
+    --mds-bg-surface-subtle: #{$retani-dash-recessed};
+    --mds-bg-interactive-secondary-default: #{$retani-dash-btn};
+    --mds-bg-interactive-secondary-hover: #{$retani-dash-btn-hover};
+    --mds-bg-interactive-secondary-active: #{$retani-dash-btn-hover};
+    --mds-bg-interactive-secondary-disabled: #{$retani-dash-recessed};
+    --mds-bg-nav-pill-hover: #{$retani-dash-hover};
+    --mds-bg-nav-pill-pressed: #{$retani-dash-btn};
+    --mds-bg-nav-pill-selected: #{$retani-dash-btn};
+    --mds-border-default: #{$retani-dash-line};
+    --mds-border-subtle: #{$retani-dash-hover};
+    --mds-border-interactive-secondary-default: #{$retani-dash-line-strong};
+    --mds-border-interactive-secondary-hover: #{$retani-dash-muted};
+    --mds-text-default: #{$retani-dash-ink};
+    --mds-text-emphasis: #{$white};
+    --mds-text-subtle: #{$retani-dash-muted};
+    --mds-text-muted: #{$retani-dash-muted};
+
+    background-color: $retani-dash-canvas;
+    color: $retani-dash-ink;
+
+    #page.drawers {
+        background: $retani-dash-canvas;
+    }
+
+    // The header sits on the canvas, as in the mockup, instead of on a card.
+    .navbar.fixed-top.retani-navbar {
+        --retani-navbar-bg: #{$retani-dash-canvas};
+        --retani-navbar-surface: #{$retani-dash-card};
+        --retani-navbar-line: #{$retani-dash-line};
+    }
+
+    .retani-icon {
+        color: $retani-dash-muted;
+        background: $retani-dash-canvas;
+        border-color: $retani-dash-line;
+    }
+
+    // Dark buttons and avatars use the mockup's button colour with white text, instead of turning light.
+    .retani-courseoverview {
+        --retani-courseoverview-avatar-bg: #{$retani-dash-btn};
+        --retani-courseoverview-avatar-fg: #{$white};
+    }
+
+    .navbar.fixed-top.retani-navbar .usermenu .avatars .userinitials,
+    .retani-leftbar-avatar {
+        background-color: $retani-dash-btn;
+        color: $white;
+    }
+
+    // Blocks are cards on the canvas.
+    .block.card {
+        background-color: $retani-dash-card;
+        border-color: $retani-dash-line;
+    }
+}

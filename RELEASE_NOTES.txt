@@ -1,0 +1,112 @@
+Retani Studio theme for Moodle (theme_retani_studio)
+Release notes
+====================================================================
+
+Version 1.1.0 (2026112400) - Release candidate
+--------------------------------------------------------------------
+
+New
+  - A landing page for the site home, after the "Moodle front page"
+    design: announcement bar, header with a courses menu built from
+    the course categories, hero, feature cards, course cards with
+    category filters, about, statistics, instructors, testimonials,
+    a call for instructors, news from the site announcements forum,
+    a call to action and a footer with links, social networks and
+    contact details.
+  - Course cards show the course image, the number of students and
+    activities, a "New" badge for courses created in the last 30 days,
+    and the fee when the course has a payment enrolment method.
+  - Three new settings tabs: "Front page", "Front page: people" and
+    "Front page: news & footer". Every section can be turned off, and
+    every text has a translatable default in the language pack.
+  - The standard site home is used when the landing
+    page is turned off.
+
+  - Dark mode for the Site administration pages, for site
+    administrators only (on by default; Experimental tab). It is a
+    class of its own, .retani-admin-dark on the html tag, separate
+    from the colour modes, and reuses their tested dark styles.
+
+  - Dark mode for the Dashboard in the warm palette of the dashboard
+    design (scss/retani_dashboard_dark.scss).
+
+  - Light and dark mode toggle in the header of the front page and
+    the course listing, remembered per user (preference) and per
+    browser (cookie) for visitors. Setting: "Light and dark mode
+    toggle" on the Front page tab (needs colour modes on).
+
+Changes
+  - Maturity raised from beta to release candidate.
+  - Dark mode no longer shows a light page background: the light
+    value set in post.scss is put back to the dark one.
+  - Geist Mono is loaded with Geist for the front page labels.
+
+Upgrading
+  - Purge all caches after upgrading. The new settings are listed on
+    the upgrade settings page with the defaults of the design.
+
+Version 1.0.0 (2026102607) - Beta
+--------------------------------------------------------------------
+
+First public release.
+
+Requirements
+  - Moodle 5.3 (build 2026100200 or later)
+  - PHP 8.3 or later
+
+Features
+  - Based on Boost. Keeps the core markup that Moodle and other plugins
+    rely on.
+  - Retractable left navigation bar with the primary navigation, user
+    menu and, inside a course, the course outline. Works as an
+    off-canvas menu on small screens.
+  - Collapsible block sidebar with icons for each block.
+  - Redesigned split-screen login page: logo or site name, optional
+    background image, and an image carousel of up to four slides.
+    Slide titles, text, images and image descriptions can be changed
+    in the theme settings, with translatable defaults in the language
+    pack. The carousel respects the "reduce motion" preference and is
+    replaced by the site's authentication instructions when these are
+    set.
+  - Refreshed course header and dashboard course overview (My courses).
+  - Restyled quiz pages, including the quiz timer.
+  - Restyled calendar navigation and view selector.
+  - Restyled admin settings pages, with the theme settings grouped in
+    tabs.
+  - Optional light and dark colour modes (experimental, off by
+    default), with a switcher for users.
+  - Bundled Noto Sans and Noto Sans JP fonts.
+
+Settings
+  - General: unneeded blocks, theme preset (default, plain or Retani,
+    or an uploaded preset), background image, login page background
+    image, logo and brand colour.
+  - Login page: number of slides (0 to 4) and, for each slide, its
+    title, text, image and image description.
+  - Advanced: raw initial SCSS and raw SCSS.
+  - Experimental: enable colour modes and the default colour mode.
+
+Changes during review
+  - Added the LICENSE file (GNU GPL v3 or later) and README.md.
+  - Added the standard Moodle licence header to all templates.
+  - Renamed variables and methods to follow the Moodle naming
+    conventions.
+  - Moved all login carousel text, including image descriptions and
+    button labels, into language strings.
+  - Replaced the remote login carousel images with images bundled in
+    pix/login.
+
+Upgrading
+  - Earlier development builds included a landing page and course
+    catalogue. These were removed; the upgrade deletes their settings
+    and uploaded images.
+  - Purge all caches after upgrading.
+
+Known limitations
+  - Colour modes are experimental. Pages from third-party plugins that
+    have not been checked in dark mode may still show light colours.
+
+Licence
+  Copyright (C) 2026 Okeowo Aderemi
+  Based on the Boost theme, Copyright (C) 2016 Frederic Massart
+  GNU GPL v3 or later. See LICENSE.

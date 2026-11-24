@@ -1,0 +1,331 @@
+// Course listing (theme_retani_studio/course_listing), after the "Course listing" mockup.
+// It shares the palette, type and buttons of the front page (retani_frontpage.scss), so everything sits in .retani-fp.
+.retani-fp {
+    .rcl-intro {
+        padding: 48px 0 8px;
+    }
+
+    .rcl-breadcrumb {
+        margin-bottom: 24px;
+        font-family: $rfp-mono-family;
+        font-size: .8125rem;
+        color: var(--rfp-muted);
+
+        a {
+            color: var(--rfp-ink);
+            border-bottom: 1px solid var(--rfp-ink);
+
+            &:hover,
+            &:focus {
+                border-bottom-color: var(--rfp-accent);
+            }
+        }
+    }
+
+    .rcl-intro .rfp-display {
+        margin-bottom: 16px;
+    }
+
+    .rcl-lead {
+        margin: 0 0 32px;
+        font-size: 1.125rem;
+        line-height: 1.5;
+        color: var(--rfp-text);
+        max-width: 52ch;
+    }
+
+    .rcl-searchrow {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 24px;
+    }
+
+    .rcl-search {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        flex: 0 1 640px;
+        min-width: 0;
+
+        input[type="search"] {
+            flex: 1 1 260px;
+            min-width: 0;
+            height: 52px;
+            padding: 0 22px;
+            border: 1px solid var(--rfp-ink);
+            border-radius: 999px;
+            background: var(--rfp-surface);
+            color: var(--rfp-ink);
+            font: inherit;
+            font-size: .9375rem;
+        }
+
+        .rfp-btn {
+            height: 52px;
+            padding: 0 28px;
+            font-weight: 500;
+            font-size: .9375rem;
+        }
+    }
+
+    .rcl-results {
+        padding: 40px 0 96px;
+    }
+
+    .rcl-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 40px;
+    }
+
+    // Filters.
+    .rcl-filters {
+        flex: 0 0 260px;
+        max-width: 100%;
+        min-width: 0;
+        border-bottom: 1px solid var(--rfp-ink);
+    }
+
+    .rcl-group {
+        margin: 0;
+        padding: 18px 0;
+        border: 0;
+        border-top: 1px solid var(--rfp-ink);
+        min-width: 0;
+
+        legend {
+            float: left;
+            width: 100%;
+            padding: 0;
+        }
+
+        legend + * {
+            clear: left;
+        }
+    }
+
+    .rcl-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 44px;
+        margin: 0;
+        font-size: .875rem;
+        color: var(--rfp-ink);
+        cursor: pointer;
+
+        input {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            flex: none;
+            accent-color: var(--rfp-ink);
+        }
+    }
+
+    .rcl-filter-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 16px;
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    .rcl-clear {
+        font-family: $rfp-mono-family;
+        font-size: .8125rem;
+        border-bottom: 1px solid var(--rfp-ink);
+    }
+
+    // Results.
+    .rcl-main {
+        flex: 1 1 640px;
+        min-width: 0;
+    }
+
+    .rcl-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px 24px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--rfp-line);
+
+        .rcl-count {
+            margin: 0;
+            font-size: .8125rem;
+            color: var(--rfp-muted);
+        }
+    }
+
+    .rcl-sort {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        font-family: $rfp-mono-family;
+        font-size: .8125rem;
+        color: var(--rfp-muted);
+
+        select {
+            height: 44px;
+            padding: 0 16px;
+            border: 1px solid var(--rfp-ink);
+            border-radius: 999px;
+            background: var(--rfp-surface);
+            color: var(--rfp-ink);
+            font: inherit;
+            font-size: .875rem;
+        }
+    }
+
+    .rcl-list {
+        display: grid;
+        gap: 20px;
+    }
+
+    .rcl-card {
+        display: flex;
+        flex-wrap: wrap;
+        overflow: hidden;
+        background: var(--rfp-surface);
+        border: 1px solid var(--rfp-line);
+        border-radius: $rfp-radius;
+        color: var(--rfp-ink);
+        transition: border-color .15s ease;
+
+        &:hover,
+        &:focus {
+            border-color: var(--rfp-ink);
+        }
+    }
+
+    .rcl-card-image {
+        flex: 0 0 240px;
+        width: 240px;
+        max-width: 100%;
+        min-height: 170px;
+        object-fit: cover;
+        background: var(--rfp-line);
+    }
+
+    .rcl-card-body {
+        flex: 1 1 320px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 22px 24px;
+
+        .rfp-code {
+            margin-bottom: 8px;
+        }
+    }
+
+    .rcl-card-title {
+        margin: 0 0 10px;
+        font-size: 1.375rem;
+        line-height: 1.2;
+        font-weight: 500;
+        letter-spacing: -.025em;
+    }
+
+    .rcl-card-summary,
+    .rcl-card-teachers {
+        margin: 0 0 10px;
+        font-size: .875rem;
+        line-height: 1.55;
+        color: var(--rfp-text);
+        max-width: 62ch;
+
+        .rfp-code-font {
+            font-size: .75rem;
+            color: var(--rfp-muted);
+        }
+    }
+
+    .rcl-card-foot {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px 16px;
+        margin-top: auto;
+        padding-top: 14px;
+        font-size: .75rem;
+        color: var(--rfp-muted);
+    }
+
+    .rcl-card-go {
+        font-size: .8125rem;
+        color: var(--rfp-ink);
+    }
+
+    .rcl-empty {
+        padding: 48px 24px;
+        text-align: center;
+        border: 1px dashed var(--rfp-line);
+        border-radius: $rfp-radius;
+        color: var(--rfp-text);
+    }
+
+    .rcl-pagination {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 40px;
+        font-family: $rfp-mono-family;
+        font-size: .8125rem;
+    }
+
+    .rcl-page {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--rfp-line);
+        border-radius: 999px;
+        background: var(--rfp-surface);
+        color: var(--rfp-ink);
+
+        &:hover,
+        &:focus {
+            border-color: var(--rfp-ink);
+        }
+    }
+
+    .rcl-page-current {
+        border-color: var(--rfp-ink);
+        background: var(--rfp-ink);
+        color: var(--rfp-ink-inverse);
+    }
+
+    .rcl-gap {
+        color: var(--rfp-muted);
+    }
+
+    @include media-breakpoint-down(md) {
+        .rcl-intro {
+            padding-top: 32px;
+        }
+
+        .rcl-filters {
+            flex-basis: 100%;
+        }
+
+        .rcl-card-image {
+            flex-basis: 100%;
+            width: 100%;
+            height: 180px;
+        }
+    }
+}

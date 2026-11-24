@@ -1,0 +1,345 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_retani_studio/frontpage
+
+    The Retani landing page used as the site home (layout/frontpage.php).
+
+    Every section is optional: it is left out when its context is missing or false. The context is built by
+    \theme_retani_studio\output\frontpage.
+
+    Context variables required for this template:
+    * output - The core renderer for the page
+    * bodyattributes - Attributes for the body tag
+    * sitename, logourl, header, footer - See theme_retani_studio/retani/frontpage_header and frontpage_footer
+    * showsitecontent - Whether the standard site home content (Site home settings) is shown
+    * announcement, hero, features, courses, about, stats, instructors, testimonials, teach, news, cta - The sections
+
+    Example context (json):
+    {
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Site home",
+            "favicon": "favicon.ico",
+            "main_content": "<h1>Site home</h1>"
+        },
+        "bodyattributes": "",
+        "sitename": "Retani",
+        "header": {"firstlinks": [{"text": "Home", "url": "#", "isactive": true}], "loginurl": "#", "loginlabel": "Log in"},
+        "footer": {"copyright": "© 2026 Retani"},
+        "announcement": "Enrolment for the spring term is open",
+        "hero": {"title": "Education that prepares you for what's next.", "text": "Start, switch or advance your career.",
+            "button": "Explore courses", "url": "#", "image": "https://picsum.photos/600/540", "imagealt": "",
+            "badge": {"value": "93%", "label": "Success rate"} },
+        "cta": {"heading": "Finding your right courses", "text": "Consider your goals.", "button": "Get started", "url": "#"}
+    }
+}}
+{{> theme_retani_studio/head }}
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+<div id="page-wrapper" class="retani-fp" data-region="retani-frontpage">
+    {{{ output.standard_top_of_body_html }}}
+
+    {{#announcement}}
+        <div class="rfp-announcement">{{.}}</div>
+    {{/announcement}}
+
+    {{> theme_retani_studio/retani/frontpage_header }}
+
+    <div id="page" class="rfp-page">
+        {{#hero}}
+        <section id="rfp-top" class="rfp-hero">
+            <div class="rfp-container">
+                <div class="rfp-hero-row">
+                    <div class="rfp-hero-copy">
+                        {{#title}}<h1 class="rfp-display">{{title}}</h1>{{/title}}
+                        {{#text}}<p class="rfp-lead">{{text}}</p>{{/text}}
+                        {{#button}}
+                            <a class="rfp-btn rfp-btn-dark" href="{{url}}">{{button}}{{> theme_retani_studio/retani/frontpage_arrow }}</a>
+                        {{/button}}
+                    </div>
+                    {{#image}}
+                    <div class="rfp-hero-media">
+                        <img src="{{image}}" alt="{{imagealt}}" class="rfp-hero-image">
+                        {{#badge}}
+                            <div class="rfp-badge rfp-badge-hero">
+                                <span class="rfp-badge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg></span>
+                                <span class="rfp-badge-text">{{value}}<span>{{label}}</span></span>
+                            </div>
+                        {{/badge}}
+                        <span class="rfp-hero-star" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 18l-6.4 3.6L7 14.5l-5.3-5 7.2-.9z"/></svg></span>
+                    </div>
+                    {{/image}}
+                </div>
+                {{> theme_retani_studio/retani/frontpage_features }}
+            </div>
+        </section>
+        {{/hero}}
+        {{^hero}}{{#features.0}}
+        <section class="rfp-section rfp-section-first">
+            <div class="rfp-container">
+                {{> theme_retani_studio/retani/frontpage_features }}
+            </div>
+        </section>
+        {{/features.0}}{{/hero}}
+
+        {{#courses}}
+        <section id="rfp-courses" class="rfp-section rfp-courses {{^hero}}rfp-section-first{{/hero}}" data-region="rfp-courses">
+            <div class="rfp-container">
+                {{#hasheader}}
+                <div class="rfp-section-header rfp-center">
+                    {{#tag}}<p class="rfp-code">{{tag}}</p>{{/tag}}
+                    {{#heading}}<h2 class="rfp-heading">{{heading}}</h2>{{/heading}}
+                </div>
+                {{/hasheader}}
+                <div class="rfp-chips" role="group" aria-label="{{#str}}fpfiltercourses, theme_retani_studio{{/str}}">
+                    {{#filters.0}}
+                        <button type="button" class="rfp-chip active" aria-pressed="true" data-action="rfp-filter" data-category="">{{#str}}fpallcourses, theme_retani_studio{{/str}}</button>
+                        {{#filters}}
+                            <button type="button" class="rfp-chip" aria-pressed="false" data-action="rfp-filter" data-category="{{id}}">{{name}}</button>
+                        {{/filters}}
+                    {{/filters.0}}
+                    <a class="rfp-chip" href="{{allurl}}">{{#str}}fpviewallcourses, theme_retani_studio{{/str}}</a>
+                </div>
+                <ul class="rfp-course-grid" role="list">
+                    {{#courses}}
+                    <li class="rfp-course" data-category="{{categoryid}}">
+                        <a href="{{url}}" class="rfp-course-link">
+                            <div class="rfp-course-media">
+                                <img src="{{image}}" alt="" loading="lazy">
+                                {{#isnew}}<span class="rfp-pill-accent">{{#str}}fpnew, theme_retani_studio{{/str}}</span>{{/isnew}}
+                            </div>
+                            <div class="rfp-course-body">
+                                {{#category}}<p class="rfp-course-category">{{category}}</p>{{/category}}
+                                <h3 class="rfp-course-title">{{name}}</h3>
+                                <div class="rfp-course-meta"><span>{{students}}</span><span>{{activities}}</span></div>
+                                <div class="rfp-course-foot">
+                                    {{#price}}<span class="rfp-price">{{price}}</span>{{/price}}
+                                    {{^price}}<span class="rfp-textlink">{{viewlabel}} <span aria-hidden="true">→</span></span>{{/price}}
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    {{/courses}}
+                </ul>
+            </div>
+        </section>
+        {{/courses}}
+
+        {{#showsitecontent}}
+        <section class="rfp-section rfp-sitecontent">
+            <div class="rfp-container">
+                {{{ output.main_content }}}
+            </div>
+        </section>
+        {{/showsitecontent}}
+
+        {{#about}}
+        <section class="rfp-section rfp-surface">
+            <div class="rfp-container rfp-split">
+                {{#image}}
+                <div class="rfp-split-media">
+                    <img src="{{image}}" alt="{{imagealt}}" class="rfp-media-image" loading="lazy">
+                    {{#badge}}
+                        <div class="rfp-badge rfp-badge-inset">
+                            <span class="rfp-badge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span>
+                            <span class="rfp-badge-text">{{value}}<span>{{label}}</span></span>
+                        </div>
+                    {{/badge}}
+                </div>
+                {{/image}}
+                <div class="rfp-split-copy">
+                    {{#tag}}<p class="rfp-code">{{tag}}</p>{{/tag}}
+                    {{#heading}}<h2 class="rfp-heading">{{heading}}</h2>{{/heading}}
+                    {{#text}}<p class="rfp-body">{{text}}</p>{{/text}}
+                    {{#points.0}}
+                    <ul class="rfp-checklist">
+                        {{#points}}
+                        <li><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>{{text}}</li>
+                        {{/points}}
+                    </ul>
+                    {{/points.0}}
+                    {{#button}}<a class="rfp-btn rfp-btn-dark" href="{{url}}">{{button}}{{> theme_retani_studio/retani/frontpage_arrow }}</a>{{/button}}
+                </div>
+            </div>
+        </section>
+        {{/about}}
+
+        {{#stats}}
+        <section class="rfp-section rfp-dark rfp-stats">
+            <div class="rfp-container">
+                {{#heading}}<h2 class="rfp-heading-sm">{{heading}}</h2>{{/heading}}
+                <div class="rfp-stats-grid">
+                    {{#items}}
+                    <div class="rfp-stat">
+                        <p class="rfp-stat-value">{{value}}</p>
+                        <p class="rfp-stat-label">{{label}}</p>
+                    </div>
+                    {{/items}}
+                </div>
+            </div>
+        </section>
+        {{/stats}}
+
+        {{#instructors}}
+        <section class="rfp-section">
+            <div class="rfp-container">
+                {{#hasheader}}
+                <div class="rfp-section-header rfp-center">
+                    {{#tag}}<p class="rfp-code">{{tag}}</p>{{/tag}}
+                    {{#heading}}<h2 class="rfp-heading">{{heading}}</h2>{{/heading}}
+                </div>
+                {{/hasheader}}
+                <ul class="rfp-people" role="list">
+                    {{#people}}
+                    <li class="rfp-person {{#offset}}rfp-person-offset{{/offset}}">
+                        {{#image}}<img src="{{image}}" alt="{{imagealt}}" loading="lazy">{{/image}}
+                        {{^image}}<span class="rfp-person-initials" aria-hidden="true">{{initials}}</span>{{/image}}
+                        <h3 class="rfp-person-name">{{name}}</h3>
+                        {{#role}}<p class="rfp-person-role">{{role}}</p>{{/role}}
+                    </li>
+                    {{/people}}
+                </ul>
+            </div>
+        </section>
+        {{/instructors}}
+
+        {{#testimonials}}
+        <section class="rfp-section rfp-surface" data-region="rfp-testimonials" id="{{id}}">
+            <div class="rfp-container">
+                <div class="rfp-testimonials-head">
+                    <div>
+                        {{#tag}}<p class="rfp-code">{{tag}}</p>{{/tag}}
+                        {{#heading}}<h2 class="rfp-heading">{{heading}}</h2>{{/heading}}
+                    </div>
+                    {{#hascontrols}}
+                    <div class="rfp-arrows">
+                        <button type="button" class="rfp-arrow" data-action="rfp-prev" aria-controls="{{id}}-track" aria-label="{{#str}}fpprevious, theme_retani_studio{{/str}}">
+                            <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+                        </button>
+                        <button type="button" class="rfp-arrow rfp-arrow-dark" data-action="rfp-next" aria-controls="{{id}}-track" aria-label="{{#str}}fpnext, theme_retani_studio{{/str}}">
+                            <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                    {{/hascontrols}}
+                </div>
+                <ul class="rfp-quotes" id="{{id}}-track" data-region="rfp-track" role="list" tabindex="0" aria-label="{{heading}}">
+                    {{#items}}
+                    <li class="rfp-quote">
+                        <figure>
+                            <svg aria-hidden="true" viewBox="0 0 24 24" width="40" height="40" fill="currentColor" class="rfp-quote-mark"><path d="M4 18v-6c0-4 2-7 6-8v3c-2 1-3 2-3 4h3v7zM14 18v-6c0-4 2-7 6-8v3c-2 1-3 2-3 4h3v7z"/></svg>
+                            <blockquote><p>{{quote}}</p></blockquote>
+                            <figcaption>
+                                {{#image}}<img src="{{image}}" alt="" loading="lazy">{{/image}}
+                                {{^image}}<span class="rfp-avatar-initials" aria-hidden="true">{{initials}}</span>{{/image}}
+                                <span><strong>{{name}}</strong>{{#role}}<span>{{role}}</span>{{/role}}</span>
+                            </figcaption>
+                        </figure>
+                    </li>
+                    {{/items}}
+                </ul>
+            </div>
+        </section>
+        {{/testimonials}}
+
+        {{#teach}}
+        <section class="rfp-section">
+            <div class="rfp-container rfp-split rfp-split-reverse">
+                <div class="rfp-split-copy">
+                    {{#tag}}<p class="rfp-code">{{tag}}</p>{{/tag}}
+                    {{#heading}}<h2 class="rfp-heading">{{heading}}</h2>{{/heading}}
+                    {{#text}}<p class="rfp-body">{{text}}</p>{{/text}}
+                    {{#points}}
+                        <h3 class="rfp-point-title">{{title}}</h3>
+                        {{#text}}<p class="rfp-point-text">{{text}}</p>{{/text}}
+                    {{/points}}
+                    {{#button}}{{#url}}<a class="rfp-btn rfp-btn-dark" href="{{url}}">{{button}}{{> theme_retani_studio/retani/frontpage_arrow }}</a>{{/url}}{{/button}}
+                </div>
+                {{#image}}
+                <div class="rfp-split-media">
+                    <img src="{{image}}" alt="{{imagealt}}" class="rfp-media-image" loading="lazy">
+                    {{#badge}}
+                        <div class="rfp-badge rfp-badge-edge">
+                            <span class="rfp-badge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c3 0 6 1.5 6 5.5"/></svg></span>
+                            <span class="rfp-badge-text">{{value}}<span>{{label}}</span></span>
+                        </div>
+                    {{/badge}}
+                </div>
+                {{/image}}
+            </div>
+        </section>
+        {{/teach}}
+
+        {{#news}}
+        <section class="rfp-section rfp-news">
+            <div class="rfp-container">
+                {{#hasheader}}
+                <div class="rfp-section-header rfp-center">
+                    {{#tag}}<p class="rfp-code">{{tag}}</p>{{/tag}}
+                    {{#heading}}<h2 class="rfp-heading">{{heading}}</h2>{{/heading}}
+                </div>
+                {{/hasheader}}
+                <ul class="rfp-posts" role="list">
+                    {{#posts}}
+                    <li>
+                        <a href="{{url}}" class="rfp-post">
+                            {{#image}}<img src="{{image}}" alt="" loading="lazy" class="rfp-post-image">{{/image}}
+                            {{^image}}<span class="rfp-post-image" style="background-image: url('{{pattern}}');" aria-hidden="true"></span>{{/image}}
+                            <span class="rfp-post-meta"><span>{{date}}</span><span>{{author}}</span></span>
+                            <h3 class="rfp-post-title">{{subject}}</h3>
+                            <span class="rfp-textlink">{{#str}}fpreadmore, theme_retani_studio{{/str}} <span aria-hidden="true">→</span></span>
+                        </a>
+                    </li>
+                    {{/posts}}
+                </ul>
+                {{#alllabel}}
+                <div class="rfp-center rfp-news-more">
+                    <a class="rfp-btn rfp-btn-outline" href="{{allurl}}">{{alllabel}}</a>
+                </div>
+                {{/alllabel}}
+            </div>
+        </section>
+        {{/news}}
+
+        {{#cta}}
+        <section class="rfp-dark rfp-cta">
+            <div class="rfp-container rfp-cta-row">
+                <div>
+                    <h2 class="rfp-heading-sm">{{heading}}</h2>
+                    {{#text}}<p>{{text}}</p>{{/text}}
+                </div>
+                {{#button}}<a class="rfp-btn rfp-btn-light" href="{{url}}">{{button}}{{> theme_retani_studio/retani/frontpage_arrow }}</a>{{/button}}
+            </div>
+        </section>
+        {{/cta}}
+
+        {{^showsitecontent}}
+            {{! The page must output the main content; the standard site home content is kept out of sight. }}
+            <div class="d-none">{{{ output.main_content }}}</div>
+        {{/showsitecontent}}
+    </div>
+
+    {{> theme_retani_studio/retani/frontpage_footer }}
+    {{{ output.standard_after_main_region_html }}}
+</div>
+{{#js}}
+require(['theme_retani_studio/frontpage'], function(Frontpage) {
+    Frontpage.init();
+});
+{{/js}}
+</body>
+</html>

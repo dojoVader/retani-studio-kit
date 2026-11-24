@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_retani_studio/admin_dark_toggle
+
+    The toggle between light and dark Site administration pages, in the navbar, for site administrators.
+
+    It is a toggle button: aria-pressed says whether the dark mode is on. The page changes at once, and the choice is
+    saved as a user preference so that the next administration page is drawn the same way by the server.
+
+    Context variables required for this template:
+    * dark - Whether the dark mode is on
+    * preference - The user preference the choice is saved in
+    * cssclass - The class on the html tag which turns the page dark
+    * label - The accessible name of the button
+
+    Example context (json):
+    {
+        "dark": true,
+        "preference": "theme_retani_studio_admindark",
+        "cssclass": "retani-admin-dark",
+        "label": "Dark mode"
+    }
+}}
+<div class="admindarktoggle d-flex align-items-center" data-region="admindark-toggle">
+    <button type="button" class="btn btn-icon" data-action="toggle-admindark"
+            data-preference="{{preference}}" data-cssclass="{{cssclass}}"
+            aria-pressed="{{#dark}}true{{/dark}}{{^dark}}false{{/dark}}"
+            title="{{label}}" data-bs-toggle="tooltip" data-bs-placement="bottom">
+        <i class="icon fa fa-moon fa-fw m-0" aria-hidden="true" data-region="admindark-icon-dark" {{^dark}}hidden{{/dark}}></i>
+        <i class="icon fa fa-sun fa-fw m-0" aria-hidden="true" data-region="admindark-icon-light" {{#dark}}hidden{{/dark}}></i>
+        <span class="visually-hidden">{{label}}</span>
+    </button>
+</div>
+{{#js}}
+    require(['theme_retani_studio/admindarkmode'], function(AdminDarkMode) {
+        AdminDarkMode.init();
+    });
+{{/js}}

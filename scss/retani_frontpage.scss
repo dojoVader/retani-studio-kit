@@ -1,0 +1,1419 @@
+// Front page (theme_retani_studio/frontpage), after the "Moodle front page" mockup.
+// Everything is scoped to .retani-fp, so the rest of the site is not affected.
+$rfp-font-family: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif !default;
+$rfp-mono-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace !default;
+$rfp-container: 1200px !default;
+$rfp-radius: 18px !default;
+$rfp-radius-sm: 14px !default;
+$rfp-shadow: 0 12px 30px rgba(17, 24, 39, .1) !default;
+
+body.retani-frontpage {
+    background: #f4f3ef;
+
+    @include dark-mode {
+        background: var(--#{$prefix}body-bg);
+    }
+}
+
+.retani-fp {
+    // Local palette, swapped as a whole for dark mode below.
+    --rfp-canvas: #f4f3ef;
+    --rfp-surface: #{$white};
+    --rfp-ink: #111;
+    --rfp-ink-inverse: #{$white};
+    --rfp-text: #3a3935;
+    --rfp-muted: #6b6a64;
+    --rfp-line: #dedcd5;
+    --rfp-accent: #95bf47;
+    --rfp-dark: #111;
+    --rfp-dark-text: #dedcd5;
+    --rfp-dark-line: rgba(255, 255, 255, .35);
+
+    @include dark-mode {
+        --rfp-canvas: var(--#{$prefix}body-bg);
+        --rfp-surface: var(--#{$prefix}tertiary-bg);
+        --rfp-ink: var(--#{$prefix}body-color);
+        --rfp-ink-inverse: var(--#{$prefix}body-bg);
+        --rfp-text: var(--#{$prefix}secondary-color);
+        --rfp-muted: var(--#{$prefix}secondary-color);
+        --rfp-line: var(--#{$prefix}border-color);
+        --rfp-dark: #000;
+    }
+
+    background: var(--rfp-canvas);
+    color: var(--rfp-ink);
+    font-family: $rfp-font-family;
+    font-size: .9375rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    img {
+        display: block;
+        max-width: 100%;
+    }
+
+    ul[role="list"] {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+        color: inherit;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--rfp-accent);
+        outline-offset: 2px;
+    }
+
+    // Layout. There is no fixed navbar to leave room for.
+    #page.rfp-page {
+        margin-top: 0;
+    }
+
+    .rfp-container {
+        max-width: $rfp-container;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    .rfp-section {
+        padding: 96px 0;
+    }
+
+    .rfp-section-first {
+        padding-top: 72px;
+    }
+
+    .rfp-surface {
+        background: var(--rfp-surface);
+    }
+
+    .rfp-dark {
+        background: var(--rfp-dark);
+        color: #fff;
+    }
+
+    .rfp-center {
+        text-align: center;
+    }
+
+    .rfp-section-header {
+        margin-bottom: 40px;
+
+        &.rfp-center .rfp-code {
+            justify-content: center;
+        }
+    }
+
+    // Type.
+    .rfp-code,
+    .rfp-code-font {
+        font-family: $rfp-mono-family;
+    }
+
+    .rfp-code {
+        display: flex;
+        margin: 0 0 12px;
+        font-size: .875rem;
+        color: var(--rfp-text);
+    }
+
+    .rfp-code-sm {
+        font-size: .75rem;
+        color: var(--rfp-muted);
+        margin-bottom: 6px;
+    }
+
+    .rfp-code-accent {
+        color: var(--rfp-accent);
+        font-size: .75rem;
+    }
+
+    .rfp-display {
+        margin: 0 0 20px;
+        font-size: 4.5rem;
+        line-height: 1;
+        font-weight: 500;
+        letter-spacing: -.045em;
+    }
+
+    .rfp-heading {
+        margin: 0 0 16px;
+        font-size: 2.5rem;
+        line-height: 1.1;
+        font-weight: 500;
+        letter-spacing: -.035em;
+    }
+
+    .rfp-section-header .rfp-heading {
+        margin-bottom: 0;
+    }
+
+    .rfp-heading-sm {
+        margin: 0 0 10px;
+        font-size: 2.25rem;
+        font-weight: 500;
+        letter-spacing: -.035em;
+        color: #fff;
+    }
+
+    .rfp-lead {
+        margin: 0 0 28px;
+        font-size: 1rem;
+        color: var(--rfp-text);
+        max-width: 520px;
+    }
+
+    .rfp-body {
+        margin: 0 0 20px;
+        font-size: .875rem;
+        color: var(--rfp-text);
+        max-width: 520px;
+    }
+
+    .rfp-textlink {
+        font-size: .8125rem;
+        font-weight: 600;
+        color: var(--rfp-ink);
+    }
+
+    // Buttons.
+    .rfp-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 44px;
+        padding: 12px 24px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font-size: .875rem;
+        font-weight: 600;
+        line-height: 1.2;
+        white-space: nowrap;
+        transition: filter .15s ease;
+
+        &:hover,
+        &:focus {
+            filter: brightness(.92);
+            text-decoration: none;
+        }
+    }
+
+    .rfp-btn-dark {
+        background: var(--rfp-ink);
+        color: var(--rfp-ink-inverse);
+    }
+
+    .rfp-btn-light {
+        background: #f4f3ef;
+        color: #111;
+    }
+
+    .rfp-btn-outline {
+        border-color: var(--rfp-ink);
+        color: var(--rfp-ink);
+    }
+
+    .rfp-btn-arrow {
+        flex: none;
+    }
+
+    [dir="rtl"] & .rfp-btn-arrow {
+        transform: scaleX(-1);
+    }
+
+    // Announcement bar.
+    .rfp-announcement {
+        background: var(--rfp-dark);
+        color: #fff;
+        font-family: $rfp-mono-family;
+        font-size: .75rem;
+        text-align: center;
+        padding: 10px 16px;
+    }
+
+    // Header.
+    .rfp-header {
+        position: relative;
+        z-index: 60;
+        background: var(--rfp-surface);
+        border-bottom: 1px solid var(--rfp-line);
+    }
+
+    .rfp-header-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px 32px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+    }
+
+    .rfp-logo {
+        display: flex;
+        align-items: center;
+
+        img {
+            max-height: 40px;
+            width: auto;
+        }
+    }
+
+    .rfp-wordmark {
+        font-weight: 600;
+        font-size: 1.5rem;
+        letter-spacing: -.05em;
+        line-height: 1;
+        color: var(--rfp-ink);
+
+        span {
+            color: var(--rfp-accent);
+        }
+    }
+
+    .rfp-navtoggle {
+        display: none;
+        width: 44px;
+        height: 44px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--rfp-line);
+        border-radius: 999px;
+        background: transparent;
+        color: var(--rfp-ink);
+    }
+
+    .rfp-nav-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 28px;
+        font-family: $rfp-mono-family;
+        font-size: .8125rem;
+    }
+
+    .rfp-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        min-height: 44px;
+        padding: 10px 0;
+        border: 0;
+        background: none;
+        font: inherit;
+        color: var(--rfp-ink);
+        cursor: pointer;
+
+        &.active {
+            text-decoration: underline;
+            text-decoration-color: var(--rfp-accent);
+            text-decoration-thickness: 2px;
+            text-underline-offset: 6px;
+        }
+    }
+
+    .rfp-chevron {
+        transition: transform .15s ease;
+    }
+
+    .rfp-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .usermenu-container,
+        .langmenu {
+            display: flex;
+            align-items: center;
+        }
+
+        .editmode-switch-form {
+            margin: 0 8px;
+        }
+    }
+
+    // Light and dark mode toggle: shows the moon in dark mode and the sun in light mode.
+    .rfp-modetoggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        flex: none;
+        padding: 0;
+        color: var(--rfp-ink);
+        background: transparent;
+        border: 1px solid var(--rfp-line);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background-color .15s ease;
+
+        &:hover {
+            background: var(--rfp-surface);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--rfp-accent);
+            outline-offset: 2px;
+        }
+
+        .rfp-modetoggle-dark {
+            display: none;
+        }
+
+        &[aria-pressed="true"] {
+            .rfp-modetoggle-dark {
+                display: block;
+            }
+
+            .rfp-modetoggle-light {
+                display: none;
+            }
+        }
+    }
+
+    // Menus: the courses menu spans the header, other menus drop under their link.
+    .rfp-mm-panel,
+    .rfp-dropdown-panel {
+        display: none;
+        position: absolute;
+        z-index: 60;
+        background: var(--rfp-surface);
+        box-shadow: 0 24px 40px rgba(17, 17, 17, .1);
+        font-family: $rfp-font-family;
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -28px;
+            height: 28px;
+        }
+    }
+
+    .rfp-mm-panel {
+        left: 0;
+        right: 0;
+        top: 100%;
+        border-top: 1px solid var(--rfp-line);
+        border-bottom: 1px solid var(--rfp-ink);
+    }
+
+    .rfp-dropdown {
+        position: relative;
+    }
+
+    .rfp-dropdown-panel {
+        top: 100%;
+        min-width: 220px;
+        padding: 8px 16px;
+        border: 1px solid var(--rfp-line);
+        border-radius: 12px;
+        list-style: none;
+        margin: 0;
+    }
+
+    @media (hover: hover) {
+        .rfp-mm:hover,
+        .rfp-dropdown:hover {
+            .rfp-mm-panel,
+            .rfp-dropdown-panel {
+                display: block;
+            }
+
+            .rfp-chevron {
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    .rfp-mm.open,
+    .rfp-dropdown.open {
+        .rfp-mm-panel,
+        .rfp-dropdown-panel {
+            display: block;
+        }
+
+        .rfp-chevron {
+            transform: rotate(180deg);
+        }
+    }
+
+    .rfp-mm-inner {
+        padding-top: 36px;
+        padding-bottom: 28px;
+    }
+
+    .rfp-mm-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+    }
+
+    .rfp-mm-columns {
+        flex: 3 1 560px;
+        min-width: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 28px 24px;
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+    .rfp-mm-link {
+        display: flex;
+        align-items: center;
+        min-height: 36px;
+        font-size: .875rem;
+        color: var(--rfp-text);
+
+        &:hover,
+        &:focus {
+            color: var(--rfp-ink);
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            text-decoration-color: var(--rfp-accent);
+            text-decoration-thickness: 2px;
+        }
+    }
+
+    .rfp-mm-head {
+        display: block;
+        min-height: 0;
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: -.02em;
+        color: var(--rfp-ink);
+        padding: 6px 0 10px;
+        border-bottom: 1px solid var(--rfp-ink);
+        margin-bottom: 8px;
+    }
+
+    .rfp-mm-featured {
+        flex: 1 1 260px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 24px;
+        border-radius: $rfp-radius;
+        background: var(--rfp-dark);
+        color: #f4f3ef;
+
+        .rfp-btn {
+            align-self: flex-start;
+            margin-top: auto;
+        }
+    }
+
+    .rfp-mm-featured-title {
+        font-size: 1.25rem;
+        line-height: 1.2;
+        font-weight: 500;
+        letter-spacing: -.03em;
+    }
+
+    .rfp-mm-featured-meta {
+        font-size: .8125rem;
+        color: #dedcd5;
+    }
+
+    .rfp-mm-featured-price {
+        font-size: 1.375rem;
+        font-weight: 500;
+        letter-spacing: -.03em;
+    }
+
+    .rfp-mm-foot {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px 24px;
+        margin-top: 28px;
+        padding-top: 18px;
+        border-top: 1px solid var(--rfp-line);
+
+        .rfp-code {
+            margin: 0;
+        }
+    }
+
+    .rfp-mm-all {
+        font-family: $rfp-mono-family;
+        font-size: .8125rem;
+        color: var(--rfp-ink);
+        border-bottom: 1px solid var(--rfp-ink);
+    }
+
+    // Hero.
+    .rfp-hero {
+        padding-top: 72px;
+    }
+
+    .rfp-hero-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 40px;
+    }
+
+    .rfp-hero-copy {
+        flex: 1 1 480px;
+        min-width: 0;
+        align-self: center;
+        padding-bottom: 110px;
+    }
+
+    .rfp-hero-media {
+        flex: 1 1 440px;
+        min-width: 0;
+        position: relative;
+    }
+
+    .rfp-hero-image {
+        width: 100%;
+        height: 540px;
+        object-fit: cover;
+        object-position: top;
+        background: var(--rfp-line);
+        border-radius: $rfp-radius $rfp-radius 0 0;
+    }
+
+    .rfp-hero-star {
+        position: absolute;
+        right: 16px;
+        top: 40px;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--rfp-dark);
+        color: #fff;
+    }
+
+    // Badges on images.
+    .rfp-badge {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 22px 14px 16px;
+        background: var(--rfp-surface);
+        box-shadow: $rfp-shadow;
+    }
+
+    .rfp-badge-hero {
+        left: -24px;
+        bottom: 96px;
+    }
+
+    .rfp-badge-inset {
+        left: 24px;
+        bottom: 24px;
+    }
+
+    .rfp-badge-edge {
+        left: -20px;
+        bottom: 56px;
+    }
+
+    .rfp-badge-icon {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--rfp-accent);
+        color: #111;
+    }
+
+    .rfp-badge-text {
+        font-size: 1.25rem;
+        font-weight: 500;
+        letter-spacing: -.03em;
+        line-height: 1.2;
+
+        span {
+            display: block;
+            font-size: .875rem;
+            color: var(--rfp-text);
+            letter-spacing: 0;
+        }
+    }
+
+    // Features.
+    .rfp-features {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px;
+    }
+
+    .rfp-hero .rfp-features {
+        margin-top: -72px;
+    }
+
+    .rfp-feature {
+        background: var(--rfp-surface);
+        border-top: 3px solid var(--rfp-accent);
+        padding: 26px 24px;
+        box-shadow: $rfp-shadow;
+
+        p {
+            margin: 0 0 12px;
+            font-size: .8125rem;
+            color: var(--rfp-text);
+        }
+    }
+
+    .rfp-feature-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+
+        span {
+            display: flex;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.0625rem;
+            font-weight: 500;
+            letter-spacing: -.02em;
+        }
+    }
+
+    // Courses.
+    .rfp-courses {
+        padding-top: 104px;
+        padding-bottom: 80px;
+    }
+
+    .rfp-chips {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin: -8px 0 36px;
+    }
+
+    .rfp-chip {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 10px 18px;
+        border: 1px solid var(--rfp-line);
+        border-radius: 999px;
+        background: var(--rfp-surface);
+        color: var(--rfp-ink);
+        font: inherit;
+        font-size: .8125rem;
+        font-weight: 500;
+        cursor: pointer;
+
+        &.active {
+            border-color: var(--rfp-ink);
+            background: var(--rfp-ink);
+            color: var(--rfp-ink-inverse);
+            font-weight: 600;
+        }
+    }
+
+    .rfp-course-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .rfp-course[hidden] {
+        display: none;
+    }
+
+    .rfp-course-link {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+        background: var(--rfp-surface);
+        border: 1px solid var(--rfp-line);
+        border-radius: $rfp-radius;
+        transition: transform .15s ease, box-shadow .15s ease;
+
+        &:hover,
+        &:focus {
+            transform: translateY(-2px);
+            box-shadow: $rfp-shadow;
+        }
+    }
+
+    .rfp-course-media {
+        position: relative;
+
+        img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: var(--rfp-dark);
+        }
+    }
+
+    .rfp-pill-accent {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: var(--rfp-accent);
+        color: #111;
+        font-size: .6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .rfp-course-body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 16px;
+    }
+
+    .rfp-course-category {
+        margin: 0 0 4px;
+        font-family: $rfp-mono-family;
+        font-size: .75rem;
+        color: var(--rfp-muted);
+    }
+
+    .rfp-course-title {
+        margin: 0 0 10px;
+        font-size: .9375rem;
+        line-height: 1.4;
+        font-weight: 500;
+        min-height: 42px;
+    }
+
+    .rfp-course-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 16px;
+        margin-bottom: 14px;
+        font-size: .75rem;
+        color: var(--rfp-text);
+    }
+
+    .rfp-course-foot {
+        margin-top: auto;
+    }
+
+    .rfp-price {
+        display: inline-block;
+        padding: 5px 14px;
+        border-radius: 999px;
+        background: var(--rfp-ink);
+        color: var(--rfp-ink-inverse);
+        font-size: .875rem;
+        font-weight: 700;
+    }
+
+    // Image and text side by side.
+    .rfp-split {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 56px;
+    }
+
+    .rfp-split-media,
+    .rfp-split-copy {
+        flex: 1 1 420px;
+        min-width: 0;
+    }
+
+    .rfp-split-media {
+        position: relative;
+    }
+
+    .rfp-media-image {
+        width: 100%;
+        height: 450px;
+        object-fit: cover;
+        background: var(--rfp-line);
+        border-radius: $rfp-radius-sm;
+    }
+
+    .rfp-checklist {
+        margin: 0 0 28px;
+        padding: 0;
+        list-style: none;
+        max-width: 520px;
+
+        li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--rfp-line);
+            font-size: .875rem;
+        }
+
+        svg {
+            flex: none;
+        }
+    }
+
+    .rfp-point-title {
+        margin: 0 0 4px;
+        font-size: 1.0625rem;
+        font-weight: 500;
+        letter-spacing: -.02em;
+    }
+
+    .rfp-point-text {
+        margin: 0 0 18px;
+        font-size: .8125rem;
+        color: var(--rfp-text);
+        max-width: 520px;
+    }
+
+    .rfp-point-text:last-of-type {
+        margin-bottom: 28px;
+    }
+
+    // Statistics.
+    .rfp-stats {
+        padding: 72px 0;
+
+        .rfp-heading-sm {
+            margin-bottom: 40px;
+        }
+    }
+
+    .rfp-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 32px;
+    }
+
+    .rfp-stat {
+        border-left: 1px solid var(--rfp-dark-line);
+        padding-left: 24px;
+    }
+
+    .rfp-stat-value {
+        margin: 0 0 6px;
+        font-size: 2.75rem;
+        font-weight: 500;
+        letter-spacing: -.045em;
+        line-height: 1.2;
+    }
+
+    .rfp-stat-label {
+        margin: 0;
+        font-size: .8125rem;
+        max-width: 240px;
+    }
+
+    // Instructors.
+    .rfp-people {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 32px 24px;
+
+        img,
+        .rfp-person-initials {
+            width: 100%;
+            height: 420px;
+            object-fit: cover;
+            border-radius: $rfp-radius-sm;
+            background: var(--rfp-line);
+        }
+    }
+
+    .rfp-person-initials {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        font-weight: 500;
+        letter-spacing: -.04em;
+        color: var(--rfp-muted);
+    }
+
+    .rfp-person-offset {
+        padding-top: 40px;
+
+        img,
+        .rfp-person-initials {
+            height: 340px;
+        }
+    }
+
+    .rfp-person-name {
+        margin: 16px 0 2px;
+        font-size: 1.125rem;
+        font-weight: 500;
+        letter-spacing: -.02em;
+    }
+
+    .rfp-person-role {
+        margin: 0;
+        font-size: .8125rem;
+    }
+
+    // Testimonials.
+    .rfp-testimonials-head {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 16px;
+        margin-bottom: 8px;
+
+        .rfp-heading {
+            margin-bottom: 8px;
+        }
+    }
+
+    .rfp-arrows {
+        display: flex;
+        gap: 8px;
+    }
+
+    .rfp-arrow {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--rfp-line);
+        background: var(--rfp-surface);
+        color: var(--rfp-ink);
+        cursor: pointer;
+
+        [dir="rtl"] & svg {
+            transform: scaleX(-1);
+        }
+    }
+
+    .rfp-arrow-dark {
+        border-color: var(--rfp-ink);
+        background: var(--rfp-ink);
+        color: var(--rfp-ink-inverse);
+    }
+
+    .rfp-quotes {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: calc((100% - 48px) / 2);
+        gap: 48px;
+        margin-top: 24px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .rfp-quote {
+        scroll-snap-align: start;
+
+        figure {
+            margin: 0;
+        }
+
+        blockquote {
+            margin: 12px 0 24px;
+
+            p {
+                margin: 0;
+                font-size: 1rem;
+                line-height: 1.75;
+                color: var(--rfp-text);
+            }
+        }
+
+        figcaption {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            img,
+            .rfp-avatar-initials {
+                width: 44px;
+                height: 44px;
+                flex: none;
+                border-radius: 50%;
+                object-fit: cover;
+                background: var(--rfp-line);
+            }
+
+            strong {
+                display: block;
+                font-size: .875rem;
+            }
+
+            span span {
+                display: block;
+                font-size: .75rem;
+                color: var(--rfp-text);
+            }
+        }
+    }
+
+    .rfp-avatar-initials {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .875rem;
+        font-weight: 600;
+        color: var(--rfp-muted);
+    }
+
+    .rfp-quote-mark {
+        color: var(--rfp-line);
+    }
+
+    // News.
+    .rfp-news {
+        padding-top: 24px;
+    }
+
+    .rfp-posts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 32px;
+    }
+
+    .rfp-post {
+        display: block;
+
+        &:hover .rfp-post-title,
+        &:focus .rfp-post-title {
+            text-decoration: underline;
+            text-decoration-color: var(--rfp-accent);
+            text-underline-offset: 4px;
+        }
+    }
+
+    .rfp-post-image {
+        display: block;
+        width: 100%;
+        height: 190px;
+        object-fit: cover;
+        background-color: var(--rfp-dark);
+        background-size: cover;
+        background-position: center;
+        border-radius: $rfp-radius-sm;
+    }
+
+    .rfp-post-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 20px;
+        margin: 14px 0 8px;
+        font-size: .75rem;
+        color: var(--rfp-text);
+    }
+
+    .rfp-post-title {
+        margin: 0 0 10px;
+        font-size: 1.1875rem;
+        line-height: 1.35;
+        font-weight: 600;
+    }
+
+    .rfp-news-more {
+        margin-top: 44px;
+    }
+
+    // Standard site home content, when shown.
+    .rfp-sitecontent {
+        padding-top: 0;
+    }
+
+    // Call to action.
+    .rfp-cta {
+        padding: 72px 0;
+
+        p {
+            margin: 0;
+            font-size: .875rem;
+            max-width: 620px;
+        }
+    }
+
+    .rfp-cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px 40px;
+
+        > div {
+            flex: 1 1 480px;
+            min-width: 0;
+        }
+    }
+
+    // Footer.
+    .rfp-footer {
+        background: var(--rfp-dark);
+        color: var(--rfp-dark-text);
+        padding: 72px 0 28px;
+        font-size: .875rem;
+
+        a:hover,
+        a:focus {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .rfp-wordmark {
+            font-size: 1.625rem;
+            color: #f4f3ef;
+        }
+    }
+
+    .rfp-footer-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+    }
+
+    .rfp-footer-brand {
+        flex: 1.6 1 300px;
+        min-width: 0;
+
+        p {
+            margin: 18px 0 22px;
+            max-width: 360px;
+        }
+    }
+
+    .rfp-footer-col {
+        flex: 1 1 150px;
+        min-width: 0;
+
+        li + li {
+            margin-top: 12px;
+        }
+    }
+
+    .rfp-footer-contact {
+        flex: 1.2 1 240px;
+
+        li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        svg {
+            flex: none;
+            margin-top: 2px;
+            color: var(--rfp-accent);
+        }
+    }
+
+    .rfp-footer-title {
+        margin: 0 0 18px;
+        font-size: 1.0625rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .rfp-socials {
+        display: flex;
+        gap: 10px;
+
+        a {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #3a3935;
+            color: #fff;
+
+            &:hover,
+            &:focus {
+                border-color: var(--rfp-accent);
+            }
+        }
+    }
+
+    .rfp-footer-bottom {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px 24px;
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid #2a2a28;
+        font-size: .8125rem;
+    }
+
+    .rfp-legal {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+    }
+
+    .rfp-footer-system {
+        max-width: $rfp-container;
+        margin: 0 auto;
+        padding: 0 24px;
+        font-size: .75rem;
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    // Small screens.
+    @include media-breakpoint-down(lg) {
+        .rfp-display {
+            font-size: 3.5rem;
+        }
+
+        .rfp-navtoggle {
+            display: flex;
+            margin-left: auto;
+        }
+
+        .rfp-nav {
+            display: none;
+            order: 10;
+            flex-basis: 100%;
+
+            &.open {
+                display: block;
+            }
+        }
+
+        .rfp-nav-list {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .rfp-mm-panel,
+        .rfp-dropdown-panel {
+            position: static;
+            box-shadow: none;
+            border: 0;
+            border-left: 2px solid var(--rfp-accent);
+            border-radius: 0;
+            margin: 0 0 12px;
+
+            &::before {
+                display: none;
+            }
+        }
+
+        .rfp-mm-inner {
+            padding: 12px 16px;
+        }
+
+        .rfp-mm-featured {
+            display: none;
+        }
+    }
+
+    @include media-breakpoint-down(md) {
+        .rfp-section {
+            padding: 64px 0;
+        }
+
+        .rfp-container {
+            padding: 0 16px;
+        }
+
+        .rfp-display {
+            font-size: 2.5rem;
+        }
+
+        .rfp-heading {
+            font-size: 1.75rem;
+        }
+
+        .rfp-heading-sm {
+            font-size: 1.625rem;
+        }
+
+        .rfp-hero-copy {
+            padding-bottom: 24px;
+        }
+
+        .rfp-hero-image {
+            height: 380px;
+        }
+
+        .rfp-hero .rfp-features {
+            margin-top: 24px;
+        }
+
+        .rfp-badge-hero,
+        .rfp-badge-edge {
+            left: 16px;
+            bottom: 16px;
+        }
+
+        .rfp-media-image {
+            height: 320px;
+        }
+
+        .rfp-quotes {
+            grid-auto-columns: 100%;
+            gap: 24px;
+        }
+
+        .rfp-person-offset {
+            padding-top: 0;
+        }
+
+        .rfp-people img,
+        .rfp-people .rfp-person-initials {
+            height: 340px;
+        }
+
+        .rfp-actions .rfp-btn {
+            padding: 10px 18px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .rfp-course-link,
+        .rfp-chevron,
+        .rfp-quotes {
+            transition: none;
+            scroll-behavior: auto;
+        }
+    }
+}
