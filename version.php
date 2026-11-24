@@ -25,9 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026102607;
+$plugin->version   = 2026112404;
 $plugin->requires  = 2026100200;
 $plugin->component = 'theme_retani_studio';
-$plugin->release   = '1.0.0';
-$plugin->maturity  = MATURITY_BETA;
+$plugin->release   = '1.1.0';
+$plugin->maturity  = MATURITY_RC;
 $plugin->supported = [503, 503];

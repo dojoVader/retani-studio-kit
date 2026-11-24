@@ -46,10 +46,10 @@ __name(Chevron, "Chevron");
 function LoginCarousel({
   slides,
   interval = 6e3,
-  label = "Highlights",
-  previouslabel = "Previous slide",
-  nextlabel = "Next slide",
-  slidelabel = "Go to slide {$a}"
+  label,
+  previouslabel,
+  nextlabel,
+  slidelabel
 }) {
   const count = slides?.length ?? 0;
   const [active, setActive] = useState(0);

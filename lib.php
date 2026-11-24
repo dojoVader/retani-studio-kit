@@ -75,6 +75,10 @@ function theme_retani_studio_get_extra_scss($theme) {
         $content .= file_get_contents($extracss);
     }
 
+    // Dark mode for the Dashboard, and the dark corrections of the light values in post.scss. After post.scss so that
+    // it wins over them.
+    $content .= file_get_contents($CFG->dirroot . '/theme/retani_studio/scss/retani_dashboard_dark.scss');
+
     // Always return the background image with the scss when we have it.
     return !empty($theme->settings->scss) ? "{$theme->settings->scss}  \n  {$content}" : $content;
 }
@@ -93,7 +97,8 @@ function theme_retani_studio_get_extra_scss($theme) {
  */
 function theme_retani_studio_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'logo' || $filearea === 'backgroundimage' ||
-        $filearea === 'loginbackgroundimage' || preg_match('/^loginslide[1-9]image$/', $filearea))) {
+        $filearea === 'loginbackgroundimage' || preg_match('/^loginslide[1-9]image$/', $filearea) ||
+        preg_match('/^fp[a-z0-9]+image$/', $filearea))) {
         $theme = theme_config::load('retani_studio');
         // By default, theme files must be cache-able by both browsers and proxies.
         if (!array_key_exists('cacheability', $options)) {
@@ -131,6 +136,12 @@ function theme_retani_studio_user_preferences(): array {
             'permissioncallback' => [core_user::class, 'is_current_user'],
         ],
         \theme_retani_studio\output\left_bar::OUTLINE_PREFERENCE => [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => true,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ],
+        \theme_retani_studio\admin_dark_mode::PREFERENCE => [
             'type' => PARAM_BOOL,
             'null' => NULL_NOT_ALLOWED,
             'default' => true,

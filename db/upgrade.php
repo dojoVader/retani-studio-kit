@@ -44,5 +44,21 @@ function xmldb_theme_retani_studio_upgrade($oldversion) {
         }
         upgrade_plugin_savepoint(true, 2026102604, 'theme', 'retani_studio');
     }
+    if ($oldversion < 2026112402) {
+        // The front page section labels are shown as typed rather than in code style, so the defaults moved to
+        // title case. Update the labels still set to the old defaults; labels changed by the site are kept.
+        $renamed = [
+            'fpcoursestag' => ['Popular courses', 'Popular Courses'],
+            'fpabouttag' => ['About us', 'About Us'],
+            'fpteachtag' => ['Become an instructor', 'Become an Instructor'],
+        ];
+        foreach ($renamed as $name => [$old, $new]) {
+            if (get_config('theme_retani_studio', $name) === $old) {
+                set_config($name, $new, 'theme_retani_studio');
+            }
+        }
+        upgrade_plugin_savepoint(true, 2026112402, 'theme', 'retani_studio');
+    }
+
     return true;
 }

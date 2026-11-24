@@ -73,7 +73,7 @@ class hook_listener {
     }
 
     /**
-     * Set the Bootstrap colour mode on the html tag.
+     * Set the Bootstrap colour mode on the html tag, and the class of the administration dark mode.
      *
      * The data-bs-theme attribute drives every Bootstrap colour mode override, so it has to be on the page from the
      * very first byte. The chosen mode is repeated in data-colourmode because "auto" can only be resolved in the
@@ -82,6 +82,14 @@ class hook_listener {
      * @param before_html_attributes $hook The hook object.
      */
     public static function before_html_attributes_listener(before_html_attributes $hook): void {
+        global $PAGE;
+
+        // The administration dark mode is a class of its own, separate from the colour modes below.
+        if (admin_dark_mode::applies($PAGE)) {
+            $classes = trim(($hook->get_attributes()['class'] ?? '') . ' ' . admin_dark_mode::CSS_CLASS);
+            $hook->add_attribute('class', $classes);
+        }
+
         if (!colour_mode::is_retani_studio_theme() || !colour_mode::is_enabled()) {
             return;
         }

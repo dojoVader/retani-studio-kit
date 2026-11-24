@@ -75,6 +75,15 @@ class core_renderer extends \core_renderer {
     }
 
     /**
+     * The toggle between light and dark Site administration pages, for site administrators.
+     *
+     * @return string HTML for the toggle, or an empty string where the administration dark mode is not available.
+     */
+    public function admin_dark_toggle(): string {
+        return \theme_retani_studio\admin_dark_mode::render_toggle($this->page, $this);
+    }
+
+    /**
      * Returns HTML to display a "Turn editing on/off" button in a form.
      *
      * @param moodle_url $url The URL + params to send through when clicking the button

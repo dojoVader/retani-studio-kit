@@ -136,6 +136,179 @@ if ($ADMIN->fulltree) {
     }
     $settings->add($page);
 
+    // Front page: the landing page drawn by layout/frontpage.php. Text settings default to the text of the design, and
+    // a text setting left empty hides what it fills.
+    $fp = \theme_retani_studio\output\frontpage::class;
+    $str = fn(string $key, $a = null) => get_string($key, 'theme_retani_studio', $a);
+    $desc = fn(string $key) => get_string_manager()->string_exists($key, 'theme_retani_studio') ? $str($key) : '';
+    $heading = function(admin_settingpage $page, string $name) use ($str, $desc): void {
+        $page->add(new admin_setting_heading("theme_retani_studio/fp{$name}heading", $str("fpheading_{$name}"),
+            $desc("fpheading_{$name}_desc")));
+    };
+    // A text setting. $title is the name of the setting when it is not "fp{$name}" in the language file.
+    $text = function(admin_settingpage $page, string $name, bool $multiline = false, ?string $title = null,
+            string $description = '') use ($fp, $str, $desc): void {
+        $title ??= $str("fp{$name}");
+        $description = $description ?: $desc("fp{$name}_desc");
+        $default = $fp::default_text($name);
+        $settingname = "theme_retani_studio/fp{$name}";
+        $page->add($multiline
+            ? new admin_setting_configtextarea($settingname, $title, $description, $default, PARAM_TEXT, 60, 4)
+            : new admin_setting_configtext($settingname, $title, $description, $default, PARAM_TEXT));
+    };
+    $image = function(admin_settingpage $page, string $name, ?string $title = null) use ($str): void {
+        $setting = new admin_setting_configstoredfile("theme_retani_studio/fp{$name}", $title ?? $str("fp{$name}"),
+            $str('fpimage_desc'), "fp{$name}", 0, ['maxfiles' => 1, 'accepted_types' => ['web_image']]);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $page->add($setting);
+    };
+    // The eyebrow label and heading of a section.
+    $sectionheader = function(admin_settingpage $page, string $section) use ($text, $str): void {
+        $text($page, "{$section}tag", false, $str('fpsectiontag'), $str('fpsectiontag_desc'));
+        $text($page, "{$section}heading", false, $str('fpsectionheading'));
+    };
+    $badge = function(admin_settingpage $page, string $section) use ($text, $str): void {
+        $text($page, "{$section}badgevalue", false, $str('fpbadgevalue'), $str('fpbadge_desc'));
+        $text($page, "{$section}badgelabel", false, $str('fpbadgelabel'));
+    };
+    $counts = fn(int $max) => array_combine(range(0, $max), range(0, $max));
+
+    // Front page: general, hero, features, courses, about and statistics.
+    $page = new admin_settingpage('theme_retani_studio_frontpage', $str('frontpagesettings'));
+    $heading($page, 'general');
+    $page->add(new admin_setting_configcheckbox('theme_retani_studio/fpenabled', $str('fpenabled'),
+        $str('fpenabled_desc'), 1));
+    $page->add(new admin_setting_configcheckbox('theme_retani_studio/fpcourselisting', $str('fpcourselisting'),
+        $str('fpcourselisting_desc'), 1));
+    $page->add(new admin_setting_configcheckbox('theme_retani_studio/fpmodetoggle', $str('fpmodetoggle'),
+        $str('fpmodetoggle_desc'), 1));
+    $sections = [];
+    foreach ($fp::SECTIONS as $section) {
+        $sections[$section] = $str("fpsection_{$section}");
+    }
+    $page->add(new admin_setting_configmulticheckbox('theme_retani_studio/fpsections', $str('fpsections'),
+        $str('fpsections_desc'), array_fill_keys($fp::DEFAULT_SECTIONS, 1), $sections));
+    $text($page, 'announcement');
+
+    $heading($page, 'hero');
+    $text($page, 'herotitle');
+    $text($page, 'herotext', true);
+    $text($page, 'herobutton', false, $str('fpbutton'));
+    $text($page, 'herourl', false, $str('fpurl'), $str('fpurl_desc'));
+    $image($page, 'heroimage', $str('fpimage'));
+    $text($page, 'heroimagealt', false, $str('fpimagealt'), $str('fpimagealt_desc'));
+    $badge($page, 'hero');
+
+    $heading($page, 'features');
+    for ($i = 1; $i <= $fp::FEATURES; $i++) {
+        $text($page, "feature{$i}title", false, $str('fpfeaturetitle', $i));
+        $text($page, "feature{$i}text", true, $str('fpfeaturetext', $i));
+        $text($page, "feature{$i}url", false, $str('fpfeatureurl', $i), $str('fpurl_desc'));
+    }
+
+    $heading($page, 'courses');
+    $sectionheader($page, 'courses');
+    $page->add(new admin_setting_configtext('theme_retani_studio/fpcourseids', $str('fpcourseids'),
+        $str('fpcourseids_desc'), '', PARAM_SEQUENCE));
+    $page->add(new admin_setting_configselect('theme_retani_studio/fpcoursescount', $str('fpcoursescount'),
+        $str('fpcoursescount_desc'), 8, array_combine($fp::COURSE_COUNTS, $fp::COURSE_COUNTS)));
+
+    $heading($page, 'about');
+    $sectionheader($page, 'about');
+    $text($page, 'abouttext', true, $str('fptext'));
+    $text($page, 'aboutpoints', true);
+    $text($page, 'aboutbutton', false, $str('fpbutton'));
+    $text($page, 'abouturl', false, $str('fpurl'), $str('fpurl_desc'));
+    $image($page, 'aboutimage', $str('fpimage'));
+    $text($page, 'aboutimagealt', false, $str('fpimagealt'), $str('fpimagealt_desc'));
+    $badge($page, 'about');
+
+    $heading($page, 'stats');
+    $text($page, 'statsheading', false, $str('fpsectionheading'));
+    for ($i = 1; $i <= $fp::STATS; $i++) {
+        $text($page, "stat{$i}value", false, $str('fpstatvalue', $i));
+        $text($page, "stat{$i}label", false, $str('fpstatlabel', $i));
+    }
+    $settings->add($page);
+
+    // Front page: instructors, testimonials and the call for instructors.
+    $page = new admin_settingpage('theme_retani_studio_frontpagepeople', $str('frontpagepeoplesettings'));
+    $heading($page, 'instructors');
+    $sectionheader($page, 'instructors');
+    $page->add(new admin_setting_configselect('theme_retani_studio/fpinstructorscount', $str('fpinstructorscount'),
+        '', 4, $counts($fp::MAX_INSTRUCTORS)));
+    for ($i = 1; $i <= $fp::MAX_INSTRUCTORS; $i++) {
+        $text($page, "instructor{$i}name", false, $str('fpinstructorname', $i));
+        $text($page, "instructor{$i}role", false, $str('fpinstructorrole', $i));
+        $image($page, "instructor{$i}image", $str('fpinstructorimage', $i));
+        $fewer = implode('|', range(0, $i - 1));
+        foreach (['name', 'role', 'image'] as $part) {
+            $settings->hide_if("theme_retani_studio/fpinstructor{$i}{$part}", 'theme_retani_studio/fpinstructorscount',
+                'in', $fewer);
+        }
+    }
+
+    $heading($page, 'testimonials');
+    $sectionheader($page, 'testimonials');
+    $page->add(new admin_setting_configselect('theme_retani_studio/fptestimonialscount', $str('fptestimonialscount'),
+        $str('fptestimonialscount_desc'), 2, $counts($fp::MAX_TESTIMONIALS)));
+    for ($i = 1; $i <= $fp::MAX_TESTIMONIALS; $i++) {
+        $text($page, "testimonial{$i}quote", true, $str('fptestimonialquote', $i));
+        $text($page, "testimonial{$i}name", false, $str('fptestimonialname', $i));
+        $text($page, "testimonial{$i}role", false, $str('fptestimonialrole', $i));
+        $image($page, "testimonial{$i}image", $str('fptestimonialimage', $i));
+        $fewer = implode('|', range(0, $i - 1));
+        foreach (['quote', 'name', 'role', 'image'] as $part) {
+            $settings->hide_if("theme_retani_studio/fptestimonial{$i}{$part}", 'theme_retani_studio/fptestimonialscount',
+                'in', $fewer);
+        }
+    }
+
+    $heading($page, 'teach');
+    $sectionheader($page, 'teach');
+    $text($page, 'teachtext', true, $str('fptext'));
+    foreach ([1, 2] as $i) {
+        $text($page, "teachpoint{$i}title", false, $str('fpteachpointtitle', $i));
+        $text($page, "teachpoint{$i}text", true, $str('fpteachpointtext', $i));
+    }
+    $text($page, 'teachbutton', false, $str('fpbutton'));
+    $text($page, 'teachurl', false, $str('fpurl'), $str('fpteachurl_desc'));
+    $image($page, 'teachimage', $str('fpimage'));
+    $text($page, 'teachimagealt', false, $str('fpimagealt'), $str('fpimagealt_desc'));
+    $badge($page, 'teach');
+    $settings->add($page);
+
+    // Front page: news, the call to action and the footer.
+    $page = new admin_settingpage('theme_retani_studio_frontpagefooter', $str('frontpagefootersettings'));
+    $heading($page, 'news');
+    $sectionheader($page, 'news');
+    $page->add(new admin_setting_configselect('theme_retani_studio/fpnewscount', $str('fpnewscount'),
+        $str('fpnewscount_desc'), 3, $counts(6)));
+    $text($page, 'newsbutton', false, $str('fpbutton'));
+
+    $heading($page, 'cta');
+    $text($page, 'ctaheading', false, $str('fpsectionheading'), $str('fpctaheading_desc'));
+    $text($page, 'ctatext', true, $str('fptext'));
+    $text($page, 'ctabutton', false, $str('fpbutton'));
+    $text($page, 'ctaurl', false, $str('fpurl'), $str('fpurl_desc'));
+
+    $heading($page, 'footer');
+    $text($page, 'footertext', true);
+    foreach ($fp::SOCIALS as $network) {
+        $text($page, "social{$network}", false, $str('fpsociallink', $str("fpsocial{$network}")), $str('fpsocial_desc'));
+    }
+    foreach ([1, 2] as $i) {
+        $text($page, "footercol{$i}title", false, $str('fpfootercoltitle', $i));
+        $text($page, "footercol{$i}links", true, $str('fpfootercollinks', $i), $str('fplinks_desc'));
+    }
+    $text($page, 'contacttitle');
+    $text($page, 'address');
+    $text($page, 'email');
+    $text($page, 'phone');
+    $text($page, 'copyright');
+    $text($page, 'legallinks', true, null, $str('fplinks_desc'));
+    $settings->add($page);
+
     // Advanced settings.
     $page = new admin_settingpage('theme_retani_studio_advanced', get_string('advancedsettings', 'theme_retani_studio'));
 
@@ -155,6 +328,11 @@ if ($ADMIN->fulltree) {
 
     // Experimental settings.
     $page = new admin_settingpage('theme_retani_studio_experimental', get_string('experimentalsettings', 'theme_retani_studio'));
+
+    // Dark mode for the Site administration pages, for site administrators. Separate from the colour modes below:
+    // it does not need them to be on, and does not change anybody's colour mode.
+    $page->add(new admin_setting_configcheckbox('theme_retani_studio/admindarkmode',
+        get_string('admindarkmode', 'theme_retani_studio'), get_string('admindarkmode_desc', 'theme_retani_studio'), 1));
 
     // Colour modes. Off until a site opts in, because a plugin which has not been checked in dark mode can still
     // draw its pages in light colours.

@@ -48,6 +48,9 @@ class provider implements
     /** The user preference for the light or dark colour mode. */
     public const COLOUR_MODE = colour_mode::PREFERENCE;
 
+    /** The user preference for the dark mode of the Site administration pages. */
+    public const ADMIN_DARK = \theme_retani_studio\admin_dark_mode::PREFERENCE;
+
     /** The user preference for showing the course outline in the left bar. */
     public const LEFTBAR_OUTLINE = \theme_retani_studio\output\left_bar::OUTLINE_PREFERENCE;
 
@@ -62,6 +65,7 @@ class provider implements
         $items->add_user_preference(self::DRAWER_OPEN_BLOCK, 'privacy:metadata:preference:draweropenblock');
         $items->add_user_preference(self::COLOUR_MODE, 'privacy:metadata:preference:colourmode');
         $items->add_user_preference(self::LEFTBAR_OUTLINE, 'privacy:metadata:preference:leftbaroutline');
+        $items->add_user_preference(self::ADMIN_DARK, 'privacy:metadata:preference:admindark');
         return $items;
     }
 
@@ -121,6 +125,17 @@ class provider implements
                 self::LEFTBAR_OUTLINE,
                 $outlinepref,
                 get_string($outlinepref ? 'privacy:leftbaroutlineopen' : 'privacy:leftbaroutlineclosed', 'theme_retani_studio')
+            );
+        }
+
+        $admindarkpref = get_user_preferences(self::ADMIN_DARK, null, $userid);
+
+        if (isset($admindarkpref)) {
+            writer::export_user_preference(
+                'theme_retani_studio',
+                self::ADMIN_DARK,
+                $admindarkpref,
+                get_string($admindarkpref ? 'privacy:admindarkon' : 'privacy:admindarkoff', 'theme_retani_studio')
             );
         }
     }

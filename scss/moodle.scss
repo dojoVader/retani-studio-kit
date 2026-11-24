@@ -67,5 +67,8 @@
 @import "retani_calendar";
 @import "retani_quiz";
 @import "retani_question";
+@import "retani_frontpage";
+@import "retani_courselisting";
 // Must stay last so that the dark colour mode can override anything above it.
 @import "moodle/dark";
+@import "retani_admindark";

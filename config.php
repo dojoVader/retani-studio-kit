@@ -55,7 +55,7 @@ $THEME->layouts = [
         'options' => array('langmenu' => true),
     ),
     'coursecategory' => array(
-        'file' => 'drawers.php',
+        'file' => 'coursecategory.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
@@ -67,7 +67,7 @@ $THEME->layouts = [
     ),
     // The site home page.
     'frontpage' => array(
-        'file' => 'drawers.php',
+        'file' => 'frontpage.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
         'options' => array('nonavbar' => true),
