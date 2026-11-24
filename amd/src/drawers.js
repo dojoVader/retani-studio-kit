@@ -27,7 +27,7 @@ import {dispatchEvent} from 'core/event_dispatcher';
 import {debounce} from 'core/utils';
 import {isSmall, isLarge} from 'core/pagehelpers';
 import Pending from 'core/pending';
-import {setUserPreference} from 'core_user/repository';
+import {setUserPreference} from 'theme_retani_studio/preference';
 import {Tooltip} from 'bootstrap';
 import {subscribe} from 'core/pubsub';
 import DrawerEvents from 'core/drawer_events';

@@ -16,31 +16,18 @@
 /**
  * The toggle between light and dark Site administration pages (theme_retani_studio/admin_dark_toggle).
  *
- * Switches the class on the html tag at once, and saves the choice as a user preference so that the server draws the
- * next administration page the same way. Separate from the colour modes (theme_retani_studio/colourmode).
+ * Switches the class and the colour mode on the html tag at once, and saves the choice in the administration pages'
+ * own user preference, so that the server draws the next administration page the same way. The colour mode preference
+ * of the rest of the site (theme_retani_studio/colourmode, the front page toggle) is not changed.
  *
  * @module     theme_retani_studio/admindarkmode
  * @copyright  2026 Okeowo Aderemi
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Ajax from 'core/ajax';
+import {setUserPreference} from 'theme_retani_studio/preference';
 import Notification from 'core/notification';
 
-/**
- * Save a user preference of the current user through the core_user_set_user_preferences web service.
- *
- * Not core_user/repository: in this Moodle version it posts to the REST router (r.php/api), which is not reachable on
- * every server, and fails without the page knowing.
- *
- * @param {String} name
- * @param {String|Number} value
- * @return {Promise}
- */
-const savePreference = (name, value) => Ajax.call([{
-    methodname: 'core_user_set_user_preferences',
-    args: {preferences: [{name, value: String(value), userid: 0}]},
-}])[0];
 
 const SELECTORS = {
     toggle: '[data-action="toggle-admindark"]',
@@ -71,9 +58,13 @@ export const init = () => {
         toggle.dataset.initialised = '1';
         toggle.addEventListener('click', () => {
             const dark = toggle.getAttribute('aria-pressed') !== 'true';
-            document.documentElement.classList.toggle(toggle.dataset.cssclass, dark);
+            const root = document.documentElement;
+            const mode = dark ? 'dark' : 'light';
+            root.classList.toggle(toggle.dataset.cssclass, dark);
+            root.setAttribute('data-bs-theme', mode);
+            root.setAttribute('data-colourmode', mode);
             showState(toggle, dark);
-            savePreference(toggle.dataset.preference, dark ? 1 : 0).catch(Notification.exception);
+            setUserPreference(toggle.dataset.preference, dark ? 1 : 0).catch(Notification.exception);
         });
     });
 };

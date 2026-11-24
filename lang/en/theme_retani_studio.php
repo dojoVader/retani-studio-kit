@@ -407,7 +407,7 @@ $string['fpcourselisting_desc'] = 'Show the list of courses (Courses > All cours
 
 // Dark mode for Site administration (classes/admin_dark_mode.php).
 $string['admindarkmode'] = 'Dark mode for Site administration';
-$string['admindarkmode_desc'] = 'Show the Site administration pages in dark colours to site administrators, with a toggle in the top bar for each administrator to switch between light and dark. Dark is the default until they switch. Other users, and the rest of the site, are not affected. Only used while "Enable colour modes" is off: when it is on, the administration pages follow the colour mode menu instead, so that there is only one dark mode control.';
+$string['admindarkmode_desc'] = 'Show the Site administration pages in dark colours to site administrators, with a toggle in the top bar for each administrator to switch between light and dark. Dark is the default until they switch. This choice is kept apart from the light and dark mode of the rest of the site: the front page toggle and the colour mode menu do not change it, and the colour mode menu is not shown on the administration pages, so that there is only one control there. Other users, and the rest of the site, are not affected.';
 $string['admindarktoggle'] = 'Dark mode';
 $string['privacy:admindarkoff'] = 'The dark mode of the Site administration pages is turned off.';
 $string['privacy:admindarkon'] = 'The dark mode of the Site administration pages is turned on.';

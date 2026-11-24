@@ -78,7 +78,7 @@ The site home is replaced by a landing page, set up in three tabs: *Front page*,
 
 | Setting | Description |
 | --- | --- |
-| Dark mode for Site administration | Shows the Site administration pages dark to site administrators only. On by default. Only used while colour modes are off; when they are on, admin pages follow the colour mode menu, so there is one control. |
+| Dark mode for Site administration | Shows the Site administration pages dark to site administrators only. On by default. Each administrator has their own light/dark choice for these pages, set with a toggle in the top bar; the front page toggle and the colour mode menu do not affect it, and the colour mode menu is hidden on admin pages. |
 | Enable colour modes | Lets people switch the site between light and dark. Off by default. |
 | Default colour mode | The mode for people who have not chosen one. Defaults to *Light*. |
 

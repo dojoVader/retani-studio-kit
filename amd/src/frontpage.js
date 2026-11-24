@@ -26,23 +26,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Ajax from 'core/ajax';
+import {setUserPreference} from 'theme_retani_studio/preference';
 import Notification from 'core/notification';
 
-/**
- * Save a user preference of the current user through the core_user_set_user_preferences web service.
- *
- * Not core_user/repository: in this Moodle version it posts to the REST router (r.php/api), which is not reachable on
- * every server, and fails without the page knowing.
- *
- * @param {String} name
- * @param {String|Number} value
- * @return {Promise}
- */
-const savePreference = (name, value) => Ajax.call([{
-    methodname: 'core_user_set_user_preferences',
-    args: {preferences: [{name, value: String(value), userid: 0}]},
-}])[0];
 
 const SELECTORS = {
     modeToggle: '[data-action="rfp-modetoggle"]',
@@ -218,7 +204,7 @@ const initModeToggle = (root) => {
             });
             document.cookie = `${toggle.dataset.preference}=${mode}${toggle.dataset.cookieattributes}`;
             if (toggle.dataset.canstore) {
-                savePreference(toggle.dataset.preference, mode).catch(Notification.exception);
+                setUserPreference(toggle.dataset.preference, mode).catch(Notification.exception);
             }
         });
     });

@@ -2,48 +2,79 @@ Retani Studio theme for Moodle (theme_retani_studio)
 Release notes
 ====================================================================
 
-Version 1.1.0 (2026112400) - Release candidate
+Version 1.1.0 (2026112404) - Release candidate
 --------------------------------------------------------------------
 
+Requirements
+  - Moodle 5.3 (build 2026100200 or later)
+  - PHP 8.3 or later
+
 New
-  - A landing page for the site home, after the "Moodle front page"
-    design: announcement bar, header with a courses menu built from
-    the course categories, hero, feature cards, course cards with
-    category filters, about, statistics, instructors, testimonials,
-    a call for instructors, news from the site announcements forum,
-    a call to action and a footer with links, social networks and
-    contact details.
+  - Front page: a landing page for the site home, after the "Moodle
+    front page" design: announcement bar, header with a courses menu
+    built from the course categories, hero, feature cards, course
+    cards with category filters, about, statistics, instructors,
+    testimonials, a call for instructors, news from the site
+    announcements forum, a call to action and a footer with links,
+    social networks and contact details.
   - Course cards show the course image, the number of students and
     activities, a "New" badge for courses created in the last 30 days,
     and the fee when the course has a payment enrolment method.
+  - Course listing: Courses > All courses with the front page header
+    and footer, a search by course name or teacher, filters by
+    teacher and certificate, and a choice of sort order. Setting:
+    "Use the Retani course listing".
+  - The front page has no editing mode, user menu, notifications or
+    messages in its header: it is the public face of the site.
+    Logged-out visitors get a login button.
   - Three new settings tabs: "Front page", "Front page: people" and
     "Front page: news & footer". Every section can be turned off, and
-    every text has a translatable default in the language pack.
-  - The standard site home is used when the landing
-    page is turned off.
-
-  - Dark mode for the Site administration pages, for site
-    administrators only (on by default; Experimental tab). It is a
-    class of its own, .retani-admin-dark on the html tag, separate
-    from the colour modes, and reuses their tested dark styles.
-
-  - Dark mode for the Dashboard in the warm palette of the dashboard
-    design (scss/retani_dashboard_dark.scss).
-
-  - Light and dark mode toggle in the header of the front page and
-    the course listing, remembered per user (preference) and per
-    browser (cookie) for visitors. Setting: "Light and dark mode
-    toggle" on the Front page tab (needs colour modes on).
+    every text has a translatable default in the language pack. The
+    standard site home is used when the landing page is turned off.
+  - Light and dark mode toggle in the header of the front page and the
+    course listing. The choice is remembered as a user preference for
+    people who are logged in, and in a browser cookie for visitors.
+    Setting: "Light and dark mode toggle" on the Front page tab
+    (needs colour modes on).
+  - Dashboard dark mode in the warm palette of the dashboard design:
+    near-black canvas, dark cards and blocks, warm grey text and
+    borders, dark avatars and buttons.
+  - Dark mode for Site administration, for site administrators only,
+    with a toggle in the top bar so each administrator can choose
+    light or dark (dark by default). Setting: "Dark mode for Site
+    administration". The choice is kept apart from the rest of the
+    site: the front page toggle and the colour mode menu do not
+    change it, and the colour mode menu is hidden on these pages so
+    that there is only one dark mode control.
 
 Changes
   - Maturity raised from beta to release candidate.
-  - Dark mode no longer shows a light page background: the light
-    value set in post.scss is put back to the dark one.
-  - Geist Mono is loaded with Geist for the front page labels.
+  - Dark mode no longer shows a light page background, form panels
+    or icons: the light values set in post.scss are put back to the
+    dark ones on every page.
+  - Geist and Geist Mono are used for the front page and course
+    listing.
+
+Fixes
+  - Settings saved from the page were lost on the next page load on
+    sites where the /r.php REST routes are not reachable: the colour
+    mode menu, the front page toggle, the administration dark mode
+    toggle and the open or closed state of the drawers. They now save
+    through the core_user_set_user_preferences web service
+    (amd/src/preference.js).
+
+Privacy
+  - The new administration dark mode preference is declared in the
+    privacy provider and included in data exports.
 
 Upgrading
   - Purge all caches after upgrading. The new settings are listed on
     the upgrade settings page with the defaults of the design.
+
+Known limitations
+  - Colour modes are still experimental. Pages from third-party
+    plugins that have not been checked in dark mode may still show
+    light colours.
 
 Version 1.0.0 (2026102607) - Beta
 --------------------------------------------------------------------

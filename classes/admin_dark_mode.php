@@ -21,11 +21,13 @@ use moodle_page;
 /**
  * Dark mode for the Site administration pages, for site administrators.
  *
- * Separate from the colour modes (see colour_mode): it does not use the data-bs-theme attribute, the colour mode
- * switcher or its preference. Each administrator turns it on or off with a toggle in the navbar of the administration
- * pages (self::PREFERENCE, on by default). When it applies, the html tag carries the retani-admin-dark class, and scss/retani_admindark.scss gives that
- * class every dark override of Bootstrap and the theme, plus its own for the administration components. Pages for
- * everybody else, and the rest of the site for administrators, are not affected.
+ * Separate from the colour modes (see colour_mode): the administration pages have a preference of their own
+ * (self::PREFERENCE, dark by default), which each administrator sets with a toggle in the navbar of those pages. The
+ * colour mode preference, which the front page toggle and the colour mode menu set, does not reach them, and the colour
+ * mode menu is not shown there, so that there is one control. On these pages the html tag carries data-bs-theme set
+ * to the administrator's choice and, when it is dark, the retani-admin-dark class, which scss/retani_admindark.scss
+ * gives every dark override of Bootstrap and the theme. Pages for everybody else, and the rest of the site for
+ * administrators, are not affected.
  *
  * @package    theme_retani_studio
  * @copyright  2026 Okeowo Aderemi
@@ -76,11 +78,6 @@ class admin_dark_mode {
         if (!colour_mode::is_retani_studio_theme() || !is_siteadmin()) {
             return false;
         }
-        // Where the colour mode menu is in the navbar, it is the one control: the administration pages follow the
-        // mode chosen there, and this dark mode and its toggle stand down so that there are not two.
-        if (colour_mode::can_choose_mode()) {
-            return false;
-        }
         return self::is_admin_page($page);
     }
 
@@ -91,6 +88,15 @@ class admin_dark_mode {
      */
     public static function is_chosen(): bool {
         return (bool) get_user_preferences(self::PREFERENCE, 1);
+    }
+
+    /**
+     * The Bootstrap colour mode of an administration page, from the administrator's own choice.
+     *
+     * @return string colour_mode::DARK or colour_mode::LIGHT.
+     */
+    public static function get_mode(): string {
+        return self::is_chosen() ? colour_mode::DARK : colour_mode::LIGHT;
     }
 
     /**

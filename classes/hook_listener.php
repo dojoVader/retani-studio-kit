@@ -84,10 +84,17 @@ class hook_listener {
     public static function before_html_attributes_listener(before_html_attributes $hook): void {
         global $PAGE;
 
-        // The administration dark mode is a class of its own, separate from the colour modes below.
-        if (admin_dark_mode::applies($PAGE)) {
-            $classes = trim(($hook->get_attributes()['class'] ?? '') . ' ' . admin_dark_mode::CSS_CLASS);
-            $hook->add_attribute('class', $classes);
+        // The administration pages of a site administrator follow their own preference, not the colour mode which
+        // the front page toggle and the colour mode menu set.
+        if (admin_dark_mode::is_available($PAGE)) {
+            if (admin_dark_mode::is_chosen()) {
+                $classes = trim(($hook->get_attributes()['class'] ?? '') . ' ' . admin_dark_mode::CSS_CLASS);
+                $hook->add_attribute('class', $classes);
+            }
+            $mode = admin_dark_mode::get_mode();
+            $hook->add_attribute('data-bs-theme', $mode);
+            $hook->add_attribute('data-colourmode', $mode);
+            return;
         }
 
         if (!colour_mode::is_retani_studio_theme() || !colour_mode::is_enabled()) {

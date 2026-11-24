@@ -26,7 +26,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {setUserPreference} from 'core_user/repository';
+import {setUserPreference} from 'theme_retani_studio/preference';
+import Notification from 'core/notification';
+
 
 const PREFERENCE = 'theme_retani_studio_colourmode';
 
@@ -107,7 +109,7 @@ const applyMode = (mode) => {
         });
     });
 
-    setUserPreference(PREFERENCE, mode);
+    setUserPreference(PREFERENCE, mode).catch(Notification.exception);
     rememberMode(mode);
 };
 

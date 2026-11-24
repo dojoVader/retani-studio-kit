@@ -71,6 +71,10 @@ class core_renderer extends \core_renderer {
      * @return string HTML for the colour mode menu, or an empty string.
      */
     public function colour_mode_menu(): string {
+        // The administration pages have their own toggle instead (admin_dark_toggle()).
+        if (\theme_retani_studio\admin_dark_mode::is_available($this->page)) {
+            return '';
+        }
         return colour_mode::render_menu($this);
     }
 
